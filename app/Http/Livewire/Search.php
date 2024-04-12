@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Enums\Standard;
 use App\Models\Post;
 use App\Models\PostCollection;
 use App\Models\User;
@@ -34,6 +35,8 @@ class Search extends Component
     public array $practices = [];
     /** @var array<\App\Enums\Language> */
     public array $languages = [];
+    /** @var string[] */
+    public array $standard_groups = [];
     public int $likes_count = 0;
     public int $views_count = 0;
 
@@ -52,6 +55,7 @@ class Search extends Component
         $languages_count = count($this->languages);
         $categories_count = count($this->categories);
         $audiences_count = count($this->audiences);
+        $standard_groups_count = count($this->standard_groups);
 
         $post_query = Post::search($this->query)->query(function (
             Builder $query
@@ -61,7 +65,8 @@ class Search extends Component
             $practices_count,
             $languages_count,
             $categories_count,
-            $audiences_count
+            $audiences_count,
+            $standard_groups_count
         ) {
             return $query
                 ->where("published", true)
@@ -79,6 +84,19 @@ class Search extends Component
                         $this->standards,
                     ),
                 )
+                ->when($standard_groups_count > 0, function ($query) {
+                    $standards = collect($this->standard_groups)
+                        ->map(fn($group) => Standard::getGroup($group))
+                        ->flatten();
+                    return $query->where(
+                        fn($query) => $standards->map(
+                            fn($standard) => $query->orWhereJsonContains(
+                                "metadata->standards",
+                                $standard,
+                            ),
+                        ),
+                    );
+                })
                 ->when(
                     $practices_count > 0,
                     fn($query) => $query->whereJsonContains(

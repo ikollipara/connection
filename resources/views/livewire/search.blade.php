@@ -34,6 +34,7 @@
         label="Minimum Likes" />
       <x-forms.input wire:model.defer='views_count' type="number" name="views_count" min="0"
         label="Minimum Views" />
+      <x-search.search-groups wire:model.defer="standard_groups" multiple />
       <x-forms.standards wire:model.defer="standards" multiple />
       <x-forms.practices wire:model.defer="practices" multiple />
       <x-forms.grades wire:model.defer="grades" multiple />
