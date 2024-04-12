@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
+use App\Enums\Category;
 use App\Services\BodyExtractor;
 use App\Traits\HasComments;
 use App\Traits\HasLikes;
@@ -116,6 +117,11 @@ class Post extends Model implements Likable, Viewable, Commentable
      */
     public function toSearchableArray()
     {
+        $get_with_defaults = function ($key, $default) {
+            return array_key_exists($key, $this->metadata)
+                ? $this->metadata[$key]
+                : $default;
+        };
         if (!array_key_exists("languages", $this->metadata)) {
             $this->metadata = array_merge($this->metadata, ["languages" => []]);
         }
@@ -123,12 +129,18 @@ class Post extends Model implements Likable, Viewable, Commentable
             "id" => $this->id,
             "title" => $this->title,
             "body" => BodyExtractor::extract($this->body),
-            "category" => $this->metadata["category"],
-            "audience" => $this->metadata["audience"],
-            "grades" => collect($this->metadata["grades"])->join(","),
-            "standards" => collect($this->metadata["standards"])->join(","),
-            "practices" => collect($this->metadata["practices"])->join(","),
-            "languages" => collect($this->metadata["languages"])->join(","),
+            "category" => $get_with_defaults("category", ""),
+            "audience" => $get_with_defaults("audience", ""),
+            "grades" => collect($get_with_defaults("grades", []))->join(","),
+            "standards" => collect($get_with_defaults("standards", []))->join(
+                ",",
+            ),
+            "practices" => collect($get_with_defaults("practices", []))->join(
+                ",",
+            ),
+            "languages" => collect($get_with_defaults("languages", []))->join(
+                ",",
+            ),
             "user" => $this->user->exists()
                 ? $this->user->full_name()
                 : "[Deleted]",
