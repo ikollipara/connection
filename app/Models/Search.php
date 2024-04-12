@@ -17,6 +17,10 @@ class Search extends Model
 {
     protected $fillable = ["user_id", "search_params"];
 
+    protected $casts = [
+        "search_params" => "array",
+    ];
+
     /**
      * Get the user that owns the Search
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User>

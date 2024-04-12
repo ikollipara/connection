@@ -148,7 +148,9 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
             "languages" => collect($get_with_defaults("languages", []))->join(
                 ",",
             ),
-            "user" => $this->user ? $this->user->full_name() : "[Deleted]",
+            "user" => $this->user()->exists()
+                ? $this->user->full_name()
+                : "[Deleted]",
             "likes" => (int) $this->likes_count,
             "views" => (int) $this->views,
         ];
