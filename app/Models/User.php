@@ -43,6 +43,7 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $followers
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Search> $searches
  */
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
@@ -156,6 +157,15 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             "follower_id",
             "user_id",
         );
+    }
+
+    /**
+     * Get the user's searches
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Search>
+     */
+    public function searches()
+    {
+        return $this->hasMany(Search::class);
     }
 
     /**

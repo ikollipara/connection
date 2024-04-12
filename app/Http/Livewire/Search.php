@@ -49,6 +49,25 @@ class Search extends Component
 
     public function search(): void
     {
+        auth()
+            ->user()
+            /** @phpstan-ignore-next-line */
+            ->searches()
+            ->create([
+                "search_params" => json_encode([
+                    "query" => $this->query,
+                    "type" => $this->type ? $this->type : "both",
+                    "categories" => $this->categories,
+                    "audiences" => $this->audiences,
+                    "grades" => $this->grades,
+                    "standards" => $this->standards,
+                    "practices" => $this->practices,
+                    "languages" => $this->languages,
+                    "standard_groups" => $this->standard_groups,
+                    "likes_count" => $this->likes_count,
+                    "views_count" => $this->views_count,
+                ]),
+            ]);
         $grades_count = count($this->grades);
         $standards_count = count($this->standards);
         $practices_count = count($this->practices);
