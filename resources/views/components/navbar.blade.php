@@ -19,7 +19,7 @@
   <div x-bind:class="{ 'is-active': active }" id="nav-menu" class="navbar-menu animate__animated">
     <ul class="navbar-start">
       @auth
-        <x-nav.dropdown title="Posts">
+        <x-nav.dropdown title="My Posts">
           <x-slot name="icon">
             <x-lucide-newspaper class="icon" width="30" height="30" />
           </x-slot>
@@ -29,7 +29,7 @@
           <x-nav.divider />
           <x-nav.item route="{{ route('posts.create') }}">Create Post</x-nav.item>
         </x-nav.dropdown>
-        <x-nav.dropdown title="Collections">
+        <x-nav.dropdown title="My Collections">
           <x-slot name="icon">
             <x-lucide-layers class="icon" width="30" height="30" />
           </x-slot>
