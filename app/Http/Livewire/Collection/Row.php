@@ -30,7 +30,7 @@ class Row extends Component
 
     public function archive(): void
     {
-        if (!$this->post_collection->isPublished()) {
+        if (!$this->post_collection->delete()) {
             $this->dispatchBrowserEvent("error", [
                 "message" => "Collection is already archived!",
             ]);
