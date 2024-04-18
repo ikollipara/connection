@@ -27,8 +27,8 @@ class Settings extends Component
         return [
             "user.first_name" => "required|string",
             "user.last_name" => "required|string",
-            "above_19" => "required|boolean",
-            "full_name" => "string|required",
+            "above_19" => "boolean",
+            "full_name" => "string|required_if:above_19,true",
             "user.consented" => "boolean",
             "user.email" => [
                 "required",
