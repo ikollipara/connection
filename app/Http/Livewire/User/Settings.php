@@ -71,8 +71,22 @@ class Settings extends Component
 
     public function save(): void
     {
-        abort_if(auth()->id() !== $this->user->id, 403);
-        $this->validate();
+        if (!auth()->id() == $this->user->id) {
+            $this->dispatchBrowserEvent("error", [
+                "message" => __("You are not authorized to update this user!"),
+            ]);
+            return;
+        }
+        try {
+            $this->validate();
+        } catch (\Throwable $th) {
+            $this->dispatchBrowserEvent("error", [
+                "message" => __(
+                    "Failed to validate settings!" . $th->getMessage(),
+                ),
+            ]);
+            return;
+        }
 
         if ($this->avatar) {
             if ($avatar = $this->avatar->store("avatars", "public")) {
