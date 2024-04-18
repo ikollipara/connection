@@ -71,7 +71,7 @@ class Settings extends Component
 
     public function save(): void
     {
-        $this->authorize("update", $this->user);
+        abort_if(auth()->id() !== $this->user->id, 403);
         $this->validate();
 
         if ($this->avatar) {

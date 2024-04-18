@@ -26,11 +26,9 @@ class Kernel extends ConsoleKernel
                         if (!$user->sent_week_one_survey) {
                             $user->notify(
                                 new QualtricsSurvey(
-                                    env(
-                                        "APP_QUALTRICS_CT_CAST_LINK" .
-                                            "?userId=" .
-                                            $user->id,
-                                    ),
+                                    env("APP_QUALTRICS_CT_CAST_LINK") .
+                                        "?userId=" .
+                                        $user->id,
                                 ),
                             );
                             $user->sent_week_one_survey = true;
@@ -43,20 +41,16 @@ class Kernel extends ConsoleKernel
                         ) {
                             $user->notify(
                                 new QualtricsSurvey(
-                                    env(
-                                        "APP_QUALTRICS_CT_CAST_LINK" .
-                                            "?userId=" .
-                                            $user->id,
-                                    ),
+                                    env("APP_QUALTRICS_CT_CAST_LINK") .
+                                        "?userId=" .
+                                        $user->id,
                                 ),
                             );
                             $user->notify(
                                 new QualtricsSurvey(
-                                    env(
-                                        "APP_QUALTRICS_SCALES_LINK" .
-                                            "?userId=" .
-                                            $user->id,
-                                    ),
+                                    env("APP_QUALTRICS_SCALES_LINK") .
+                                        "?userId=" .
+                                        $user->id,
                                 ),
                             );
                             $user->yearly_survey_sent_at = now();
