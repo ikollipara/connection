@@ -43,6 +43,7 @@
       @else
         <x-nav.item route="{{ route('index') }}">Home</x-nav.item>
         <x-nav.item route="{{ route('about') }}">About</x-nav.item>
+        <x-nav.item route="{{ route('videos') }}">Videos</x-nav.item>
       @endauth
     </ul>
     <ul class="navbar-end">

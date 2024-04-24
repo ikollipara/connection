@@ -29,6 +29,7 @@ use App\Http\Livewire\Search;
 
 Route::view("/", "home")->name("index");
 Route::view("/about", "about")->name("about");
+Route::view("/videos", "videos")->name("videos");
 
 Route::get("/sign-up", User\Create::class)->name("registration.create");
 Route::get("/login", Login::class)->name("login.create");

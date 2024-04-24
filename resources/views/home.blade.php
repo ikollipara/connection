@@ -1,15 +1,21 @@
 <x-layout title="ConneCTION">
   <x-hero class="is-success">
-    <div class="has-flex has-flex-direction-col ml-5 has-text-left">
+    <div class="has-flex has-flex-direction-col ml-5 has-text-centered">
       <p class="title">
         <x-logo width="300" height="125" />
       </p>
       <p class="subtitle">
         Connecting Teachers across the country around Computer Science Education
       </p>
-      <div class="buttons">
-        <a href="{{ route('about') }}" class="button is-primary">Learn More</a>
-        <a href="{{ route('registration.create') }}" class="button is-primary is-outlined">Sign Up</a>
+      <div style="display: inline-flex; justify-content: center;">
+        <video controls style="width: 50%">
+          <source src="/storage/episodes/Episode-1-Searching.mp4" encoding="video/mp4">
+        </video>
+      </div>
+      <div class="buttons" style="justify-content: center">
+        <a href="{{ route('about') }}" class="button is-primary">About Us</a>
+        <a href="{{ route('videos') }}" class="button is-primary is-outlined">Learn More</a>
+        <a href="{{ route('registration.create') }}" class="button is-primary">Sign Up</a>
       </div>
     </div>
   </x-hero>
