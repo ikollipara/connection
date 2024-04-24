@@ -15,6 +15,7 @@ use App\Http\Livewire\Post;
 use App\Http\Livewire\Collection;
 use App\Http\Livewire\Home;
 use App\Http\Livewire\Search;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,20 @@ Route::view("/videos", "videos")->name("videos");
 
 Route::get("/sign-up", User\Create::class)->name("registration.create");
 Route::get("/login", Login::class)->name("login.create");
+
+Route::get("/login/{user}", function (
+    Request $request,
+    \App\Models\User $user
+) {
+    abort_if(
+        !$user->hasVerifiedEmail(),
+        403,
+        "Link has expired. Please request a new one.",
+    );
+    if (auth()->loginUsingId($user->id, true)) {
+        return redirect()->route("home");
+    }
+})->name("login.store");
 
 Route::get("/email/verify/{id}/{hash}", function (
     EmailVerificationRequest $request

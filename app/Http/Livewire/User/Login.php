@@ -2,8 +2,12 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Mail\Login as MailLogin;
+use App\Models\User;
 use App\Traits\Livewire\HasDispatch;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Livewire\Component;
 
 class Login extends Component
@@ -16,8 +20,6 @@ class Login extends Component
     /** @var string[] */
     protected $rules = [
         "email" => "required|email|exists:users,email",
-        "password" => "required",
-        "remember_me" => "boolean",
     ];
 
     /**
@@ -37,20 +39,17 @@ class Login extends Component
     {
         $this->validate();
 
-        if (
-            !auth()->attempt(
-                $this->only(["email", "password"]),
-                $this->remember_me,
-            )
-        ) {
-            Log::info("User {$this->email} failed to log in.");
-            $this->dispatchBrowserEvent("error", [
-                "message" => __("Invalid credentials!"),
-            ]);
-            return;
-        }
-        session()->regenerate();
-        return redirect()->to(route("home"), 303);
+        $this->email = strtolower($this->email);
+        Mail::to($this->email)->send(
+            new MailLogin(User::where("email", $this->email)->first()),
+        );
+
+        $this->dispatchBrowserEvent(
+            "success",
+            __(
+                "An email has been sent to you to login. Please check your inbox.",
+            ),
+        );
     }
 
     /**
