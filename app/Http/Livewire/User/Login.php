@@ -44,12 +44,11 @@ class Login extends Component
             new MailLogin(User::where("email", $this->email)->first()),
         );
 
-        $this->dispatchBrowserEvent(
-            "success",
-            __(
+        $this->dispatchBrowserEvent("success", [
+            "message" => __(
                 "An email has been sent to you to login. Please check your inbox.",
             ),
-        );
+        ]);
     }
 
     /**
