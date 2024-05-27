@@ -34,10 +34,12 @@ class Kernel extends ConsoleKernel
                             $user->sent_week_one_survey = true;
                             $user->save();
                         }
+                        if(is_null($user->created_at)) {
+                            $user->created_at = now();
+                            $user->save();
+                        }
                         if (
-                            !$user->yearly_survey_sent_at or
-                            $user->yearly_survey_sent_at->diffInDays(now()) >=
-                                365
+                            ($user->created_at->diffInDays(now()) % 365) == 0
                         ) {
                             $user->notify(
                                 new QualtricsSurvey(
