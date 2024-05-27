@@ -60,27 +60,28 @@
         </button>
         <x-modal title="conneCTION Consent Form" show-var="show">
           <x-research.consent-form>
-            <span>
+            <span x-data="{ checked: @entangle('user.consented').defer, above: false, fullName: '' }">
               <div class="field">
                 <label class="checkbox">
-                  <input type="checkbox" wire:model='user.consented'>
+                  <input type="checkbox" x-model='checked'>
                   I want to participate in the conneCTION Research Study
                 </label>
               </div>
-              @if ($this->user->consented)
-                <div class="field">
-                  <label class="checkbox">
-                    <input type="checkbox" wire:model='above_19'>
-                    I am 19 years or older
-                  </label>
-                </div>
-                @if ($this->above_19)
-                  <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
-                    name="full_name" />
-                @endif
-              @endif
+              <div class="field">
+                <label class="checkbox" x-bind:class="{ 'is-hidden': !checked }">
+                  <input type="checkbox" x-model='above'>
+                  I am 19 years or older
+                </label>
+              </div>
+              <span x-show="above">
+                <x-forms.input label="Please enter your full name to consent." x-model="fullName" name="full_name" />
+              </span>
             </span>
           </x-research.consent-form>
+          <x-slot name="footer">
+            <button type="button" wire:click='modifyConsentStatus' x-on:click="show = false"
+              class="button is-primary">Update Consent</button>
+          </x-slot>
         </x-modal>
         <hr>
         <div>

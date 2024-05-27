@@ -18,8 +18,6 @@ class Settings extends Component
     /** @var UploadedFile|null */
     public $avatar = null;
     public User $user;
-    public bool $above_19 = false;
-    public string $full_name = "";
 
     /** @return array<string, string[]|string> */
     protected function rules()
@@ -27,8 +25,6 @@ class Settings extends Component
         return [
             "user.first_name" => "required|string",
             "user.last_name" => "required|string",
-            "above_19" => "boolean",
-            "full_name" => "string|required_if:above_19,true",
             "user.consented" => "boolean",
             "user.email" => [
                 "required",
@@ -69,6 +65,13 @@ class Settings extends Component
         $this->user->save();
     }
 
+    public function modifyConsentStatus()
+    {
+        $this->user->update([
+            "consented" => $this->user->consented,
+        ]);
+    }
+
     public function save(): void
     {
         if (!auth()->id() == $this->user->id) {
@@ -93,10 +96,6 @@ class Settings extends Component
                 Storage::delete($this->user->avatar);
                 $this->user->avatar = $avatar;
             }
-        }
-
-        if ($this->above_19 and $this->full_name == $this->user->full_name()) {
-            $this->user->consented = true;
         }
 
         if ($this->user->save()) {
