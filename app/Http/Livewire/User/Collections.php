@@ -2,17 +2,18 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Collections extends Component
 {
-    use WithPagination;
+    use WithPagination, LazyLoading;
 
     public User $user;
     public string $search = "";
-    public bool $ready_to_load_collections = false;
+    protected $lazy = ["collections"];
 
     public function mount(User $user): void
     {
@@ -22,11 +23,6 @@ class Collections extends Component
     public function updatingSearch(): void
     {
         $this->resetPage();
-    }
-
-    public function loadCollections(): void
-    {
-        $this->ready_to_load_collections = true;
     }
 
     public function getCollectionsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator

@@ -14,10 +14,8 @@
     </div>
     <x-forms.input name="search" placeholder="Search..." label="" wire:model.debounce.300ms="search" />
   </x-hero>
-  <main wire:init='loadPosts' class="container is-fluid mt-3">
-    @if ($this->ready_to_load_posts === false)
-      <span style="margin-block: 5em;" class="loader"></span>
-    @else
+  <main class="container is-fluid mt-3">
+    <x-lazy prop='posts'>
       <table class="table is-fullwidth">
         <thead></thead>
         <tbody>
@@ -27,6 +25,6 @@
         </tbody>
       </table>
       {{ $this->posts->links('pagination') }}
-    @endif
+    </x-lazy>
   </main>
 </div>

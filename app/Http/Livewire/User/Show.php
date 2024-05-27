@@ -2,31 +2,22 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\PostCollection;
 use App\Models\User;
 use Livewire\Component;
 
 class Show extends Component
 {
+    use LazyLoading;
     public User $user;
     public string $bio;
-    public bool $ready_to_load_collections = false;
-    public bool $ready_to_load_posts = false;
+    protected $lazy = ["collections", "posts"];
 
     public function mount(User $user): void
     {
         $this->user = $user;
         $this->bio = json_encode($user->bio);
-    }
-
-    public function loadCollections(): void
-    {
-        $this->ready_to_load_collections = true;
-    }
-
-    public function loadPosts(): void
-    {
-        $this->ready_to_load_posts = true;
     }
 
     /**

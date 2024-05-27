@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
-use App\Services\BodyExtractor;
+use App\Models\Concerns\HasRichText;
 use App\Traits\HasComments;
 use App\Traits\HasLikes;
 use App\Traits\HasUuids;
@@ -34,6 +34,7 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
     use HasFactory,
         HasUuids,
         SoftDeletes,
+        HasRichText,
         HasComments,
         HasViews,
         HasLikes,
@@ -74,6 +75,8 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
         "published" => false,
         "title" => "",
     ];
+
+    protected $rich_text_attributes = ["body"];
 
     /**
      * Get the user that owns the post collection.
@@ -140,7 +143,7 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
         return [
             "id" => $this->id,
             "title" => $this->title,
-            "body" => BodyExtractor::extract($this->body),
+            "body" => $this->body_text,
             "category" => $get_with_defaults("category", ""),
             "audience" => $get_with_defaults("audience", ""),
             "grades" => collect($get_with_defaults("grades", []))->join(","),

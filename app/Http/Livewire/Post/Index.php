@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Post;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,21 +12,16 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, LazyLoading;
 
+    protected $lazy = ["posts"];
     public string $status = "draft";
     public string $search = "";
-    public bool $ready_to_load_posts = false;
 
     public function mount(): void
     {
         $this->authorize("viewAny", auth()->user());
         $this->status = request()->query("status", "draft");
-    }
-
-    public function loadPosts(): void
-    {
-        $this->ready_to_load_posts = true;
     }
 
     public function getPostsProperty(): LengthAwarePaginator

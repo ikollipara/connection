@@ -10,10 +10,8 @@
       </p>
     @endif
   </x-hero>
-  <main wire:init='loadPosts' class="container">
-    @if ($this->ready_to_load_posts === false)
-      <span style="margin-block: 5em;" class="loader"></span>
-    @else
+  <main class="container">
+    <x-lazy prop="posts">
       <table class="table is-fullwidth is-hoverable">
         <thead>
           <tr>
@@ -32,5 +30,5 @@
         </tbody>
       </table>
       {{ $this->posts->links('pagination') }}
-    @endif
+    </x-lazy>
 </div>

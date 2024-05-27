@@ -65,35 +65,27 @@
     <section x-bind:class="{ 'is-hidden': tab !== 0 }">
       <x-editor read-only wire:model='bio' name="bio" />
     </section>
-    <section wire:init='loadPosts' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
-      @if ($this->ready_to_load_posts === false)
-        <span style="margin-block: 5em;" class="loader"></span>
-      @else
-        <table class="table is-fullwidth">
-          <thead>
-          </thead>
-          <tbody>
-            @foreach ($this->topPosts as $post)
-              <x-search.row :item="$post" :show-user="false" />
-            @endforeach
-          </tbody>
-        </table>
-      @endif
-    </section>
-    <section wire:init='loadCollections' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
-      @if ($this->ready_to_load_collections === false)
-        <span style="margin-block: 5em;" class="loader"></span>
-      @else
-        <table class="table is-fullwidth">
-          <thead>
-          </thead>
-          <tbody>
-            @foreach ($this->topCollections as $collection)
-              <x-search.row :item="$collection" :show-user="false" />
-            @endforeach
-          </tbody>
-        </table>
-      @endif
-    </section>
+    <x-lazy prop='posts' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
+      <table class="table is-fullwidth">
+        <thead>
+        </thead>
+        <tbody>
+          @foreach ($this->topPosts as $post)
+            <x-search.row :item="$post" :show-user="false" />
+          @endforeach
+        </tbody>
+      </table>
+    </x-lazy>
+    <x-lazy prop='collections' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
+      <table class="table is-fullwidth">
+        <thead>
+        </thead>
+        <tbody>
+          @foreach ($this->topCollections as $collection)
+            <x-search.row :item="$collection" :show-user="false" />
+          @endforeach
+        </tbody>
+      </table>
+    </x-lazy>
   </main>
 </div>

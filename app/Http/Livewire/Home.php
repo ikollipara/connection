@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\Post;
 use App\Models\PostCollection;
 use App\Models\User;
@@ -9,24 +10,12 @@ use Livewire\Component;
 
 class Home extends Component
 {
+    use LazyLoading;
     public bool $ready_to_load_top_posts = false;
     public bool $ready_to_load_top_collections = false;
     public bool $ready_to_load_followings_items = false;
 
-    public function loadPosts(): void
-    {
-        $this->ready_to_load_top_posts = true;
-    }
-
-    public function loadCollections(): void
-    {
-        $this->ready_to_load_top_collections = true;
-    }
-
-    public function loadFollowingsItems(): void
-    {
-        $this->ready_to_load_followings_items = true;
-    }
+    protected $lazy = ["top_posts", "top_collections", "followings_items"];
 
     /** @return \Illuminate\Support\Collection<\App\Models\Post|\App\Models\PostCollection> */
     public function getFollowingsItemsProperty()

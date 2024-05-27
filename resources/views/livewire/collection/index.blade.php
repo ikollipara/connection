@@ -10,10 +10,8 @@
       </p>
     @endif
   </x-hero>
-  <main wire:init='loadCollections' class="container">
-    @if ($this->ready_to_load_collections === false)
-      <span style="margin-block: 5em;" class="loader"></span>
-    @else
+  <main class="container">
+    <x-lazy prop="post_collections">
       <table class="table is-fullwidth is-hoverable">
         <thead>
           <tr>
@@ -33,6 +31,6 @@
         </tbody>
       </table>
       {{ $this->postCollections->links('pagination') }}
-    @endif
+    </x-lazy>
   </main>
 </div>

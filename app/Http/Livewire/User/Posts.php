@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\Post;
 use App\Models\User;
 use Livewire\Component;
@@ -9,11 +10,11 @@ use Livewire\WithPagination;
 
 class Posts extends Component
 {
-    use WithPagination;
+    use WithPagination, LazyLoading;
 
     public User $user;
     public string $search = "";
-    public bool $ready_to_load_posts = false;
+    protected $lazy = ["posts"];
 
     public function mount(User $user): void
     {
@@ -23,11 +24,6 @@ class Posts extends Component
     public function updatingSearch(): void
     {
         $this->resetPage();
-    }
-
-    public function loadPosts(): void
-    {
-        $this->ready_to_load_posts = true;
     }
 
     public function getPostsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator

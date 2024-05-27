@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Collection;
 
+use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\PostCollection;
 use Livewire\Component;
 use App\Models\User;
@@ -11,11 +12,11 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, LazyLoading;
 
     public string $status = "draft";
     public string $search = "";
-    public bool $ready_to_load_collections = false;
+    protected $lazy = ["post_collections"];
 
     public function mount(): void
     {
@@ -35,14 +36,9 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function loadCollections(): void
-    {
-        $this->ready_to_load_collections = true;
-    }
-
     public function getPostCollectionsProperty(): LengthAwarePaginator
     {
-        if (!$this->ready_to_load_collections) {
+        if (!$this->ready_to_load_post_collections) {
             return new \Illuminate\Pagination\LengthAwarePaginator(
                 [],
                 0,
