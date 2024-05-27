@@ -8,12 +8,8 @@
       Unnamed Collection
     @endif
   </td>
-  <td wire:init='loadNumberOfPosts'>
-    @if ($this->ready_to_load_number_of_posts === false)
-      <span style="width: 1em; height: 1em;" class="loader"></span>
-    @else
-      {{ $this->numberOfPosts }}
-    @endif
+  <td>
+    {{ $this->numberOfPosts }}
   </td>
   <td>
     @if ($this->post_collection->created_at)

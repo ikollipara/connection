@@ -70,7 +70,7 @@
         <span class="icon">
           <x-lucide-book class="icon" width="30" height="30" />
         </span>
-        <span>{{ $item->posts()->count() }}</span>
+        <span>{{ $item->posts_count }}</span>
       </span>
     <td><a href="{{ route('collections.show', ['post_collection' => $item]) }}">Visit</a></td>
   </tr>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Collection;
 
+use App\Models\PostCollection;
 use Livewire\Component;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -49,9 +50,8 @@ class Index extends Component
                 $this->page,
             );
         }
-        return auth()
-            ->user()
-            ->postCollections()
+        return PostCollection::query()
+            ->where("user_id", auth()->id())
             ->status($this->status)
             ->when(
                 $this->search !== "",
@@ -62,6 +62,7 @@ class Index extends Component
                 ),
             )
             ->latest()
+            ->withCount("posts")
             ->paginate(10);
     }
 

@@ -41,6 +41,12 @@ class Post extends Model implements Likable, Viewable, Commentable
         Searchable;
 
     /**
+     * The relationships that should always be loaded.
+     * @var array<int, string>
+     */
+    protected $with = ["user"];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

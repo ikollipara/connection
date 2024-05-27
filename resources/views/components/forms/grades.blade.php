@@ -4,8 +4,8 @@
 
 <span wire:ignore>
   <select x-data="slimSelect('Grades...')" {{ $attributes }} name="grades" id="grades">
-    @foreach (Grade::asPairs() as $grade)
-      <option wire:key="{{ $grade[0] }}" value="{{ $grade[0] }}">{{ $grade[1] }}</option>
+    @foreach (Grade::cases() as $grade)
+      <option wire:key="{{ $grade->value }}" value="{{ $grade->value }}">{{ $grade->label }}</option>
     @endforeach
   </select>
 </span>

@@ -52,6 +52,7 @@ class Collections extends Component
             )
             ->orderByDesc("likes_count")
             ->orderByDesc("views")
+            ->withCount("posts")
             ->latest()
             ->paginate(10);
     }

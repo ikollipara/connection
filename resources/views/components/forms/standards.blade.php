@@ -5,7 +5,7 @@
 <span wire:ignore>
   <select x-data="slimSelect('Standards...')" {{ $attributes }} name="standards" id="standards">
     @foreach (Standard::cases() as $standard)
-      <option wire:key="{{ $standard }}" value="{{ $standard }}">{{ $standard }}</option>
+      <option wire:key="{{ $standard->value }}" value="{{ $standard->value }}">{{ $standard->label }}</option>
     @endforeach
   </select>
 </span>

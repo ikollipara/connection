@@ -38,6 +38,11 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
         HasViews,
         HasLikes,
         Searchable;
+    /**
+     * The relationships that should always be loaded.
+     * @var array<int, string>
+     */
+    protected $with = ["user"];
 
     /**
      * The attributes that are mass assignable.

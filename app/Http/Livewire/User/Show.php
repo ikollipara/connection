@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Models\PostCollection;
 use App\Models\User;
 use Livewire\Component;
 
@@ -53,8 +54,9 @@ class Show extends Component
         if (!$this->ready_to_load_collections) {
             return collect();
         }
-        return $this->user
-            ->postCollections()
+        return PostCollection::query()
+            ->where("user_id", $this->user->id)
+            ->withCount("posts")
             ->wherePublished()
             ->orderByDesc("likes_count")
             ->orderByDesc("views")

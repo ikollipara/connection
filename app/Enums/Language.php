@@ -2,25 +2,48 @@
 
 namespace App\Enums;
 
-use App\Enums\Enum;
+use Closure;
+use Illuminate\Support\Str;
+use Spatie\Enum\Laravel\Enum;
 
+/**
+ * @method static self blockly()
+ * @method static self c()
+ * @method static self cpp()
+ * @method static self csharp()
+ * @method static self css()
+ * @method static self go()
+ * @method static self html()
+ * @method static self java()
+ * @method static self javascript()
+ * @method static self kotlin()
+ * @method static self lua()
+ * @method static self php()
+ * @method static self python()
+ * @method static self ruby()
+ * @method static self scratch()
+ * @method static self sql()
+ * @method static self swift()
+ * @method static self typescript()
+ */
 class Language extends Enum
 {
-    const Blockly = "Blockly";
-    const C = "C";
-    const Csharp = "C#";
-    const Cplusplus = "C++";
-    const Css = "CSS";
-    const Go = "Go";
-    const Html = "HTML";
-    const Java = "Java";
-    const Javascript = "JavaScript";
-    const Kotlin = "Kotlin";
-    const Php = "PHP";
-    const Python = "Python";
-    const Ruby = "Ruby";
-    const Scratch = "Scratch";
-    const Sql = "SQL";
-    const Swift = "Swift";
-    const Typescript = "TypeScript";
+    protected static function labels(): Closure
+    {
+        return function(string $value) {
+            if($value === 'javascript') {
+                return 'JavaScript';
+            } elseif($value === 'csharp') {
+                return 'C#';
+            } elseif($value === 'cpp') {
+                return 'C++';
+            } elseif($value === 'typescript') {
+                return 'TypeScript';
+            } elseif($value === 'sql') {
+                return 'SQL';
+            } else {
+                return Str::of($value)->title()->__toString();
+            }
+        };
+    }
 }

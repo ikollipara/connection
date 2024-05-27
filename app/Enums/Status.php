@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-class Status extends Enum
+class Status
 {
-    const Draft = 'draft';
-    const Published = 'published';
+    const Draft = "draft";
+    const Published = "published";
 
-    const Archived = 'archived';
+    const Archived = "archived";
 }

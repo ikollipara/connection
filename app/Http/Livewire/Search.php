@@ -174,6 +174,7 @@ class Search extends Component
             ) {
                 return $query
                     ->where("published", true)
+                    ->withCount("posts")
                     ->when(
                         $grades_count > 0,
                         fn($query) => $query->whereJsonContains(
@@ -237,9 +238,13 @@ class Search extends Component
             },
         );
         if ($this->type === "post") {
-            $this->post_results = $post_query->get();
+            $this->post_results = $post_query
+                ->query(fn(Builder $query) => $query->with("user"))
+                ->get();
         } elseif ($this->type === "collection") {
-            $this->collection_results = $collection_query->get();
+            $this->collection_results = $collection_query
+                ->query(fn(Builder $query) => $query->with("user"))
+                ->get();
         } else {
             $this->post_results = $post_query->get();
             $this->collection_results = $collection_query->get();

@@ -15,17 +15,9 @@ class Row extends Component
         $this->post_collection = $post_collection;
     }
 
-    public function loadNumberOfPosts(): void
-    {
-        $this->ready_to_load_number_of_posts = true;
-    }
-
     public function getNumberOfPostsProperty(): int
     {
-        if (!$this->ready_to_load_number_of_posts) {
-            return 0;
-        }
-        return $this->post_collection->posts()->count();
+        return $this->post_collection->posts_count;
     }
 
     public function archive(): void
