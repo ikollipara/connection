@@ -39,15 +39,12 @@ class SendSurveyReminder extends Command
      */
     public function handle()
     {
-        /** @var int */
-        $emails_sent = 0;
         User::query()
             ->where("consented", true)
-            ->each(function (User $user) use ($emails_sent) {
+            ->each(function (User $user) {
                 $user->notify(new SurveyReminder($user));
-                $emails_sent++;
+                $this->info("Survey reminder sent to {$user->email}.");
             });
-        $this->info("Sent {$emails_sent} survey reminders.");
         return 0;
     }
 }
