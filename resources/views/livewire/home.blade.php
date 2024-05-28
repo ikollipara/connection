@@ -5,54 +5,47 @@
   <x-hero class="is-primary">
     <h1 class="title">Welcome to conneCTION</h1>
   </x-hero>
-  <main x-data="{ tab: 0 }" class="container is-fluid mt-5">
-    <section class="tabs is-centered">
-      <ul>
-        <li x-bind:class="{ 'is-active': tab == 0 }"><a @@click="tab = 0">Top Posts</a></li>
-        <li x-bind:class="{ 'is-active': tab == 1 }"><a @@click="tab = 1">Top Collections</a></li>
-        <li x-bind:class="{ 'is-active': tab == 2 }"><a @@click="tab = 2">Your Follower Feed</a></li>
-      </ul>
-    </section>
-    <x-lazy prop='top_posts' x-bind:class="{ 'is-hidden': tab !== 0 }">
-      <table class="table is-fullwidth">
-        <tbody>
-          @foreach ($this->topPosts as $post)
-            <x-search.row :item="$post" />
-          @endforeach
-        </tbody>
-      </table>
-    </x-lazy>
-    <x-lazy prop='top_collections' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
-      <table class="table is-fullwidth">
-        <tbody>
-          @foreach ($this->topCollections as $collection)
-            <x-search.row :item="$collection" />
-          @endforeach
-        </tbody>
-      </table>
-    </x-lazy>
-    <x-lazy prop='followings_items' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
-      <table class="table is-fullwidth">
-        <tbody>
-          @forelse ($this->followingsItems as $item)
-            <x-search.row :item="$item" />
-          @empty
-            @if (auth()->user()->following()->count() > 0)
+  <x-container x-data="{ tab: 0 }" is-fluid class="mt-5">
+    <x-tabs tab-titles="Top Posts, Top Collections, Your Follower Feed">
+      <x-tabs.tab component="lazy" prop="top_posts" title="Top Posts">
+        <table class="table is-fullwidth">
+          <tbody>
+            @foreach ($this->topPosts as $post)
+              <x-search.row :item="$post" />
+            @endforeach
+          </tbody>
+        </table>
+      </x-tabs.tab>
+      <x-tabs.tab component="lazy" prop="top_collections" title="Top Collections">
+        <table class="table is-fullwidth">
+          <tbody>
+            @foreach ($this->topCollections as $collection)
+              <x-search.row :item="$collection" />
+            @endforeach
+          </tbody>
+        </table>
+      </x-tabs.tab>
+      <x-tabs.tab component="lazy" prop="followings_items" title="Your Follower Feed">
+        <table class="table is-fullwidth">
+          <tbody>
+            @forelse ($this->followingsItems as $item)
+              <x-search.row :item="$item" />
+            @empty
               <tr>
                 <td colspan="5">
-                  <p class="content is-medium has-text-centered">No posts or collections from your followers yet.</p>
+                  <p class="content is-medium has-text-centered">
+                    @if (auth()->user()->following()->count() > 0)
+                      No posts or collections from your followers yet.
+                    @else
+                      You are not following anyone yet.
+                    @endif
+                  </p>
                 </td>
               </tr>
-            @else
-              <tr>
-                <td colspan="5">
-                  <p class="content is-medium has-text-centered">You are not following anyone yet.</p>
-                </td>
-              </tr>
-            @endif
-          @endforelse
-        </tbody>
-      </table>
-    </x-lazy>
-  </main>
+            @endforelse
+          </tbody>
+        </table>
+      </x-tabs.tab>
+    </x-tabs>
+    </x-bulma.container>
 </div>

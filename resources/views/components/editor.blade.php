@@ -1,3 +1,4 @@
+@props(['name', 'readOnly' => false, 'cannotUpload' => false, 'model' => ''])
 @if ($attributes->wire('model')->value)
   <span x-data="{ body: @entangle($attributes->wire('model')) }">
     <article @@editor-saved.document="persistDeletedImages" wire:ignore class="content is-medium editor"

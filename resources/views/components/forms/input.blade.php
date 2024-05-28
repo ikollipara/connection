@@ -1,3 +1,5 @@
+@props(['label', 'name'])
+
 <section class="field">
   <label for="{{ $name }}" class="label">{{ $label }}</label>
   @if ($attributes->wire('loading')->hasModifier('class'))

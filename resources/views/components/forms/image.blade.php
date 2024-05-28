@@ -1,3 +1,5 @@
+@props(['label', 'name', 'showText' => true])
+
 <section class="field">
   <div class="control">
     <label for="{{ $name }}" class="label">{{ $label }}</label>

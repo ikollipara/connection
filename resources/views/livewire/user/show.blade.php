@@ -54,38 +54,29 @@
       </div>
     </div>
   </x-hero>
-  <main x-data="{ tab: 0 }" class="container is-fluid mt-5">
-    <section class="tabs is-centered">
-      <ul>
-        <li x-bind:class="{ 'is-active': tab == 0 }"><a @@click="tab = 0">Biography</a></li>
-        <li x-bind:class="{ 'is-active': tab == 1 }"><a @@click="tab = 1">Top Posts</a></li>
-        <li x-bind:class="{ 'is-active': tab == 2 }"><a @@click="tab = 2">Top Collection</a></li>
-      </ul>
-    </section>
-    <section x-bind:class="{ 'is-hidden': tab !== 0 }">
-      <x-editor read-only wire:model='bio' name="bio" />
-    </section>
-    <x-lazy prop='posts' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
-      <table class="table is-fullwidth">
-        <thead>
-        </thead>
-        <tbody>
-          @foreach ($this->topPosts as $post)
-            <x-search.row :item="$post" :show-user="false" />
-          @endforeach
-        </tbody>
-      </table>
-    </x-lazy>
-    <x-lazy prop='collections' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
-      <table class="table is-fullwidth">
-        <thead>
-        </thead>
-        <tbody>
-          @foreach ($this->topCollections as $collection)
-            <x-search.row :item="$collection" :show-user="false" />
-          @endforeach
-        </tbody>
-      </table>
-    </x-lazy>
-  </main>
+  <x-container is-fluid class="mt-5">
+    <x-tabs tab-titles="Biography, Top Posts, Top Collections">
+      <x-tabs.tab title="Biography">
+        <x-editor read-only wire:model='bio' name="bio" />
+      </x-tabs.tab>
+      <x-tabs.tab component="lazy" prop="posts" title="Top Posts">
+        <table class="table is-fullwidth">
+          <tbody>
+            @foreach ($this->topPosts as $post)
+              <x-search.row :item="$post" :show-user="false" />
+            @endforeach
+          </tbody>
+        </table>
+      </x-tabs.tab>
+      <x-tabs.tab component="lazy" prop="collections" title="Top Collections">
+        <table class="table is-fullwidth">
+          <tbody>
+            @foreach ($this->topCollections as $collection)
+              <x-search.row :item="$collection" :show-user="false" />
+            @endforeach
+          </tbody>
+        </table>
+      </x-tabs.tab>
+    </x-tabs>
+  </x-container>
 </div>
