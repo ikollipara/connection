@@ -4,7 +4,7 @@
       <p class="title">
         <x-logo width="300" height="125" />
       </p>
-      <p class="subtitle">
+      <p class="subtitle has-text-light">
         Connecting Teachers across the country around Computer Science Education
       </p>
       <div style="display: inline-flex; justify-content: center;">

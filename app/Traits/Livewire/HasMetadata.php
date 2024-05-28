@@ -15,8 +15,18 @@ trait HasMetadata
     public array $practices = [];
     /** @var string[] */
     public array $languages = [];
-    public string $category = Category::Material;
-    public string $audience = Audience::Students;
+    public string $category;
+    public string $audience;
+
+    public function mountHasMetadata(): void
+    {
+        $this->grades = [];
+        $this->standards = [];
+        $this->practices = [];
+        $this->languages = [];
+        $this->category = Category::material()->value;
+        $this->audience = Audience::students()->value;
+    }
 
     /** @return array<string, string[]|string> */
     public function getMetadata()

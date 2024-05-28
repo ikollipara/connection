@@ -31,11 +31,34 @@ trait HasRichText
     {
         static::retrieved(function ($model) {
             foreach ($model->getRichTextAttributes() as $attribute) {
-                $model->{$attribute . "_text"} = BodyExtractor::extract(
-                    is_string($model->{$attribute})
-                        ? json_decode($model->{$attribute}, true)
-                        : $model->{$attribute},
-                );
+                $model->{"get" .
+                    ucfirst($attribute) .
+                    "TextAttribute"} = function () use ($model, $attribute) {
+                    return BodyExtractor::extract(
+                        is_string($model->{$attribute})
+                            ? json_decode($model->{$attribute}, true)
+                            : $model->{$attribute},
+                    );
+                };
+            }
+        });
+        static::saving(function ($model) {
+            foreach ($model->getRichTextAttributes() as $attribute) {
+                unset($model->{"get" . ucfirst($attribute) . "TextAttribute"});
+            }
+        });
+
+        static::saved(function ($model) {
+            foreach ($model->getRichTextAttributes() as $attribute) {
+                $model->{"get" .
+                    ucfirst($attribute) .
+                    "TextAttribute"} = function () use ($model, $attribute) {
+                    return BodyExtractor::extract(
+                        is_string($model->{$attribute})
+                            ? json_decode($model->{$attribute}, true)
+                            : $model->{$attribute},
+                    );
+                };
             }
         });
     }

@@ -27,7 +27,7 @@
         "@shufo/prettier-plugin-blade": "^1.13.4",
         "animate.css": "^4.1.1",
         "axios": "^0.21",
-        "bulma": "^0.9.4",
+        "bulma": "^1.0.1",
         "bulma-toast": "^2.4.3",
         "copy-webpack-plugin": "^5.1.1",
         "i": "^0.3.7",
@@ -50,7 +50,6 @@
     "dependencies": {
         "@editorjs/code": "^2.9.0",
         "alpinejs": "^3.13.3",
-        "slim-select": "^2.6.0",
-        "turbolinks": "^5.2.0"
+        "slim-select": "^2.6.0"
     }
 }

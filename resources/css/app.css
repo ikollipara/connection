@@ -1,0 +1,29 @@
+@import url("bulma/css/versions/bulma-no-dark-mode.css");
+@import url("slim-select/styles");
+
+:root {
+    --bulma-primary-h: 201;
+    --bulma-primary-s: 100%;
+    --bulma-primary-l: 14%;
+    --bulma-primary-invert-l: calc(100% - var(--bulma-primary-l));
+    --bulma-success-h: 150;
+    --bulma-success-s: 71%;
+    --bulma-success-l: 41%;
+    --bulma-success-invert-l: var(--bulma-light-l);
+    --ss-primary-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l));
+    --ss-focus-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), calc(var(--bulma-primary-l) + 10%));
+}
+
+.loader {
+  animation: spinAround 500ms infinite linear;
+  border: 2px solid var(--bulma-border);
+  border-radius: var(--bulma-radius-rounded);
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: "";
+  display: block;
+  height: 5em;
+  position: relative;
+  width: 5em;
+  margin: auto;
+}
