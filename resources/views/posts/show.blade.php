@@ -46,75 +46,7 @@
     <main class="container is-fluid content mt-5">
       <details class="is-clickable">
         <summary>Metadata</summary>
-        <div class="table-container">
-          <table class="table is-fullwidth">
-            <thead>
-              <tr>
-                <th>Metadata</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              @if ($post->metadata->standards->count() > 0)
-                <tr>
-                  <td>Standards</td>
-                  <td class="level">
-                    <div class="level-left">
-                      @foreach ($post->metadata->standards as $standard)
-                        <span class="tag">{{ $standard->label }}</span>
-                      @endforeach
-                    </div>
-                  </td>
-                </tr>
-              @endif
-              @if ($post->metadata->practices->count() > 0)
-                <tr>
-                  <td>Practices</td>
-                  <td class="level">
-                    <div class="level-left">
-                      @foreach ($post->metadata->practices as $practice)
-                        <span class="tag">{{ $practice->label }}</span>
-                      @endforeach
-                    </div>
-                  </td>
-                </tr>
-              @endif
-              @if ($post->metadata->languages->count() > 0)
-                <tr>
-                  <td>Languages</td>
-                  <td class="level">
-                    <div class="level-left">
-                      @foreach ($post->metadata->languages as $language)
-                        <span class="tag">{{ $language->label }}</span>
-                      @endforeach
-                    </div>
-                  </td>
-                </tr>
-              @endif
-              @if ($post->metadata->grades->count() > 0)
-                <tr>
-                  <td>Grades</td>
-                  <td class="level">
-                    <div class="level-left">
-                      @foreach ($post->metadata->grades as $grade)
-                        <span class="tag">{{ $grade->label }}</span>
-                      @endforeach
-                    </div>
-                  </td>
-                </tr>
-              @endif
-              <tr>
-                <td>Category</td>
-                <td><span class="tag">{{ $post->metadata->category->label }}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Audience</td>
-                <td><span class="tag">{{ $post->metadata->audience->label }}</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <x-metadata.table :metadata="$post->metadata" />
       </details>
       <x-editor model="{{ Js::from($post->body) }}" name="editor" read-only />
       <x-modal show-var='showModal' title="Add to Collection">

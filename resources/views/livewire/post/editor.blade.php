@@ -37,37 +37,8 @@
     <main class="container is-fluid mt-5">
       <x-editor name="body" wire:model.lazy='body' />
     </main>
-    <x-modal title="Set Post Metadata" show-var="show">
-      <div class="field">
-        <div class="control">
-          <x-forms.grades multiple wire:model.defer='grades' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.standards multiple wire:model.defer='standards' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.practices multiple wire:model.defer='practices' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.languages multiple wire:model.defer='languages' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.categories wire:model.defer='category' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.audiences wire:model.defer='audience' />
-        </div>
-      </div>
+    <x-modal title="Set Metadata" show-var="show">
+      <x-metadata.form :metadata="$post->metadata" />
       <x-slot name="footer">
         <button class="button is-primary is-outlined" type="button"
           @if ($this->post->published) @@click="show = false;" @else @@click="show = false; $wire.set('post.published', false, true);" @endif>

@@ -26,12 +26,12 @@ use Closure;
  * | This approach is used to avoid duplication and enable fluent additions of new
  * | metadata.
  * |-----------------------------------------------------------------------------|
- * | @property Collection<\App\Enums\Grade> $grades
- * | @property Collection<\App\Enums\Standard> $standards
- * | @property Collection<\App\Enums\Practice> $practices
- * | @property Collection<\App\Enums\Language> $languages
- * | @property \App\Enums\Category $category
- * | @property \App\Enums\Audience $audience
+ * @property Collection<\App\Enums\Grade> $grades
+ * @property Collection<\App\Enums\Standard> $standards
+ * @property Collection<\App\Enums\Practice> $practices
+ * @property Collection<\App\Enums\Language> $languages
+ * @property \App\Enums\Category $category
+ * @property \App\Enums\Audience $audience
  * |=============================================================================| */
 class Metadata
 {

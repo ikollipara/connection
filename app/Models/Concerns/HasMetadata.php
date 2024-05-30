@@ -19,7 +19,7 @@ use App\ValueObjects\Metadata;
  * | This define a trait that adds metadata to a model and enables rich access of it.
  * | To make use of, make sure the model has a `metadata` jsonb column.
  * |-----------------------------------------------------------------------------|
- * | @property Metadata $metadata;
+ * @property Metadata $metadata;
  * |=============================================================================| */
 trait HasMetadata
 {

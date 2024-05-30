@@ -70,36 +70,7 @@
       @endif
     </main>
     <x-modal show-var="show" title="Set Collection Metadata">
-      <div class="field">
-        <div class="control">
-          <x-forms.grades multiple wire:model.defer='grades' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.standards multiple wire:model.defer='standards' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.practices multiple wire:model.defer='practices' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.languages multiple wire:model.defer='languages' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.categories wire:model.defer='category' />
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <x-forms.audiences wire:model.defer='audience' />
-        </div>
-      </div>
+      <x-metadata.form :metadata="$this->post_collection->metadata" />
       <x-slot name="footer">
         <button class="button is-primary is-outlined" type="button"
           @if ($this->post_collection->published) @@click="show = false;" @else @@click="show = false; $wire.set('post_collection.published', false, true);" @endif>

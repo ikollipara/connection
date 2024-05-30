@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Collection;
 
+use App\Http\Livewire\Forms\MetadataForm;
 use Livewire\Component;
 use App\Models\PostCollection;
 use App\Notifications\NewFollowedCollection;
@@ -16,6 +17,7 @@ class Editor extends Component
     use AuthorizesRequests, HasMetadata, HasDispatch, HasAutosave;
 
     public string $body;
+    public MetadataForm $metadata_form;
     public PostCollection $post_collection;
 
     /**
@@ -23,20 +25,15 @@ class Editor extends Component
      */
     public function mount($uuid = null): void
     {
+        $this->metadata_form = new MetadataForm();
         if ($post_collection = PostCollection::find($uuid)) {
             $this->authorize("update", $post_collection);
             $this->post_collection = $post_collection;
-            $this->fill([
-                "grades" => $post_collection->metadata->grades->toArray(),
-                "standards" => $post_collection->metadata->standards->toArray(),
-                "practices" => $post_collection->metadata->practices->toArray(),
-                "category" => $post_collection->metadata->category,
-                "audience" => $post_collection->metadata->audience,
-                "languages" => $post_collection->metadata->languages->toArray(),
-            ]);
+            $this->metadata_form->fill($post_collection->metadata);
         } else {
             $this->authorize("create", PostCollection::class);
             $this->post_collection = new PostCollection();
+            $this->metadata_form->fill($this->post_collection->metadata);
         }
         $this->body = json_encode($this->post_collection->body);
     }
@@ -46,19 +43,19 @@ class Editor extends Component
         "body" => ["json"],
         "post_collection.title" => ["string"],
         "post_collection.published" => ["boolean"],
-        "audience" => ["string"],
-        "category" => ["string"],
-        "grades" => ["array"],
-        "standards" => ["array"],
-        "practices" => ["array"],
-        "languages" => ["array"],
+        "metadata_form.audience" => ["string"],
+        "metadata_form.category" => ["string"],
+        "metadata_form.grades" => ["array"],
+        "metadata_form.standards" => ["array"],
+        "metadata_form.practices" => ["array"],
+        "metadata_form.languages" => ["array"],
     ];
 
     public function save(): void
     {
         $this->validate();
         $this->post_collection->user_id = auth()->user()->id;
-        $this->post_collection->metadata = new Metadata($this->getMetadata());
+        $this->post_collection->metadata = $this->metadata_form->toMetadata();
         if (!$this->post_collection->exists) {
             $this->post_collection->body = json_decode($this->body, true);
         }
