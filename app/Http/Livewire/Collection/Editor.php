@@ -8,6 +8,7 @@ use App\Notifications\NewFollowedCollection;
 use App\Traits\Livewire\HasAutosave;
 use App\Traits\Livewire\HasDispatch;
 use App\Traits\Livewire\HasMetadata;
+use App\ValueObjects\Metadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Editor extends Component
@@ -26,12 +27,12 @@ class Editor extends Component
             $this->authorize("update", $post_collection);
             $this->post_collection = $post_collection;
             $this->fill([
-                "grades" => $post_collection->metadata["grades"],
-                "standards" => $post_collection->metadata["standards"],
-                "practices" => $post_collection->metadata["practices"],
-                "category" => $post_collection->metadata["category"],
-                "audience" => $post_collection->metadata["audience"],
-                "languages" => $post_collection->metadata["languages"],
+                "grades" => $post_collection->metadata->grades->toArray(),
+                "standards" => $post_collection->metadata->standards->toArray(),
+                "practices" => $post_collection->metadata->practices->toArray(),
+                "category" => $post_collection->metadata->category,
+                "audience" => $post_collection->metadata->audience,
+                "languages" => $post_collection->metadata->languages->toArray(),
             ]);
         } else {
             $this->authorize("create", PostCollection::class);
@@ -57,7 +58,7 @@ class Editor extends Component
     {
         $this->validate();
         $this->post_collection->user_id = auth()->user()->id;
-        $this->post_collection->metadata = $this->getMetadata();
+        $this->post_collection->metadata = new Metadata($this->getMetadata());
         if (!$this->post_collection->exists) {
             $this->post_collection->body = json_decode($this->body, true);
         }

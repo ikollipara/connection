@@ -7,6 +7,7 @@ use App\Notifications\NewFollowedPost;
 use App\Traits\Livewire\HasAutosave;
 use App\Traits\Livewire\HasDispatch;
 use App\Traits\Livewire\HasMetadata;
+use App\ValueObjects\Metadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
@@ -25,14 +26,15 @@ class Editor extends Component
     {
         if ($post = Post::find($uuid)) {
             $this->authorize("update", $post);
+            /** @var Post $post */
             $this->post = $post;
             $this->fill([
-                "grades" => $post->metadata["grades"],
-                "standards" => $post->metadata["standards"],
-                "practices" => $post->metadata["practices"],
-                "category" => $post->metadata["category"],
-                "audience" => $post->metadata["audience"],
-                "languages" => $post->metadata["languages"],
+                "grades" => $post->metadata->grades->toArray(),
+                "standards" => $post->metadata->standards->toArray(),
+                "practices" => $post->metadata->practices->toArray(),
+                "category" => $post->metadata->category,
+                "audience" => $post->metadata->audience,
+                "languages" => $post->metadata->languages->toArray(),
             ]);
         } else {
             $this->authorize("create", Post::class);
@@ -58,7 +60,7 @@ class Editor extends Component
     {
         $this->validate();
         $this->post->user_id = auth()->user()->id;
-        $this->post->metadata = $this->getMetadata();
+        $this->post->metadata = new Metadata($this->getMetadata());
         if (!$this->post->exists) {
             $this->post->body = json_decode($this->body, true);
         }

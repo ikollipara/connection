@@ -6,6 +6,7 @@ use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
 use App\Enums\Category;
+use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\HasRichText;
 use App\Traits\HasComments;
 use App\Traits\HasLikes;
@@ -16,14 +17,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
+use App\ValueObjects\Metadata;
 
 /**
  * App\Models\Post
  * @property string $id
  * @property string $title
  * @property array<string, string> $body
- * @property array<string, string|string[]> $metadata
  * @property bool $published
+ * @property Metadata $metadata
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -33,6 +35,7 @@ use Laravel\Scout\Searchable;
 class Post extends Model implements Likable, Viewable, Commentable
 {
     use HasFactory,
+        HasMetadata,
         HasUuids,
         HasRichText,
         SoftDeletes,
@@ -61,7 +64,6 @@ class Post extends Model implements Likable, Viewable, Commentable
      */
     protected $casts = [
         "body" => "array",
-        "metadata" => "array",
         "published" => "boolean",
         "id" => "string",
         "title" => "string",
@@ -126,35 +128,9 @@ class Post extends Model implements Likable, Viewable, Commentable
      */
     public function toSearchableArray()
     {
-        $get_with_defaults = function ($key, $default) {
-            return array_key_exists($key, $this->metadata)
-                ? $this->metadata[$key]
-                : $default;
-        };
-        if (!array_key_exists("languages", $this->metadata)) {
-            $this->metadata = array_merge($this->metadata, ["languages" => []]);
-        }
         return [
-            "id" => $this->id,
             "title" => $this->title,
             "body" => $this->body_text,
-            "category" => $get_with_defaults("category", ""),
-            "audience" => $get_with_defaults("audience", ""),
-            "grades" => collect($get_with_defaults("grades", []))->join(","),
-            "standards" => collect($get_with_defaults("standards", []))->join(
-                ",",
-            ),
-            "practices" => collect($get_with_defaults("practices", []))->join(
-                ",",
-            ),
-            "languages" => collect($get_with_defaults("languages", []))->join(
-                ",",
-            ),
-            "user" => $this->user()->exists()
-                ? $this->user->full_name()
-                : "[Deleted]",
-            "likes" => (int) $this->likes_count,
-            "views" => (int) $this->views,
         ];
     }
 
@@ -187,14 +163,6 @@ class Post extends Model implements Likable, Viewable, Commentable
         static::updating(function (Post $post) {
             if (!$post->published) {
                 $post->slug = Str::slug("{$post->title} {$post->id} Post");
-            }
-        });
-
-        static::retrieved(function (Post $post) {
-            if (!array_key_exists("languages", $post->metadata)) {
-                $post->metadata = array_merge($post->metadata, [
-                    "languages" => [],
-                ]);
             }
         });
     }

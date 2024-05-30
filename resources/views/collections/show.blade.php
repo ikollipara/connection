@@ -46,7 +46,7 @@
     <details class="is-clickable">
       <summary>Metadata</summary>
       <div class="table-container">
-        <table class="table">
+        <table class="table is-fullwidth">
           <thead>
             <tr>
               <th>Metadata</th>
@@ -54,49 +54,49 @@
             </tr>
           </thead>
           <tbody>
-            @if (count($collection->metadata['standards']) > 0)
+            @if ($collection->metadata->standards->count() > 0)
               <tr>
                 <td>Standards</td>
                 <td class="level">
                   <div class="level-left">
-                    @foreach ($collection->metadata['standards'] as $standard)
-                      <span class="tag">{{ $standard }}</span>
+                    @foreach ($collection->metadata->standards as $standard)
+                      <span class="tag">{{ $standard->label }}</span>
                     @endforeach
                   </div>
                 </td>
               </tr>
             @endif
-            @if (count($collection->metadata['practices']) > 0)
+            @if ($collection->metadata->practices->count() > 0)
               <tr>
                 <td>Practices</td>
                 <td class="level">
                   <div class="level-left">
-                    @foreach ($collection->metadata['practices'] as $practice)
-                      <span class="tag">{{ $practice }}</span>
+                    @foreach ($collection->metadata->practices as $practice)
+                      <span class="tag">{{ $practice->label }}</span>
                     @endforeach
                   </div>
                 </td>
               </tr>
             @endif
-            @if (count($collection->metadata['languages']) > 0)
+            @if ($collection->metadata->languages->count() > 0)
               <tr>
                 <td>Languages</td>
                 <td class="level">
                   <div class="level-left">
-                    @foreach ($collection->metadata['languages'] as $language)
-                      <span class="tag">{{ $language }}</span>
+                    @foreach ($collection->metadata->languages as $language)
+                      <span class="tag">{{ $language->label }}</span>
                     @endforeach
                   </div>
                 </td>
               </tr>
             @endif
-            @if (count($collection->metadata['grades']) > 0)
+            @if ($collection->metadata->grades->count() > 0)
               <tr>
                 <td>Grades</td>
                 <td class="level">
                   <div class="level-left">
-                    @foreach ($collection->metadata['grades'] as $grade)
-                      <span class="tag">{{ $grade }}</span>
+                    @foreach ($collection->metadata->grades as $grade)
+                      <span class="tag">{{ $grade->label }}</span>
                     @endforeach
                   </div>
                 </td>
@@ -104,12 +104,12 @@
             @endif
             <tr>
               <td>Category</td>
-              <td><span class="tag">{{ Str::of($collection->metadata['category'])->title() }}</span>
+              <td><span class="tag">{{ $collection->metadata->category->label }}</span>
               </td>
             </tr>
             <tr>
               <td>Audience</td>
-              <td><span class="tag">{{ $collection->metadata['audience'] }}</span></td>
+              <td><span class="tag">{{ $collection->metadata->audience->label }}</span></td>
             </tr>
           </tbody>
         </table>

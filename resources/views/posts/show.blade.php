@@ -47,7 +47,7 @@
       <details class="is-clickable">
         <summary>Metadata</summary>
         <div class="table-container">
-          <table class="table">
+          <table class="table is-fullwidth">
             <thead>
               <tr>
                 <th>Metadata</th>
@@ -55,49 +55,49 @@
               </tr>
             </thead>
             <tbody>
-              @if (count($post->metadata['standards']) > 0)
+              @if ($post->metadata->standards->count() > 0)
                 <tr>
                   <td>Standards</td>
                   <td class="level">
                     <div class="level-left">
-                      @foreach ($post->metadata['standards'] as $standard)
-                        <span class="tag">{{ $standard }}</span>
+                      @foreach ($post->metadata->standards as $standard)
+                        <span class="tag">{{ $standard->label }}</span>
                       @endforeach
                     </div>
                   </td>
                 </tr>
               @endif
-              @if (count($post->metadata['practices']) > 0)
+              @if ($post->metadata->practices->count() > 0)
                 <tr>
                   <td>Practices</td>
                   <td class="level">
                     <div class="level-left">
-                      @foreach ($post->metadata['practices'] as $practice)
-                        <span class="tag">{{ $practice }}</span>
+                      @foreach ($post->metadata->practices as $practice)
+                        <span class="tag">{{ $practice->label }}</span>
                       @endforeach
                     </div>
                   </td>
                 </tr>
               @endif
-              @if (count($post->metadata['languages']) > 0)
+              @if ($post->metadata->languages->count() > 0)
                 <tr>
                   <td>Languages</td>
                   <td class="level">
                     <div class="level-left">
-                      @foreach ($post->metadata['languages'] as $language)
-                        <span class="tag">{{ $language }}</span>
+                      @foreach ($post->metadata->languages as $language)
+                        <span class="tag">{{ $language->label }}</span>
                       @endforeach
                     </div>
                   </td>
                 </tr>
               @endif
-              @if (count($post->metadata['grades']) > 0)
+              @if ($post->metadata->grades->count() > 0)
                 <tr>
                   <td>Grades</td>
                   <td class="level">
                     <div class="level-left">
-                      @foreach ($post->metadata['grades'] as $grade)
-                        <span class="tag">{{ $grade }}</span>
+                      @foreach ($post->metadata->grades as $grade)
+                        <span class="tag">{{ $grade->label }}</span>
                       @endforeach
                     </div>
                   </td>
@@ -105,12 +105,12 @@
               @endif
               <tr>
                 <td>Category</td>
-                <td><span class="tag">{{ Str::of($post->metadata['category'])->title() }}</span>
+                <td><span class="tag">{{ $post->metadata->category->label }}</span>
                 </td>
               </tr>
               <tr>
                 <td>Audience</td>
-                <td><span class="tag">{{ $post->metadata['audience'] }}</span></td>
+                <td><span class="tag">{{ $post->metadata->audience->label }}</span></td>
               </tr>
             </tbody>
           </table>
