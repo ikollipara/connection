@@ -13,7 +13,7 @@ with the `LazyLoading` trait in Livewire components.
 @endphp
 
 @unless ($component)
-  <section {{ $attributes }} wire:init='load("{{ $prop }}")'>
+  <section {{ $attributes }} wire:init='$set("{{ $ready }}", true)'>
     @unless ($this->{$ready})
       <span style="margin-block: 5em;" class="loader"></span>
     @else
