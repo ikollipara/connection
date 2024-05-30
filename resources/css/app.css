@@ -27,3 +27,8 @@
   width: 5em;
   margin: auto;
 }
+
+
+.is-primary {
+    --bulma-link-text: #D6DBFF;
+}
