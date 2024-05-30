@@ -15,7 +15,7 @@ with the `LazyLoading` trait in Livewire components.
 @unless ($component)
   <section {{ $attributes }} wire:init='$set("{{ $ready }}", true)'>
     @unless ($this->{$ready})
-      <span style="margin-block: 5em;" class="loader"></span>
+      <span class="loader"></span>
     @else
       {{ $slot }}
     @endunless
@@ -23,7 +23,7 @@ with the `LazyLoading` trait in Livewire components.
 @else
   <x-dynamic-component :component="$component" {{ $attributes }} wire:init='load("{{ $prop }}")'>
     @unless ($this->{$ready})
-      <span style="margin-block: 5em;" class="loader"></span>
+      <span class="loader"></span>
     @else
       {{ $slot }}
     @endunless
