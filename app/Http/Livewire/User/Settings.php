@@ -36,6 +36,7 @@ class Settings extends Component
             "user.school" => "string|required",
             "user.subject" => "string|required",
             "user.no_comment_notifications" => "boolean",
+            "user.receive_weekly_digest" => "boolean",
         ];
     }
 

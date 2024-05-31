@@ -38,6 +38,7 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property bool $sent_week_one_survey
  * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
+ * @property bool $receive_weekly_digest
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\PostCollection> $postCollections
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
@@ -68,6 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "no_comment_notifications",
         "years_of_experience",
         "is_preservice",
+        "receive_weekly_digest",
     ];
 
     /**
@@ -92,6 +94,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "is_preservice" => "boolean",
         "sent_week_one_survey" => "boolean",
         "yearly_survey_sent_at" => "datetime",
+        "receive_weekly_digest" => "boolean",
     ];
 
     /** @var array<string, mixed> */
@@ -215,7 +218,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function notifyFollowers(object $notification): void
     {
         $this->followers()->each(
-            fn(User $follower) => $follower->notify($notification),
+            fn (User $follower) => $follower->notify($notification),
         );
     }
 

@@ -32,6 +32,15 @@ Route::view("/", "home")->name("index");
 Route::view("/about", "about")->name("about");
 Route::view("/videos", "videos")->name("videos");
 
+if (env("APP_DEBUG")) {
+    Route::get("/mail", function () {
+        return new App\Mail\WeeklyDigest(auth()->user(), [
+            \App\Models\Post::first(),
+            "This is a test.",
+        ]);
+    });
+}
+
 Route::get("/sign-up", User\Create::class)->name("registration.create");
 Route::get("/login", Login::class)->name("login.create");
 
@@ -58,6 +67,30 @@ Route::get("/email/verify/{id}/{hash}", function (
 })
     ->middleware(["auth"])
     ->name("verification.verify");
+
+Route::get("/unsubscribe-weekly-digest/{user}", function (
+    \App\Models\User $user,
+    Request $request
+) {
+    if ($request->hasValidSignature()) {
+        $user->update(["receive_weekly_digest" => false]);
+        return <<<HTML
+        <main class="container mt-5">
+            <div class="notification is-success">
+                You have successfully unsubscribed from the weekly digest.
+            </div>
+        </main>
+        HTML;
+    } else {
+        return <<<HTML
+        <main class="container mt-5">
+            <div class="notification is-danger">
+                This link has expired. Please request a new one.
+            </div>
+        </main>
+        HTML;
+    }
+})->name("weekly-digest.unsubscribe");
 
 Route::get("/email/verify", VerifyEmail::class)
     ->middleware("auth")

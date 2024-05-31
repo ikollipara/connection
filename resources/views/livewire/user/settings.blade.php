@@ -55,6 +55,12 @@
             I do not want to recieve comment notifications
           </label>
         </div>
+        <div class="field">
+          <label class="checkbox">
+            <input type="checkbox" wire:model.defer='user.receive_weekly_digest'>
+            I want to recieve the weekly digest
+          </label>
+        </div>
         <button type="button" @@click='show = true;' class="button is-primary">
           See Consent Status
         </button>
