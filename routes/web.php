@@ -4,6 +4,7 @@ use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
+use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use App\Http\Livewire\Password\ForgotPassword;
 use App\Http\Livewire\Password\ResetPassword;
 use App\Http\Livewire\VerifyEmail;
@@ -61,29 +62,12 @@ Route::get("/email/verify/{id}/{hash}", function (
     ->middleware(["auth"])
     ->name("verification.verify");
 
-Route::get("/unsubscribe-weekly-digest/{user}", function (
-    \App\Models\User $user,
-    Request $request
-) {
-    if ($request->hasValidSignature()) {
-        $user->update(["receive_weekly_digest" => false]);
-        return <<<HTML
-        <main class="container mt-5">
-            <div class="notification is-success">
-                You have successfully unsubscribed from the weekly digest.
-            </div>
-        </main>
-        HTML;
-    } else {
-        return <<<HTML
-        <main class="container mt-5">
-            <div class="notification is-danger">
-                This link has expired. Please request a new one.
-            </div>
-        </main>
-        HTML;
-    }
-})->name("weekly-digest.unsubscribe");
+Route::delete("/weekly-digest/subscription/{user}", [
+    WeeklyDigestSubscriptionController::class,
+    "destroy",
+])
+    ->name("weekly-digest.subscription.destroy")
+    ->middleware("signed");
 
 Route::get("/email/verify", VerifyEmail::class)
     ->middleware("auth")

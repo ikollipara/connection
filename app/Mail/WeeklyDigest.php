@@ -33,9 +33,12 @@ class WeeklyDigest extends Mailable
      */
     public function __construct($user, $postOfTheWeek, $extra = null)
     {
-        $this->unsubscribeLink = URL::signedRoute("weekly-digest.unsubscribe", [
-            "user" => $user,
-        ]);
+        $this->unsubscribeLink = URL::signedRoute(
+            "weekly-digest.subscription.destroy",
+            [
+                "user" => $user,
+            ],
+        );
         $this->postOfTheWeek = $postOfTheWeek;
         $this->randomPostOfTheWeek = Post::query()
             ->inRandomOrder()
