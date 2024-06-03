@@ -5,8 +5,6 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
-use App\Http\Livewire\Password\ForgotPassword;
-use App\Http\Livewire\Password\ResetPassword;
 use App\Http\Livewire\VerifyEmail;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Log;
@@ -72,14 +70,6 @@ Route::delete("/weekly-digest/subscription/{user}", [
 Route::get("/email/verify", VerifyEmail::class)
     ->middleware("auth")
     ->name("verification.notice");
-
-Route::get("/forgot-password", ForgotPassword::class)
-    ->middleware("guest")
-    ->name("password.request");
-
-Route::get("/reset-password/{token}", ResetPassword::class)
-    ->middleware("guest")
-    ->name("password.reset");
 
 Route::middleware("auth")->group(function () {
     Route::get("/home", Home::class)->name("home");
