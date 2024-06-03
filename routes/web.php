@@ -1,20 +1,17 @@
 <?php
 
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
-use App\Http\Livewire\VerifyEmail;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\User;
 use App\Http\Livewire\Post;
 use App\Http\Livewire\Collection;
 use App\Http\Livewire\Home;
 use App\Http\Livewire\Search;
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,15 +47,15 @@ Route::delete("/logout", [LoginController::class, "destroy"])
     ->name("login.destroy")
     ->middleware("auth");
 
-Route::get("/email/verify/{id}/{hash}", function (
-    EmailVerificationRequest $request
-) {
-    $request->fulfill();
-    Log::info("Email verified for user {$request->user()->id}.");
-    return redirect()->route("home");
-})
-    ->middleware(["auth"])
-    ->name("verification.verify");
+Route::get("/email/verify/{id}/{hash}", [
+    EmailVerificationController::class,
+    "verify",
+])
+    ->name("verification.verify")
+    ->middleware(["auth"]);
+Route::get("/email/verify", [EmailVerificationController::class, "index"])
+    ->name("verification.notice")
+    ->middleware(["auth"]);
 
 Route::delete("/weekly-digest/subscription/{user}", [
     WeeklyDigestSubscriptionController::class,
@@ -66,10 +63,6 @@ Route::delete("/weekly-digest/subscription/{user}", [
 ])
     ->name("weekly-digest.subscription.destroy")
     ->middleware("signed");
-
-Route::get("/email/verify", VerifyEmail::class)
-    ->middleware("auth")
-    ->name("verification.notice");
 
 Route::middleware("auth")->group(function () {
     Route::get("/home", Home::class)->name("home");
