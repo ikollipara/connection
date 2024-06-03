@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
@@ -65,10 +66,11 @@ Route::delete("/weekly-digest/subscription/{user}", [
     ->middleware("signed");
 
 Route::middleware("auth")->group(function () {
+    Route::resource("faq", FrequentlyAskedQuestionController::class)->parameter(
+        "faq",
+        "question",
+    );
     Route::get("/home", Home::class)->name("home");
-    Route::view("/faq", "faq")
-        ->name("faq")
-        ->middleware("verified");
     Route::get("/search", Search::class)
         ->name("search")
         ->middleware("verified");

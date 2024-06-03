@@ -49,7 +49,7 @@
     <ul class="navbar-end">
       @auth
         <x-nav.unsaved-changes />
-        <x-nav.item class="icon-text" route="{{ route('faq') }}">
+        <x-nav.item class="icon-text" route="{{ route('faq.index') }}">
           <span class="icon">
             <x-lucide-help-circle class="icon" width="30" height="30" />
           </span>
