@@ -23,7 +23,7 @@ class Login extends Mailable
     public function __construct(User $user)
     {
         $this->login_link = URL::temporarySignedRoute(
-            "login.store",
+            "login.show",
             now()->addHour(),
             [
                 "user" => $user,

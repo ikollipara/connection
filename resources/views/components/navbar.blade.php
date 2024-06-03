@@ -70,7 +70,17 @@
         </x-nav.dropdown>
         <x-nav.avatar />
         <li class="navbar-item">
-          @livewire('user.logout')
+          <form action="{{ route('login.destroy') }}" method="post">
+            @csrf
+            @method('DELETE')
+            <button x-on:click="$el.classList.add('is-loading')" class="button is-outlined is-primary icon-text"
+              type="submit">
+              <span class="icon">
+                <x-lucide-log-out class="icon" width="30" height="30" />
+              </span>
+              <span>Logout</span>
+            </button>
+          </form>
         </li>
       @else
         <x-nav.item is-button class="is-outlined" route="{{ route('registration.create') }}">Sign Up</x-nav.item>

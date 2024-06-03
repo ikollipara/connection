@@ -13,12 +13,8 @@
         @enderror>
     @else
       <span class="control is-expanded">
-        <input id="{{ $name }}" name="{{ $name }}" {{ $attributes }}
-          @error($name)
-            class="input is-danger"
-        @else
-            class="input"
-        @enderror>
+        <input value="{{ old($name) ?? '' }}" id="{{ $name }}" name="{{ $name }}" {{ $attributes }}
+          @class(['input', 'is-danger' => $errors->has($name)])>
       </span>
   @endif
   @error($name)

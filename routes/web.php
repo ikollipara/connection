@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
 use App\Http\Livewire\Password\ForgotPassword;
 use App\Http\Livewire\Password\ResetPassword;
-use App\Http\Livewire\User\Login;
 use App\Http\Livewire\VerifyEmail;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Log;
@@ -42,21 +42,14 @@ if (env("APP_DEBUG")) {
 }
 
 Route::get("/sign-up", User\Create::class)->name("registration.create");
-Route::get("/login", Login::class)->name("login.create");
+Route::resource("login", LoginController::class)
+    ->only(["create", "store", "show"])
+    ->parameter("login", "user")
+    ->middleware("guest");
 
-Route::get("/login/{user}", function (
-    Request $request,
-    \App\Models\User $user
-) {
-    abort_if(
-        !$user->hasVerifiedEmail(),
-        403,
-        "Link has expired. Please request a new one.",
-    );
-    if (auth()->loginUsingId($user->id, true)) {
-        return redirect()->route("home");
-    }
-})->name("login.store");
+Route::delete("/logout", [LoginController::class, "destroy"])
+    ->name("login.destroy")
+    ->middleware("auth");
 
 Route::get("/email/verify/{id}/{hash}", function (
     EmailVerificationRequest $request
