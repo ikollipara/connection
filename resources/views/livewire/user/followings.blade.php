@@ -8,10 +8,10 @@
         <h1 class="title is-1">{{ $this->user->full_name() }}</h1>
         <div class="is-flex is-justify-content-start is-align-items-center" style="gap: 1em;">
           <a href="{{ route('users.followers.index', ['user' => $this->user]) }}"
-            class="is-link">{{ $this->user->followers_count }}
+            class="is-link">{{ $this->user->followers()->count() }}
             Followers</a>
           <a href="{{ route('users.followings.index', ['user' => $this->user]) }}"
-            class="is-link">{{ $this->user->following_count }} Following</a>
+            class="is-link">{{ $this->user->following()->count() }} Following</a>
         </div>
         <p class="is-italic content">
           {{ $this->user->subject }} Teacher at

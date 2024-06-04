@@ -4,15 +4,17 @@ namespace App\Models;
 
 use App\Casts\Hashed;
 use App\Events\UserFollowed;
+use App\Mail\Survey;
 use App\Notifications\QualtricsSurvey;
+use App\Services\SurveyService;
 use App\Traits\HasUuids;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetTrait;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
@@ -46,9 +48,9 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $following
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Search> $searches
  */
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids, PasswordsCanResetTrait;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -89,7 +91,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "bio" => "array",
         "grades" => "array",
         "no_comment_notifications" => "boolean",
-        "password" => Hashed::class,
         "consented" => "boolean",
         "is_preservice" => "boolean",
         "sent_week_one_survey" => "boolean",
@@ -106,6 +107,55 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "bio" => '{"blocks": []}',
         "years_of_experience" => 0,
     ];
+
+    public static function booted()
+    {
+        // Before creating the user, we normalize the email.
+        static::creating(function (User $user) {
+            $user->email = Str::of($user->email)
+                ->trim()
+                ->lower();
+        });
+        static::created(function (User $user) {
+            event(new Registered($user));
+        });
+        static::saved(function (User $user) {
+            if ($user->consented and $user->wasChanged("consented")) {
+                $url =
+                    env("APP_QUALTRICS_CONSENT_LINK") . "?user_id={$user->id}";
+                Mail::to($user)->queue(new Survey($url));
+            }
+        });
+    }
+
+    /**
+     * Get the user's followers
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
+     * @see \App\Models\User::followers()
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(
+            self::class,
+            "followers",
+            "followed_id",
+            "follower_id",
+        )->using(Follower::class);
+    }
+
+    /**
+     * Get the users who the users is following
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
+     */
+    public function following()
+    {
+        return $this->belongsToMany(
+            self::class,
+            "followers",
+            "follower_id",
+            "followed_id",
+        )->using(Follower::class);
+    }
 
     /**
      * Get the user's posts
@@ -135,91 +185,12 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
     /**
-     * Get the user's followers
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\User>
-     */
-    public function followers()
-    {
-        return $this->belongsToMany(
-            User::class,
-            "followers",
-            "user_id",
-            "follower_id",
-        );
-    }
-
-    /**
-     * Get the user's following
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\User>
-     */
-    public function following()
-    {
-        return $this->belongsToMany(
-            User::class,
-            "followers",
-            "follower_id",
-            "user_id",
-        );
-    }
-
-    /**
      * Get the user's searches
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Search>
      */
     public function searches()
     {
         return $this->hasMany(Search::class);
-    }
-
-    /**
-     * Check if the user is following another user
-     * @param User $user The user to check
-     * @return bool
-     */
-    public function follow(User $user)
-    {
-        $this->following()->attach($user->id);
-        if ($this->save()) {
-            UserFollowed::dispatch($this, $user);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Unfollow a user
-     * @param User $user The user to unfollow
-     * @return bool
-     */
-    public function unfollow(User $user)
-    {
-        $this->following()->detach($user->id);
-        if ($this->save()) {
-            UserFollowed::dispatch($this, $user);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Check if the user is following another user
-     * @param User $user The user to check
-     * @return bool
-     */
-    public function hasFollowed(User $user): bool
-    {
-        return $this->following()
-            ->where("user_id", $user->id)
-            ->exists();
-    }
-
-    public function notifyFollowers(object $notification): void
-    {
-        $this->followers()->each(
-            fn (User $follower) => $follower->notify($notification),
-        );
     }
 
     /**
@@ -245,26 +216,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             return "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF";
         }
         return Storage::url($this->avatar);
-    }
-
-    public static function booted()
-    {
-        // Before creating the user, we normalize the email.
-        static::creating(function (User $user) {
-            $user->email = Str::of($user->email)
-                ->trim()
-                ->lower();
-        });
-        static::created(function (User $user) {
-            event(new Registered($user));
-        });
-        static::saved(function (User $user) {
-            if ($user->consented and $user->wasChanged("consented")) {
-                $url =
-                    env("APP_QUALTRICS_SCALES_LINK") . "?user_id=" . $user->id;
-                $user->notify(new QualtricsSurvey($url));
-            }
-        });
     }
 
     /**

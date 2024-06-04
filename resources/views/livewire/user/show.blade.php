@@ -8,9 +8,9 @@
         <h1 class="title is-1">{{ $this->user->full_name() }}</h1>
         <div class="is-flex is-justify-content-start is-align-items-center" style="gap: 1em;">
           <a href="{{ route('users.followers.index', ['user' => $this->user]) }}"
-            class="is-link">{{ $this->user->followers_count }} Followers</a>
+            class="is-link">{{ $this->user->followers()->count() }} Followers</a>
           <a href="{{ route('users.followings.index', ['user' => $this->user]) }}"
-            class="is-link">{{ $this->user->following_count }} Following</a>
+            class="is-link">{{ $this->user->following()->count() }} Following</a>
         </div>
         <p class="is-italic content">
           {{ $this->user->subject }} Teacher at
@@ -18,23 +18,20 @@
         </p>
         <div class="buttons">
           @unless (auth()->user()->is($this->user))
-            @if (auth()->user()->hasFollowed($this->user))
-              <button wire:target='unfollow' wire:loading.class='is-loading' wire:click='unfollow("{{ auth()->id() }}")'
-                type="button" class="button is-success icon-text is-justify-content-start">
+            <button wire:target='follow' wire:loading.class='is-loading' wire:click='follow("{{ auth()->id() }}")'
+              type="button" class="button is-success icon-text is-justify-content-start">
+              @if (App\Models\Follower::where('follower_id', auth()->id())->where('followed_id', $this->user->id)->exists())
                 <span class="icon">
                   <x-lucide-star class="icon" width="30" height="30" fill="white" />
                 </span>
                 <span class="mt-auto mb-auto">Unfollow</span>
-              </button>
-            @else
-              <button wire:target='follow' wire:loading.class='is-loading' wire:click='follow("{{ auth()->id() }}")'
-                type="button" class="button is-success icon-text is-justify-content-start">
+              @else
                 <span class="icon">
                   <x-lucide-star class="icon" width="30" height="30" />
                 </span>
                 <span class="mt-auto mb-auto">Follow</span>
-              </button>
-            @endif
+              @endif
+            </button>
           @endunless
           <a href="{{ route('users.posts.index', ['user' => $this->user]) }}"
             class="button is-link icon-text is-justify-content-start">

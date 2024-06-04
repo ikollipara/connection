@@ -29,7 +29,7 @@ class UpdateUserFollowers
             ->followers()
             ->count();
         $event->follower->following_count = $event->follower
-            ->following()
+            ->followees()
             ->count();
         $event->followed->save();
         $event->follower->save();

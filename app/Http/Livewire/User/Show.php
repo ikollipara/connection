@@ -16,7 +16,7 @@ class Show extends Component
 
     public function mount(User $user): void
     {
-        $this->user = $user;
+        $this->user = $user->loadCount(["followers", "following"]);
         $this->bio = json_encode($user->bio);
     }
 
@@ -57,28 +57,7 @@ class Show extends Component
 
     public function follow(User $user): void
     {
-        if ($user->follow($this->user)) {
-            $this->dispatchBrowserEvent("success", [
-                "message" => __("Followed!"),
-            ]);
-        } else {
-            $this->dispatchBrowserEvent("error", [
-                "message" => __("Failed to follow!"),
-            ]);
-        }
-    }
-
-    public function unfollow(User $user): void
-    {
-        if ($user->unfollow($this->user)) {
-            $this->dispatchBrowserEvent("success", [
-                "message" => __("Unfollowed!"),
-            ]);
-        } else {
-            $this->dispatchBrowserEvent("error", [
-                "message" => __("Failed to unfollow!"),
-            ]);
-        }
+        $this->user->followers()->toggle($user->id);
     }
 
     /** @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory */
