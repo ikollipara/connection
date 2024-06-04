@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\User;
 use App\Notifications\QualtricsSurvey;
+use App\Services\SurveyService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -22,43 +23,17 @@ class Kernel extends ConsoleKernel
             ->call(function () {
                 User::query()
                     ->where("consented", true)
-                    ->each(function (User $user) {
-                        if (!$user->sent_week_one_survey) {
-                            $user->notify(
-                                new QualtricsSurvey(
-                                    env("APP_QUALTRICS_CT_CAST_LINK") .
-                                        "?userId=" .
-                                        $user->id,
-                                ),
-                            );
-                            $user->sent_week_one_survey = true;
-                            $user->save();
-                        }
-                        if(is_null($user->created_at)) {
-                            $user->created_at = now();
-                            $user->save();
-                        }
-                        if (
-                            ($user->created_at->diffInDays(now()) % 365) == 0
-                        ) {
-                            $user->notify(
-                                new QualtricsSurvey(
-                                    env("APP_QUALTRICS_CT_CAST_LINK") .
-                                        "?userId=" .
-                                        $user->id,
-                                ),
-                            );
-                            $user->notify(
-                                new QualtricsSurvey(
-                                    env("APP_QUALTRICS_SCALES_LINK") .
-                                        "?userId=" .
-                                        $user->id,
-                                ),
-                            );
-                            $user->yearly_survey_sent_at = now();
-                            $user->save();
-                        }
-                    });
+                    ->each(
+                        fn($user) => (new SurveyService($user))
+                            ->sendSurvey(
+                                [SurveyService::CT_CAST],
+                                SurveyService::ONCE,
+                            )
+                            ->sendSurvey(
+                                [SurveyService::CT_CAST, SurveyService::SCALES],
+                                SurveyService::YEARLY,
+                            ),
+                    );
             })
             ->daily();
     }
