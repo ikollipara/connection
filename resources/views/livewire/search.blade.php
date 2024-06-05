@@ -29,7 +29,7 @@
   <aside class="column is-one-quarter">
     <section class="is-flex is-flex-direction-column" style="gap: 0.5rem;">
       <h2 class="subtitle is-4">Advanced Search</h2>
-      <p class="content is-medium has-text-grey">Total Results: {{ $this->results->count() }}</p>
+      <p class="content is-medium has-text-grey">Total Results: {{ count($results) }}</p>
       <x-forms.input wire:model.defer='likes_count' type="number" name="likes_count" min="0"
         label="Minimum Likes" />
       <x-forms.input wire:model.defer='views_count' type="number" name="views_count" min="0"
@@ -45,12 +45,12 @@
   </aside>
   </div>
   <section class="column is-three-quarters">
-    @if ($this->results->count() > 0)
+    @if (count($results) > 0)
       <table class="table is-fullwidth">
         <thead>
         </thead>
         <tbody>
-          @foreach ($this->results as $result)
+          @foreach ($results as $result)
             <x-search.row :item="$result" />
           @endforeach
         </tbody>

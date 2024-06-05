@@ -67,11 +67,15 @@ class Editor extends Component
             ]);
             return;
         }
-        if ($this->post->wasRecentlyPublished()) {
+        if ($this->post->was_recently_published) {
             $message = __("Post published!");
-            $this->post->user->notifyFollowers(
-                new NewFollowedPost($this->post),
-            );
+            $this->post->user
+                ->followers()
+                ->each(
+                    fn($follower) => $follower->notify(
+                        new NewFollowedPost($this->post),
+                    ),
+                );
         } else {
             $message = __("Post saved!");
         }

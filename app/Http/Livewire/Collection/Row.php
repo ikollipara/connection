@@ -17,7 +17,7 @@ class Row extends Component
 
     public function getNumberOfPostsProperty(): int
     {
-        return $this->post_collection->posts_count;
+        return $this->post_collection->entries_count;
     }
 
     public function archive(): void

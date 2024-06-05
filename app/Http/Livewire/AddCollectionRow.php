@@ -16,12 +16,15 @@ class AddCollectionRow extends Component
     {
         $this->collection = $collection;
         $this->post = $post;
-        $this->has_post = $collection->posts->contains($post);
+        $this->has_post = $collection
+            ->entries()
+            ->where("content_id", $post->id)
+            ->exists();
     }
 
     public function add(): void
     {
-        $this->collection->posts()->attach($this->post);
+        $this->collection->entries()->attach($this->post);
         $this->has_post = true;
         $this->dispatchBrowserEvent("success", [
             "message" => "Post added to collection successfully!",
@@ -30,7 +33,7 @@ class AddCollectionRow extends Component
 
     public function remove(): void
     {
-        $this->collection->posts()->detach($this->post);
+        $this->collection->entries()->detach($this->post);
         $this->has_post = false;
         $this->dispatchBrowserEvent("success", [
             "message" => "Post removed from collection successfully!",

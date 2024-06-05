@@ -53,10 +53,6 @@ class PostCollectionsController extends Controller
         /** @var \App\Models\User */
         $user = $this->current_user();
 
-        if (!$postCollection->isViewedBy($user)) {
-            $postCollection->view($user);
-        }
-
         return view("collections.show", [
             "collection" => $postCollection,
         ]);

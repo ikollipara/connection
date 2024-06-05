@@ -2,10 +2,14 @@
 
 namespace App\Enums;
 
-class Status
-{
-    const Draft = "draft";
-    const Published = "published";
+use Spatie\Enum\Laravel\Enum;
 
-    const Archived = "archived";
+/**
+ * \App\Enums\Status
+ * @method static self draft()
+ * @method static self published()
+ * @method static self archived()
+ */
+class Status extends Enum
+{
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -16,10 +17,12 @@ class PostsController extends Controller
     public function index(Request $request)
     {
         /** @var \App\Models\User */
-        $user = $this->current_user();
+        $user = auth()->user();
 
         /** @var string */
-        $status = $request->query("status", "draft");
+        $status =
+            Status::tryFrom($request->query("status", "draft")) ??
+            Status::draft();
 
         return view("posts.index", [
             "posts" => $user
@@ -51,9 +54,6 @@ class PostsController extends Controller
         $this->authorize("view", $post);
         /** @var \App\Models\User */
         $user = $this->current_user();
-        if (!$post->isViewedBy($user)) {
-            $post->view($user);
-        }
 
         return view("posts.show", ["post" => $post]);
     }

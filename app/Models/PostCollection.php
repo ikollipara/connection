@@ -2,176 +2,30 @@
 
 namespace App\Models;
 
-use App\Contracts\Commentable;
-use App\Contracts\Likable;
-use App\Contracts\Viewable;
-use App\Models\Concerns\HasMetadata;
-use App\Models\Concerns\HasRichText;
-use App\Traits\HasComments;
-use App\Traits\HasLikes;
-use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
-use App\Traits\HasViews;
-use Laravel\Scout\Searchable;
+use Parental\HasParent;
 
 /**
- * @property string $id
- * @property string $title
- * @property array<string, string> $body
- * @property bool $published
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User|null $user
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
+ * @property-read \Illuminate\Database\Eloquent\Collection<Content> $entries
+ * @property-read int $entries_count
  */
-class PostCollection extends Model implements Likable, Viewable, Commentable
+class PostCollection extends Content
 {
-    use HasFactory,
-        HasUuids,
-        HasMetadata,
-        SoftDeletes,
-        HasRichText,
-        HasComments,
-        HasViews,
-        HasLikes,
-        Searchable;
-    /**
-     * The relationships that should always be loaded.
-     * @var array<int, string>
-     */
-    protected $with = ["user"];
+    use HasFactory, HasParent;
+
+    protected $withCount = ["likes", "views", "entries"];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Get all the entries for the post collection.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Content>
      */
-    protected $fillable = ["title", "body", "metadata", "published", "user_id"];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "body" => "array",
-        "published" => "boolean",
-        "title" => "string",
-    ];
-
-    /**
-     * The attributes that should be defaults.
-     *
-     * @var array<string, mixed>
-     */
-    protected $attributes = [
-        "metadata" => '{"category": "material", "audience": "Teachers"}',
-        "body" => '{"blocks": []}',
-        "published" => false,
-        "title" => "",
-    ];
-
-    protected $rich_text_attributes = ["body"];
-
-    /**
-     * Get the user that owns the post collection.
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self>
-     */
-    public function user()
+    public function entries()
     {
-        /** @phpstan-ignore-next-line */
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get all the posts for the post collection.
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Post>
-     */
-    public function posts()
-    {
-        return $this->belongsToMany(Post::class);
-    }
-
-    /**
-     * Get all the post collections for the given status.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
-     * @param string $status
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeStatus($query, $status)
-    {
-        if ($status == "archived") {
-            return $query->onlyTrashed();
-        } elseif ($status == "published") {
-            return $query->where("published", true);
-        } elseif ($status == "draft") {
-            return $query->where("published", false);
-        } else {
-            return $query;
-        }
-    }
-
-    /**
-     * Get all the published post collections.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeWherePublished($query)
-    {
-        return $query->where("published", true);
-    }
-
-    /**
-     * Convert Post to Searchable Array
-     * @return array<string, mixed>
-     */
-    public function toSearchableArray(): array
-    {
-        return [
-            "title" => $this->title,
-            "body" => $this->body_text,
-        ];
-    }
-
-    public function searchableAs(): string
-    {
-        return "post_collections_index";
-    }
-
-    /**
-     * Determine if the model should be searchable.
-     *
-     * @return bool
-     */
-    public function shouldBeSearchable()
-    {
-        return $this->published and !$this->trashed();
-    }
-
-    public function wasRecentlyPublished(): bool
-    {
-        return $this->published and $this->wasChanged("published");
-    }
-
-    public static function booted()
-    {
-        static::creating(function (PostCollection $postCollection) {
-            $postCollection->slug = Str::slug(
-                "{$postCollection->title} {$postCollection->id} Collection",
-            );
-        });
-
-        static::updating(function (PostCollection $postCollection) {
-            if (!$postCollection->published) {
-                $postCollection->slug = Str::slug(
-                    "{$postCollection->title} {$postCollection->id} Collection",
-                );
-            }
-        });
+        return $this->belongsToMany(
+            Content::class,
+            "entries",
+            "collection_id",
+            "content_id",
+        )->using(Entry::class);
     }
 }

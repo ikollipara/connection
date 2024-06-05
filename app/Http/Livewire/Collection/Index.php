@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Collection;
 
+use App\Enums\Status;
 use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\PostCollection;
 use Livewire\Component;
@@ -20,7 +21,9 @@ class Index extends Component
 
     public function mount(): void
     {
-        $this->status = request()->query("status", "draft");
+        $this->status =
+            Status::tryFrom(request()->query("status", "draft")) ??
+            Status::draft();
     }
 
     /** @return array<string, string[]|string> */
@@ -48,7 +51,7 @@ class Index extends Component
         }
         return PostCollection::query()
             ->where("user_id", auth()->id())
-            ->status($this->status)
+            ->status(Status::from($this->status))
             ->when(
                 $this->search !== "",
                 fn($query) => $query->where(
@@ -58,7 +61,6 @@ class Index extends Component
                 ),
             )
             ->latest()
-            ->withCount("posts")
             ->paginate(10);
     }
 

@@ -60,7 +60,7 @@
           </tr>
         </thead>
         <tbody>
-          @foreach ($collection->posts as $post)
+          @foreach ($collection->entries as $post)
             <tr>
               <td>{{ $post->title }}</td>
               <td>

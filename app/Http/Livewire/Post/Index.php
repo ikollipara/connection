@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Post;
 
+use App\Enums\Status;
 use App\Http\Livewire\Concerns\LazyLoading;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -21,7 +22,9 @@ class Index extends Component
     public function mount(): void
     {
         $this->authorize("viewAny", auth()->user());
-        $this->status = request()->query("status", "draft");
+        $this->status =
+            Status::tryFrom(request()->query("status", "draft")) ??
+            Status::draft();
     }
 
     public function getPostsProperty(): LengthAwarePaginator
@@ -37,7 +40,7 @@ class Index extends Component
         return auth()
             ->user()
             ->posts()
-            ->status($this->status)
+            ->status(Status::from($this->status))
             ->when($this->search !== "", function ($query) {
                 return $query->where("title", "like", "%{$this->search}%");
             })

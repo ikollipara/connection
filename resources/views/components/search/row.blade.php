@@ -1,5 +1,12 @@
 @props(['item', 'showUser' => true])
-@if ($item instanceof \App\Models\Post)
+
+@php
+  if (is_array($item)) {
+      $item = (object) $item;
+  }
+@endphp
+
+@if ($item instanceof \App\Models\Post or $item->type === 'post')
   <tr>
     <td><span class="tag is-link">Post</span></td>
     @if ($item->title)
@@ -9,7 +16,8 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a href="{{ route('users.show', ['user' => $item->user]) }}" class="link">{{ $item->user->full_name() }}</a>
+        <td><a href="{{ route('users.show', ['user' => $item->user['id']]) }}"
+            class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         </td>
       @else
         <td>[Deleted]</td>
@@ -31,7 +39,7 @@
         <span>{{ $item->likes_count }}</span>
       </span>
     </td>
-    <td><a href="{{ route('posts.show', ['post' => $item]) }}">Visit</a></td>
+    <td><a href="{{ route('posts.show', ['post' => $item->id]) }}">Visit</a></td>
   </tr>
 @else
   <tr>
@@ -43,8 +51,8 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a href="{{ route('users.show', ['user' => $item->user]) }}"
-            class="link">{{ $item->user->full_name() }}</a>
+        <td><a href="{{ route('users.show', ['user' => $item->user['id']]) }}"
+            class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         @else
         <td>[Deleted]</td>
       @endif
@@ -65,13 +73,6 @@
         <span>{{ $item->likes_count }}</span>
       </span>
     </td>
-    <td>
-      <span class="icon-text">
-        <span class="icon">
-          <x-lucide-book class="icon" width="30" height="30" />
-        </span>
-        <span>{{ $item->posts_count }}</span>
-      </span>
-    <td><a href="{{ route('collections.show', ['post_collection' => $item]) }}">Visit</a></td>
+    <td><a href="{{ route('collections.show', ['post_collection' => $item->id]) }}">Visit</a></td>
   </tr>
 @endif

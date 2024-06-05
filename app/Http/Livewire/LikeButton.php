@@ -7,11 +7,11 @@ use Livewire\Component;
 
 class LikeButton extends Component
 {
-    public Likable $likable;
+    public $likable;
     public bool $liked = false;
     public bool $ready_to_load_likes = false;
 
-    public function mount(Likable $likable): void
+    public function mount($likable): void
     {
         $this->likable = $likable;
     }
@@ -26,8 +26,11 @@ class LikeButton extends Component
         if (!$this->ready_to_load_likes) {
             return 0;
         }
-        $this->liked = $this->likable->isLikedBy(auth()->user());
-        return $this->likable->likes();
+        $this->liked = $this->likable
+            ->likes()
+            ->where("user_id", auth()->id())
+            ->exists();
+        return $this->likable->likes()->count();
     }
 
     public function toggleLike(): void
@@ -41,7 +44,7 @@ class LikeButton extends Component
 
     public function like(): void
     {
-        $this->likable->like(auth()->user());
+        $this->likable->likes()->attach(auth()->user());
         $this->liked = true;
         $this->dispatchBrowserEvent("success", [
             "message" => __("Liked!"),
@@ -50,7 +53,7 @@ class LikeButton extends Component
 
     public function unlike(): void
     {
-        $this->likable->unlike(auth()->user());
+        $this->likable->likes()->detach(auth()->user());
         $this->liked = false;
         $this->dispatchBrowserEvent("success", [
             "message" => __("Unliked!"),

@@ -47,7 +47,6 @@ class Show extends Component
         }
         return PostCollection::query()
             ->where("user_id", $this->user->id)
-            ->withCount("posts")
             ->wherePublished()
             ->orderByDesc("likes_count")
             ->orderByDesc("views")

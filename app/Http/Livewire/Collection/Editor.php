@@ -67,11 +67,15 @@ class Editor extends Component
             ]);
             return;
         }
-        if ($this->post_collection->wasRecentlyPublished()) {
+        if ($this->post_collection->was_recently_published) {
             $message = __("Collection published!");
-            $this->post_collection->user->notifyFollowers(
-                new NewFollowedCollection($this->post_collection),
-            );
+            $this->post_collection->user
+                ->followers()
+                ->each(
+                    fn($follower) => $follower->notify(
+                        new NewFollowedCollection($this->post_collection),
+                    ),
+                );
         } elseif ($this->post_collection->wasRecentlyCreated) {
             $message = __("Collection created!");
             $this->dispatchBrowserEvent("collection-created", [

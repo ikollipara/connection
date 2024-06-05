@@ -22,3 +22,4 @@ cov
 *.LICENSE.txt
 public/js/*.js
 public/css/*.css
+backup.sql

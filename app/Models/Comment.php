@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasLikes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Comment extends Model implements Likable
+class Comment extends Model
 {
-    use HasFactory, HasUuids, HasLikes;
+    use HasFactory, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +35,15 @@ class Comment extends Model implements Likable
     {
         /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the likes for the comment.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Likes\CommentLike>
+     */
+    public function likes()
+    {
+        return $this->hasMany(Likes\CommentLike::class);
     }
 
     /**
