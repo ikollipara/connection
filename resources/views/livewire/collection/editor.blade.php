@@ -61,7 +61,7 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($this->post_collection->posts as $post)
+              @foreach ($this->post_collection->entries as $post)
                 @livewire('collection.entry', ['post' => $post, 'post_collection' => $this->post_collection], key($post->id))
               @endforeach
             </tbody>
