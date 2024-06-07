@@ -68,13 +68,13 @@ class MetadataForm implements Wireable
 
     public function toMetadata(): Metadata
     {
-        return new Metadata(
-            $this->grades,
-            $this->standards,
-            $this->practices,
-            $this->languages,
-            $this->category,
-            $this->audience,
-        );
+        return new Metadata([
+            "grades" => $this->grades,
+            "standards" => $this->standards,
+            "practices" => $this->practices,
+            "languages" => $this->languages,
+            "category" => $this->category,
+            "audience" => $this->audience,
+        ]);
     }
 }

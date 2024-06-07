@@ -76,16 +76,16 @@ class Metadata
     {
         return json_encode([
             "grades" => $this->grades
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             "languages" => $this->languages
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             "practices" => $this->practices
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             "standards" => $this->standards
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             "category" => $this->category->value,
             "audience" => $this->audience->value,
@@ -102,8 +102,8 @@ class Metadata
     {
         return array_key_exists($key, $data)
             ? collect($data[$key])
-                ->map(fn(string $value) => $enum::tryFrom($value))
-                ->filter(fn($value) => !is_null($value))
+                ->map(fn (string $value) => $enum::tryFrom($value))
+                ->filter(fn ($value) => !is_null($value))
             : collect([]);
     }
 }

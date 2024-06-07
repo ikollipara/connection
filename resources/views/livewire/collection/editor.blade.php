@@ -1,4 +1,5 @@
 <div>
+  @dump($this->post_collection->metadata)
   <form wire:submit.prevent='save' x-data="{ show: false }"
     x-on:collection-created.document="history.replaceState(null, '', $event.detail.url)">
     <x-hero class="is-primary">
