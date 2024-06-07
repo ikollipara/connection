@@ -72,7 +72,7 @@ class Editor extends Component
             $this->post_collection->user
                 ->followers()
                 ->each(
-                    fn ($follower) => $follower->notify(
+                    fn($follower) => $follower->notify(
                         new NewFollowedCollection($this->post_collection),
                     ),
                 );

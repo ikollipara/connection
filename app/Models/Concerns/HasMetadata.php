@@ -33,7 +33,6 @@ trait HasMetadata
 
     public function setMetadataAttribute(Metadata $metadata)
     {
-        dd($metadata);
         is_string($this->attributes["metadata"])
             ? ($this->attributes["metadata"] = $metadata->__toString())
             : ($this->attributes["metadata"] = json_decode(
