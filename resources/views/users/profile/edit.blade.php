@@ -18,6 +18,7 @@ description: This file contains the HTML for editing a user's profile.
       <div class="buttons">
         <button form="profile-form" class="button is-light" type="submit">Update</button>
         <button x-on:click="show = true" class="button is-dark">Update Consent Status</button>
+        <x-users.delete-account :user="$user" />
       </div>
     </div>
   </x-hero>

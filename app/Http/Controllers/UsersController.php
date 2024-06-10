@@ -103,6 +103,16 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $this->authorize("delete", $user);
+        if ($user->delete()) {
+            auth()->logout();
+            session()->regenerate();
+            return redirect(route("registration.create"), 303)->with(
+                "success",
+                __("Your account has been deleted."),
+            );
+        } else {
+            return back()->with("error", __("Failed to delete your account."));
+        }
     }
 }

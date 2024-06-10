@@ -85,6 +85,7 @@ Route::middleware("auth")->group(function () {
         "edit",
         "update",
         "show",
+        "destroy",
     ]);
     Route::resource("users.followers", UserFollowersController::class)->only([
         "index",
