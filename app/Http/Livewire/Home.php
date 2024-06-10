@@ -27,11 +27,7 @@ class Home extends Component
         $user = auth()->user();
 
         return $user
-            ->load([
-                "following",
-                "following.posts",
-                "following.postCollections",
-            ])
+            ->load(["following", "following.posts", "following.collections"])
             ->following->flatMap(function (User $user) {
                 return [
                     "posts" => $user
@@ -41,8 +37,8 @@ class Home extends Component
                         ->take(10)
                         ->with("user")
                         ->get(),
-                    "postCollections" => $user
-                        ->postCollections()
+                    "collections" => $user
+                        ->collections()
                         ->where("published", true)
                         ->latest()
                         ->take(10)

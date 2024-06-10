@@ -18,7 +18,12 @@ class Comment extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ["body", "user_id"];
+    protected $fillable = [
+        "body",
+        "user_id",
+        "commentable_id",
+        "commentable_type",
+    ];
 
     /**
      * The attributes that should be cast.
@@ -48,7 +53,7 @@ class Comment extends Model
 
     /**
      * Get the post or post collection that owns the comment.
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\App\Models\Post|\App\Models\PostCollection, self>
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<Content>
      */
     public function commentable()
     {

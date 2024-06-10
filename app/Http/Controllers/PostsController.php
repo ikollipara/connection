@@ -53,9 +53,9 @@ class PostsController extends Controller
     {
         $this->authorize("view", $post);
         /** @var \App\Models\User */
-        $user = $this->current_user();
+        $user = auth()->user();
 
-        return view("posts.show", ["post" => $post]);
+        return view("posts.show", ["post" => $post->load("user.profile")]);
     }
 
     /**

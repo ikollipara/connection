@@ -2,51 +2,44 @@
 
 namespace App\Models;
 
-use App\Casts\Hashed;
-use App\Events\UserFollowed;
-use App\Mail\Survey;
-use App\Notifications\QualtricsSurvey;
-use App\Services\SurveyService;
+// use App\Mail\Survey;
+
+use App\Enums\Grade;
 use App\Traits\HasUuids;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Mail;
+// use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 
 /**
  * App\Models\User
  * @property string $id
  * @property string $first_name
  * @property string $last_name
+ * @property-read string $full_name
  * @property string $avatar
- * @property string $school
- * @property string $subject
- * @property string $gender
- * @property array<string, string> $bio
- * @property array<string> $grades
  * @property string $email
- * @property bool $no_comment_notifications
  * @property bool $consented
- * @property bool $is_preservice
- * @property int $years_of_experience
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property bool $sent_week_one_survey
  * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
- * @property bool $receive_weekly_digest
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\PostCollection> $postCollections
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $followers
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Search> $searches
+ * @property-read Collection<\App\Models\Comment> $comments
+ * @property-read Collection<\App\Models\PostCollection> $collections
+ * @property-read Collection<\App\Models\Post> $posts
+ * @property-read Collection<\App\Models\User> $followers
+ * @property-read Collection<\App\Models\User> $following
+ * @property-read Collection<\App\Models\Search> $searches
+ * @property UserSettings $settings
+ * @property UserProfile $profile
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -57,29 +50,14 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        "first_name",
-        "last_name",
-        "avatar",
-        "school",
-        "subject",
-        "gender",
-        "bio",
-        "grades",
-        "email",
-        "password",
-        "no_comment_notifications",
-        "years_of_experience",
-        "is_preservice",
-        "receive_weekly_digest",
-    ];
+    protected $fillable = ["first_name", "last_name", "avatar", "email"];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = ["password", "remember_token"];
+    protected $hidden = ["remember_token"];
 
     /**
      * The attributes that should be cast.
@@ -88,45 +66,85 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         "email_verified_at" => "datetime",
-        "bio" => "array",
-        "grades" => "array",
-        "no_comment_notifications" => "boolean",
         "consented" => "boolean",
-        "is_preservice" => "boolean",
         "sent_week_one_survey" => "boolean",
         "yearly_survey_sent_at" => "datetime",
-        "receive_weekly_digest" => "boolean",
-    ];
-
-    /** @var array<string, mixed> */
-    protected $attributes = [
-        "password" => "",
-        "gender" => "",
-        "is_preservice" => false,
-        "school" => "",
-        "bio" => '{"blocks": []}',
-        "years_of_experience" => 0,
     ];
 
     public static function booted()
     {
         // Before creating the user, we normalize the email.
         static::creating(function (User $user) {
-            $user->email = Str::of($user->email)
-                ->trim()
-                ->lower();
+            $user->email = trim(strtolower($user->email));
         });
         static::created(function (User $user) {
             event(new Registered($user));
         });
-        static::saved(function (User $user) {
-            if ($user->consented and $user->wasChanged("consented")) {
-                $url =
-                    env("APP_QUALTRICS_CONSENT_LINK") . "?user_id={$user->id}";
-                Mail::to($user)->queue(new Survey($url));
-            }
-        });
+        // static::saved(function (User $user) {
+        //     if ($user->consented and $user->wasChanged("consented")) {
+        //         $url =
+        //             env("APP_QUALTRICS_CONSENT_LINK") . "?user_id={$user->id}";
+        //         Mail::to($user)->queue(new Survey($url));
+        //     }
+        // });
     }
+
+    // Overrides
+
+    public function getRouteKey()
+    {
+        return "@" .
+            Str::slug($this->full_name, "-") .
+            "--" .
+            $this->getAttribute($this->getRouteKeyName());
+    }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($value == "me") {
+            return auth()->user();
+        }
+        $id = last(explode("--", $value));
+        return parent::resolveRouteBinding($id, $field);
+    }
+
+    // Accessors and Mutators
+
+    /**
+     * Get the user's full name.
+     * @return string The user's full name
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    /**
+     * Get the user's avatar
+     * @return string The user's avatar
+     */
+    public function getAvatarAttribute(): string
+    {
+        if (!$this->attributes["avatar"]) {
+            $full_name = trim(str_replace(" ", "+", $this->full_name));
+            return "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF";
+        }
+        return Storage::url($this->attributes["avatar"]);
+    }
+
+    /**
+     * Set the user's avatar
+     * @param UploadedFile $value The new avatar file
+     */
+    public function setAvatarAttribute(UploadedFile $value): void
+    {
+        if ($this->attributes["avatar"]) {
+            Storage::delete($this->attributes["avatar"]);
+        }
+        $this->attributes["avatar"] = $value->store("avatars", "public");
+    }
+
+    // Relationships
 
     /**
      * Get the user's followers
@@ -158,6 +176,24 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's settings
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\UserSettings>
+     */
+    public function settings()
+    {
+        return $this->hasOne(UserSettings::class);
+    }
+
+    /**
+     * Get the user's profile
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\Profile>
+     */
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    /**
      * Get the user's posts
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
      */
@@ -170,7 +206,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * Get the user's post collections
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\PostCollection>
      */
-    public function postCollections()
+    public function collections()
     {
         return $this->hasMany(PostCollection::class);
     }
@@ -193,38 +229,68 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Search::class);
     }
 
+    // Scopes
+
+    // Methods
+
     /**
-     * Get the user's full name.
-     * @return string The User's full name
+     * Create a User with their profile and settings
+     * @param array<string, mixed> $data The user's data
      */
-    public function full_name()
+    public static function createWithProfileAndSettings(array $data): User
     {
-        return "{$this->first_name} {$this->last_name}";
+        $profile = [
+            "school" => isset($data["school"]) ? $data["school"] : "",
+            "is_preservice" => isset($data["is_preservice"]) ? true : false,
+            "years_of_experience" => isset($data["years_of_experience"])
+                ? $data["years_of_experience"]
+                : 0,
+            "subject" => $data["subject"],
+            "bio" => json_decode($data["bio"], true),
+            "grades" => array_map(
+                fn($grade) => Grade::from($grade),
+                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
+            ),
+            "gender" => "",
+        ];
+
+        $user = User::create([
+            "first_name" => $data["first_name"],
+            "last_name" => $data["last_name"],
+            "email" => $data["email"],
+        ]);
+        $user->profile()->create($profile);
+        $user->settings()->create([
+            "receive_weekly_digest" => true,
+            "receive_comment_notifications" => true,
+            "receive_new_follower_notifications" => true,
+            "receive_follower_notifications" => true,
+        ]);
+
+        return $user;
     }
 
-    public function avatar(): string
+    public function updateWithProfile(array $data)
     {
-        /**
-         * If the user doesn't have an avatar,
-         * we generate one using the user's full name
-         * using the ui-avatars.com API.
-         */
-        if (!$this->avatar) {
-            $full_name = Str::of($this->full_name())
-                ->trim()
-                ->replace(" ", "+");
-            return "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF";
+        $profile = [
+            "school" => isset($data["school"]) ? $data["school"] : "",
+            "is_preservice" => isset($data["is_preservice"]) ? true : false,
+            "years_of_experience" => isset($data["years_of_experience"])
+                ? $data["years_of_experience"]
+                : 0,
+            "subject" => $data["subject"],
+            "bio" => json_decode($data["bio"], true),
+            "grades" => array_map(
+                fn($grade) => Grade::from($grade),
+                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
+            ),
+            "gender" => "",
+        ];
+        if (isset($data["avatar"])) {
+            $this->avatar = $data["avatar"];
         }
-        return Storage::url($this->avatar);
-    }
-
-    /**
-     * Scope a query to only include preservice users.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
-     * @return \Illuminate\Database\Eloquent\Builder<self>
-     */
-    public function scopePreservice($query)
-    {
-        return $query->where("is_preservice", true);
+        $profile_save = $this->profile()->update($profile);
+        $user_save = $this->save();
+        return $profile_save and $user_save;
     }
 }

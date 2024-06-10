@@ -1,4 +1,4 @@
-@props(['title' => 'ConneCTION'])
+@props(['title' => 'ConneCTION', 'noLivewire' => false])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,16 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   @stack('meta')
   @routes
-  @livewireStyles
+  @unless ($noLivewire)
+    @livewireStyles
+  @endunless
   <link rel="stylesheet" href="{{ mix('css/app.css') }}">
   <script defer src="{{ mix('js/app.js') }}"></script>
-  @livewireScripts
+  @unless ($noLivewire)
+    @livewireScripts
+  @endunless
   @stack('styles')
   @stack('scripts')
   <title>{{ $title }}</title>
 </head>
 
-<body>
+<body {{ $attributes }}>
   <x-navbar />
   {{ $slot }}
 </body>

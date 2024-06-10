@@ -29,7 +29,7 @@ use Parental\HasChildren;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<Comment> $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
  */
 class Content extends Model implements Commentable
 {
@@ -41,6 +41,7 @@ class Content extends Model implements Commentable
         SoftDeletes,
         Searchable,
         HasComments;
+
     protected $table = "content";
 
     protected $childTypes = [

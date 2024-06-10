@@ -3,22 +3,25 @@
 namespace App\Http\Livewire;
 
 use App\Contracts\Likable;
+use App\Http\Livewire\Concerns\LazyLoading;
 use Livewire\Component;
 
 class LikeButton extends Component
 {
+    use LazyLoading;
+
     public $likable;
     public bool $liked = false;
-    public bool $ready_to_load_likes = false;
+
+    public $lazy = ["likes"];
 
     public function mount($likable): void
     {
         $this->likable = $likable;
-    }
-
-    public function loadLikes(): void
-    {
-        $this->ready_to_load_likes = true;
+        $this->liked = $this->likable
+            ->likes()
+            ->where("user_id", auth()->id())
+            ->exists();
     }
 
     public function getLikesProperty(): int
@@ -26,10 +29,6 @@ class LikeButton extends Component
         if (!$this->ready_to_load_likes) {
             return 0;
         }
-        $this->liked = $this->likable
-            ->likes()
-            ->where("user_id", auth()->id())
-            ->exists();
         return $this->likable->likes()->count();
     }
 
@@ -44,7 +43,7 @@ class LikeButton extends Component
 
     public function like(): void
     {
-        $this->likable->likes()->attach(auth()->user());
+        $this->likable->likes()->create(["user_id" => auth()->id()]);
         $this->liked = true;
         $this->dispatchBrowserEvent("success", [
             "message" => __("Liked!"),
@@ -53,7 +52,10 @@ class LikeButton extends Component
 
     public function unlike(): void
     {
-        $this->likable->likes()->detach(auth()->user());
+        $this->likable
+            ->likes()
+            ->where("user_id", auth()->id())
+            ->delete();
         $this->liked = false;
         $this->dispatchBrowserEvent("success", [
             "message" => __("Unliked!"),

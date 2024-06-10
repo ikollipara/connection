@@ -6,6 +6,11 @@ use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
+use App\Http\Controllers\UserFollowersController;
+use App\Http\Controllers\UserFollowingController;
+use App\Http\Controllers\UserProfilesController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\User;
@@ -38,15 +43,17 @@ if (env("APP_DEBUG")) {
     });
 }
 
-Route::get("/sign-up", User\Create::class)->name("registration.create");
+Route::get("/sign-up", [UsersController::class, "create"])
+    ->name("registration.create")
+    ->middleware("guest");
+Route::post("/users", [UsersController::class, "store"])->name(
+    "registration.store",
+);
+
 Route::resource("login", LoginController::class)
-    ->only(["create", "store", "show"])
+    ->only(["create", "store", "show", "destroy"])
     ->parameter("login", "user")
     ->middleware("guest");
-
-Route::delete("/logout", [LoginController::class, "destroy"])
-    ->name("login.destroy")
-    ->middleware("auth");
 
 Route::get("/email/verify/{id}/{hash}", [
     EmailVerificationController::class,
@@ -74,23 +81,40 @@ Route::middleware("auth")->group(function () {
     Route::get("/search", Search::class)
         ->name("search")
         ->middleware("verified");
-    Route::get("/users/{user}/edit", User\Settings::class)
-        ->name("users.edit")
+    Route::resource("users", UsersController::class)->only([
+        "edit",
+        "update",
+        "show",
+    ]);
+    Route::resource("users.followers", UserFollowersController::class)->only([
+        "index",
+    ]);
+    Route::resource("users.following", UserFollowingController::class)->only([
+        "index",
+    ]);
+    Route::get("/users/{user}/profile/edit", [
+        UserProfilesController::class,
+        "edit",
+    ])
+        ->name("users.profile.edit")
         ->middleware("verified");
-    Route::get("/users/{user}", User\Show::class)
-        ->name("users.show")
+    Route::patch("/users/{user}/profile", [
+        UserProfilesController::class,
+        "update",
+    ])
+        ->name("users.profile.update")
         ->middleware("verified");
-    Route::get("/users/{user}/posts", User\Posts::class)
-        ->name("users.posts.index")
+    Route::get("/users/{user}/settings/edit", [
+        UserSettingsController::class,
+        "edit",
+    ])
+        ->name("users.settings.edit")
         ->middleware("verified");
-    Route::get("/users/{user}/collections", User\Collections::class)
-        ->name("users.collections.index")
-        ->middleware("verified");
-    Route::get("/users/{user}/followers", User\Followers::class)
-        ->name("users.followers.index")
-        ->middleware("verified");
-    Route::get("/users/{user}/followings", User\Followings::class)
-        ->name("users.followings.index")
+    Route::patch("/users/{user}/settings", [
+        UserSettingsController::class,
+        "update",
+    ])
+        ->name("users.settings.update")
         ->middleware("verified");
 
     // File Upload

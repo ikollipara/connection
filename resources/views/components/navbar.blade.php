@@ -65,12 +65,13 @@
           <x-slot name="icon">
             <x-lucide-user class="icon" width="30" height="30" />
           </x-slot>
-          <x-nav.item route="{{ route('users.show', ['user' => auth()->user()]) }}">My Profile</x-nav.item>
-          <x-nav.item route="{{ route('users.edit', ['user' => auth()->user()]) }}">Settings</x-nav.item>
+          <x-nav.item route="{{ route('users.show', ['user' => auth()->user()]) }}">See My Profile</x-nav.item>
+          <x-nav.item route="{{ route('users.profile.edit', 'me') }}">Edit Profile</x-nav.item>
+          <x-nav.item route="{{ route('users.settings.edit', 'me') }}">Edit Settings</x-nav.item>
         </x-nav.dropdown>
         <x-nav.avatar />
         <li class="navbar-item">
-          <form action="{{ route('login.destroy') }}" method="post">
+          <form action="{{ route('login.destroy', auth()->id()) }}" method="post">
             @csrf
             @method('DELETE')
             <button x-on:click="$el.classList.add('is-loading')" class="button is-outlined is-primary icon-text"

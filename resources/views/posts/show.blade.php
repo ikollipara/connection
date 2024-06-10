@@ -6,13 +6,12 @@
         class="is-flex is-flex-direction-column mb-2 is-align-items-center is-justify-content-center has-text-centered"
         style="gap: 0.5rem;">
         <figure class="image is-64x64 is-flex is-justify-content-center is-align-items-center">
-          <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded" src="{{ $post->user->avatar() }}"
+          <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded" src="{{ $post->user->avatar }}"
             alt="">
         </figure>
         @if ($post->user)
           <a href="{{ route('users.show', ['user' => $post->user]) }}" class="link is-italic">
-            {{ $post->user->full_name() }} - {{ $post->user->subject }} Teacher at
-            {{ $post->user->school }}
+            {{ $post->user->full_name }} - {{ $post->user->profile->short_title }}
           </a>
         @else
           <p class="is-italic content">[Deleted]</p>
@@ -48,7 +47,7 @@
         <summary>Metadata</summary>
         <x-metadata.table :metadata="$post->metadata" />
       </details>
-      <x-editor model="{{ Js::from($post->body) }}" name="editor" read-only />
+      <x-editor value="{{ Js::from($post->body) }}" name="editor" read-only />
       <x-modal show-var='showModal' title="Add to Collection">
         <table class="table is-fullwidth">
           <thead>
@@ -58,7 +57,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach (auth()->user()->postCollections as $collection)
+            @foreach (auth()->user()->collections as $collection)
               @livewire('add-collection-row', ['collection' => $collection, 'post' => $post], key($collection->id))
             @endforeach
           </tbody>

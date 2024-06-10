@@ -54,7 +54,7 @@ class PostCollectionsController extends Controller
         $user = $this->current_user();
 
         return view("collections.show", [
-            "collection" => $postCollection,
+            "collection" => $postCollection->load("user.profile"),
         ]);
     }
 

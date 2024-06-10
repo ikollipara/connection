@@ -2,26 +2,23 @@
 
 namespace App\Http\Livewire\Collection;
 
+use App\Http\Livewire\Concerns\LazyLoading;
+use App\Models\ContentComment;
 use App\Models\PostCollection;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Comments extends Component
 {
-    use WithPagination;
+    use WithPagination, LazyLoading;
 
     public PostCollection $collection;
     public string $comment = "";
-    public bool $ready_to_load_comments = false;
+    public $lazy = ["comments"];
 
-    public function mount(PostCollection $collection): void
+    public function mount(PostCollection $post_collection): void
     {
-        $this->collection = $collection;
-    }
-
-    public function loadComments(): void
-    {
-        $this->ready_to_load_comments = true;
+        $this->collection = $post_collection;
     }
 
     public function getCommentsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
