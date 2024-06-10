@@ -1,7 +1,7 @@
 <tr x-data x-on:entry-removed.document="if ($event.detail.id === '{{ $this->post->id }}') { $el.remove() }">
   <td>{{ $this->post->title ?? 'Unnamed Post' }}</td>
   @if ($this->post->user)
-    <td>{{ $this->post->user->full_name() }}</td>
+    <td>{{ $this->post->user->full_name }}</td>
   @else
     <td>[Deleted]</td>
   @endif
