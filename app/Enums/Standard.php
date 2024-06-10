@@ -465,7 +465,9 @@ class Standard extends Enum
             "NE_CS_HS_5_a" =>
                 "CS.HS.5.a Define the term algorithm and explain its relationship to computational solutions",
             "NE_CS_HS_5_b" =>
-                "CS.HS.5.c Decompose a complex problem into distinct parts",
+                "CS.HS.5.b Decompose a complex problem into distinct parts",
+            "NE_CS_HS_5_c" =>
+                "CS.HS.5.c Identify and develop computation solutions to problems",
             "NE_CS_HS_5_d" =>
                 "CS.HS.5.d Define abstraction in terms of computer science and explain how it is used to manage complexity",
             "NE_CS_HS_5_e" =>
