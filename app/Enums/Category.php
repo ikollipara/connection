@@ -12,6 +12,7 @@ use Spatie\Enum\Laravel\Enum;
  * @method static self theory()
  * @method static self assignment()
  * @method static self assessment()
+ * @method static self plan()
  */
 class Category extends Enum
 {
