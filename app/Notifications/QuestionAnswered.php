@@ -45,7 +45,7 @@ class QuestionAnswered extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->greeting("Hello " . $notifiable->full_name())
+            ->greeting("Hello " . $notifiable->full_name)
             ->line("Your question has been answered.")
             ->lines([
                 "Question: " . $this->question->title,

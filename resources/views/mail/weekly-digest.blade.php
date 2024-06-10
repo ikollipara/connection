@@ -1,6 +1,6 @@
 @php
   $user_or_default = function ($user) {
-      return $user ? $user->full_name() : '[Deleted]';
+      return $user ? $user->full_name : '[Deleted]';
   };
 @endphp
 

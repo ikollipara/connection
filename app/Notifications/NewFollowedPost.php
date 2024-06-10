@@ -44,8 +44,8 @@ class NewFollowedPost extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject("New Post from {$this->post->user->full_name()}")
-            ->line("{$this->post->user->full_name()} has posted a new post!")
+            ->subject("New Post from {$this->post->user->full_name}")
+            ->line("{$this->post->user->full_name} has posted a new post!")
             ->line("{$this->post->title}")
             ->action("View Post", route("posts.show", $this->post));
     }

@@ -34,7 +34,7 @@ class FAQQuestion extends Mailable
     public function build()
     {
         return $this->subject("[ConneCTION] New FAQ Question")
-            ->from($this->user->email, $this->user->full_name())
+            ->from($this->user->email, $this->user->full_name)
             // @phpstan-ignore-next-line
             ->to(env("MAIL_FROM_ADDRESS"))
             ->view("mail.faq-question");

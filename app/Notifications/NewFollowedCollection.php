@@ -45,10 +45,10 @@ class NewFollowedCollection extends Notification
     {
         return (new MailMessage())
             ->subject(
-                "New Collection from {$this->post_collection->user->full_name()}",
+                "New Collection from {$this->post_collection->user->full_name}",
             )
             ->line(
-                "{$this->post_collection->user->full_name()} has created a new collection!",
+                "{$this->post_collection->user->full_name} has created a new collection!",
             )
             ->action(
                 "View Collection",
