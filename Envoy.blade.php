@@ -37,8 +37,7 @@
 @task('run-migrations', ['on' => 'csce'])
   cd public_html/connection-main
   php artisan migrate --force
-  php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\PostCollection"
+  php artisan scout:import "App\Models\Content"
 @endtask
 
 @task('cache', ['on' => 'csce'])

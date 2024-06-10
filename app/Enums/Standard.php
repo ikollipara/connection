@@ -161,12 +161,10 @@ use Spatie\Enum\Laravel\Enum;
  */
 class Standard extends Enum
 {
-    public static function getGroup(string $group)
+    public static function getGroup(StandardGroup $group)
     {
-        $methods = get_class_methods(static::class);
-        return collect($methods)
-            ->filter(fn($method) => str_starts_with($method, $group))
-            ->map(fn($method) => static::$method())
+        return collect(static::toValues())
+            ->filter(fn($value) => str_starts_with($value, $group))
             ->values();
     }
     protected static function values(): Closure

@@ -9,6 +9,7 @@
 
 namespace App\Enums;
 
+use Closure;
 use Spatie\Enum\Laravel\Enum;
 use Illuminate\Support\Str;
 
@@ -85,5 +86,17 @@ class StandardGroup extends Enum
             "NE_CS_HS_6" =>
                 "CS.HS.6 Implement programming literacy practices to create computational artifacts",
         ];
+    }
+
+    public static function values(): Closure
+    {
+        return function ($value) {
+            if (str_starts_with($value, "CSTA")) {
+                return str_replace("_", "-", substr($value, 5));
+            }
+            if (str_starts_with($value, "NE")) {
+                return str_replace("_", ".", substr($value, 3));
+            }
+        };
     }
 }
