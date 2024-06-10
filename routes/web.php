@@ -51,9 +51,13 @@ Route::post("/users", [UsersController::class, "store"])->name(
 );
 
 Route::resource("login", LoginController::class)
-    ->only(["create", "store", "show", "destroy"])
+    ->only(["create", "store", "show"])
     ->parameter("login", "user")
     ->middleware("guest");
+
+Route::delete("/logout", [LoginController::class, "destroy"])
+    ->name("login.destroy")
+    ->middleware("auth");
 
 Route::get("/email/verify/{id}/{hash}", [
     EmailVerificationController::class,

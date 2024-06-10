@@ -112,7 +112,7 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy(User $user)
     {
         auth()->logout();
         session()->invalidate();
