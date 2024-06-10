@@ -19,3 +19,4 @@ description: This file contains the HTML for the 500 error page.
     </p>
     <x-errors.go-btn />
   </x-container>
+</x-layout>

@@ -18,3 +18,4 @@ description: This file contains the HTML for the 503 error page.
       {{ __('The server is currently down for maintenance. We are working to fix this issue as soon as possible. We are sorry for the inconvience!') }}
     </p>
   </x-container>
+</x-layout>
