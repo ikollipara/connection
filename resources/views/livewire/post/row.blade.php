@@ -1,4 +1,5 @@
-<tr @@click="window.location.href = '{{ route('posts.edit', ['uuid' => $this->post->id]) }}'"
+<tr data-turbo-preload
+  @@click="window.location.href = '{{ route('posts.edit', ['uuid' => $this->post->id]) }}'"
   style="cursor: pointer;">
   <td>
     @if ($this->post->title)
@@ -44,7 +45,7 @@
         <x-lucide-arrow-right class="icon" width="30" height="30" fill="none" />
       </a>
     @endif
-    <a @@click.stop class="button is-primary is-outlined"
+    <a @@click.stop data-turbo-preload class="button is-primary is-outlined"
       href="{{ route('posts.edit', ['uuid' => $this->post->id]) }}">
       <x-lucide-pencil class="icon" width="30" height="30" fill="none" />
     </a>

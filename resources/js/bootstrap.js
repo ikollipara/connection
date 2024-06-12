@@ -32,8 +32,10 @@ import("axios").then(({ default: axios }) => {
 import editor from "./editor";
 import slimSelect from "./slim-select";
 import Alpine from 'alpinejs'
+import * as Turbo from "@hotwired/turbo";
 
-window.Alpine = Alpine
+window.Turbo = Turbo;
+window.Alpine = Alpine;
 Alpine.data("editor", editor);
 Alpine.data("slimSelect", slimSelect);
 

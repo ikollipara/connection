@@ -16,7 +16,7 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a href="{{ route('users.show', ['user' => $item->user['id']]) }}"
+        <td><a data-turbo-preload href="{{ route('users.show', ['user' => $item->user['id']]) }}"
             class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         </td>
       @else
@@ -51,7 +51,7 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a href="{{ route('users.show', ['user' => $item->user['id']]) }}"
+        <td><a data-turbo-preload href="{{ route('users.show', ['user' => $item->user['id']]) }}"
             class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         @else
         <td>[Deleted]</td>

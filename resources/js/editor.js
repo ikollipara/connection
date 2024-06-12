@@ -209,6 +209,9 @@ export default ({ name, readOnly = false, canUpload = true, csrf, body = { block
     },
     editor: {
         'class': 'content is-medium editor',
+        destroy() {
+            this.editor.destroy();
+        },
         ['x-ref']: `${name}-editor`,
         ['x-data']() {
             const that = this;

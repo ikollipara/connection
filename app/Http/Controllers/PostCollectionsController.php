@@ -53,6 +53,13 @@ class PostCollectionsController extends Controller
         /** @var \App\Models\User */
         $user = $this->current_user();
 
+        $postCollection
+            ->views()
+            ->where("user_id", $user->id)
+            ->updateOrCreate([
+                "user_id" => $user->id,
+            ]);
+
         return view("collections.show", [
             "collection" => $postCollection->load("user.profile"),
         ]);

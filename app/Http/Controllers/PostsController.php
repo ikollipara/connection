@@ -55,6 +55,13 @@ class PostsController extends Controller
         /** @var \App\Models\User */
         $user = auth()->user();
 
+        $post
+            ->views()
+            ->where("user_id", $user->id)
+            ->updateOrCreate([
+                "user_id" => $user->id,
+            ]);
+
         return view("posts.show", ["post" => $post->load("user.profile")]);
     }
 

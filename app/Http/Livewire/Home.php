@@ -11,10 +11,6 @@ use Livewire\Component;
 class Home extends Component
 {
     use LazyLoading;
-    public bool $ready_to_load_top_posts = false;
-    public bool $ready_to_load_top_collections = false;
-    public bool $ready_to_load_followings_items = false;
-
     protected $lazy = ["top_posts", "top_collections", "followings_items"];
 
     /** @return \Illuminate\Support\Collection<\App\Models\Post|\App\Models\PostCollection> */

@@ -1,7 +1,7 @@
 <nav x-data="{ active: false }" class="navbar is-light" id="nav">
   <div class="navbar-brand">
     @auth
-      <x-nav.item route="{{ route('home') }}">
+      <x-nav.item data-turbo-preload route="{{ route('home') }}">
         <x-logo :width="100" :height="55" />
       </x-nav.item>
     @else
@@ -23,22 +23,27 @@
           <x-slot name="icon">
             <x-lucide-newspaper class="icon" width="30" height="30" />
           </x-slot>
-          <x-nav.item route="{{ route('posts.index', ['status' => 'draft']) }}">Post Drafts</x-nav.item>
-          <x-nav.item route="{{ route('posts.index', ['status' => 'published']) }}">Published Posts</x-nav.item>
-          <x-nav.item route="{{ route('posts.index', ['status' => 'archived']) }}">Archived Posts</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('posts.index', ['status' => 'draft']) }}">Post
+            Drafts</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('posts.index', ['status' => 'published']) }}">Published
+            Posts</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('posts.index', ['status' => 'archived']) }}">Archived
+            Posts</x-nav.item>
           <x-nav.divider />
-          <x-nav.item route="{{ route('posts.create') }}">Create Post</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('posts.create') }}">Create Post</x-nav.item>
         </x-nav.dropdown>
         <x-nav.dropdown title="My Collections">
           <x-slot name="icon">
             <x-lucide-layers class="icon" width="30" height="30" />
           </x-slot>
-          <x-nav.item route="{{ route('collections.index', ['status' => 'draft']) }}">Collection Drafts</x-nav.item>
-          <x-nav.item route="{{ route('collections.index', ['status' => 'published']) }}">Published
+          <x-nav.item data-turbo-preload route="{{ route('collections.index', ['status' => 'draft']) }}">Collection
+            Drafts</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('collections.index', ['status' => 'published']) }}">Published
             Collections</x-nav.item>
-          <x-nav.item route="{{ route('collections.index', ['status' => 'archived']) }}">Archived Collections</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('collections.index', ['status' => 'archived']) }}">Archived
+            Collections</x-nav.item>
           <x-nav.divider />
-          <x-nav.item route="{{ route('collections.create') }}">Create Collection</x-nav.item>
+          <x-nav.item data-turbo-preload route="{{ route('collections.create') }}">Create Collection</x-nav.item>
         </x-nav.dropdown>
       @else
         <x-nav.item route="{{ route('index') }}">Home</x-nav.item>
@@ -55,7 +60,7 @@
           </span>
           <span>FAQ/Help</span>
         </x-nav.item>
-        <x-nav.item class="icon-text" route="{{ route('search') }}">
+        <x-nav.item data-turbo-preload class="icon-text" route="{{ route('search') }}">
           <span class="icon">
             <x-lucide-search class="icon" width="30" height="30" />
           </span>

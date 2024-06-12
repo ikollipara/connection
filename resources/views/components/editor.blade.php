@@ -36,5 +36,5 @@ The editor component is a WYSIWYG editor that uses the EditorJS editor.
 })" x-modelable="body"
   @if ($xModel) x-model="{{ $xModel }}" @endif>
   <input x-bind="input" hidden>
-  <div wire:ignore x-bind="editor"></div>
+  <div wire:ignore x-on:turbo:before-cache="destroy" x-bind="editor"></div>
 </section>

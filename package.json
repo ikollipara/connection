@@ -49,6 +49,7 @@
     },
     "dependencies": {
         "@editorjs/code": "^2.9.0",
+        "@hotwired/turbo": "^8.0.4",
         "alpinejs": "^3.13.3",
         "slim-select": "^2.6.0"
     }
