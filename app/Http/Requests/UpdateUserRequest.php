@@ -38,7 +38,6 @@ class UpdateUserRequest extends FormRequest
             "subject" => "sometimes|string",
             "grades" => "sometimes",
             "bio" => "json",
-            "consented" => "sometimes|accepted",
         ];
     }
 }

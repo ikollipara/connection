@@ -6,6 +6,7 @@ use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
+use App\Http\Controllers\UpdateUserConsentHandler;
 use App\Http\Controllers\UserFollowersController;
 use App\Http\Controllers\UserFollowingController;
 use App\Http\Controllers\UserProfilesController;
@@ -120,6 +121,14 @@ Route::middleware("auth")->group(function () {
         "update",
     ])
         ->name("users.settings.update")
+        ->middleware("verified");
+
+    Route::put("/users/{user}/consent", UpdateUserConsentHandler::class)
+        ->name("users.consent.update")
+        ->middleware("verified");
+
+    Route::patch("/users/{user}/consent", UpdateUserConsentHandler::class)
+        ->name("users.consent.update")
         ->middleware("verified");
 
     // File Upload

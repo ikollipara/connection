@@ -74,23 +74,6 @@ class UserProfilesController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $validated = $request->validated();
-        if (isset($validated["consented"]) or count($validated) === 0) {
-            if (isset($validated["consented"])) {
-                $user->consented = true;
-            }
-            if (count($validated) === 0) {
-                $user->consented = false;
-            }
-            $success = $user->save();
-            return back()->with(
-                $success ? "success" : "error",
-                __(
-                    $success
-                        ? "Your consent has been updated."
-                        : "There was an error updating your consent.",
-                ),
-            );
-        }
         $user->updateWithProfile($validated);
         return back()->with("success", __("Your profile has been updated."));
     }

@@ -286,6 +286,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ),
             "gender" => "",
         ];
+        $this->update([
+            "first_name" => $data["first_name"],
+            "last_name" => $data["last_name"],
+            "email" => $data["email"],
+        ]);
         if (isset($data["avatar"])) {
             $this->avatar = $data["avatar"];
         }

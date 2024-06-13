@@ -69,7 +69,7 @@ description: This file contains the HTML for editing a user's profile.
       </section>
     </form>
     <x-modal title="conneCTION Consent Form" show-var="show">
-      <form action="{{ route('users.profile.update', 'me') }}" method="post" id="update-consent-form">
+      <form action="{{ route('users.consent.update', 'me') }}" method="post" id="update-consent-form">
         @csrf
         @method('PATCH')
         <x-research.consent-form>
