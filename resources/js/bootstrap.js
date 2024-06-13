@@ -41,10 +41,8 @@ Alpine.data("slimSelect", slimSelect);
 
 Alpine.start()
 
-Promise.all([
-import('animate.css'),
 import("bulma-toast")
-]) .then(([_, { toast }]) => {
+.then(({ toast }) => {
     window.toast = toast;
     window.success = (message) => {
         toast({

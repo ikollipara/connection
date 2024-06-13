@@ -1,9 +1,10 @@
 const mix = require('laravel-mix');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 require("laravel-mix-purgecss");
 require("laravel-mix-compress");
 require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
-require('laravel-mix-bundle-analyzer');
+const BundleAnalyer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 /*
  |--------------------------------------------------------------------------
@@ -23,7 +24,10 @@ mix
     return {
       resolve: {
         extensions: [".*",".wasm",".mjs",".js",".jsx",".json", ".css"]
-      }
+      },
+      plugins: [
+        new BundleAnalyzerPlugin(),
+      ]
     }
   })
   .imagemin("images/*", { context: "resources" })
@@ -34,6 +38,6 @@ if (mix.inProduction()) {
   .polyfill()
   .version()
   .purgeCss({
-  safelist: ['animate__animated', 'animate__fadeIn', 'animate__fadeOut', /ss-*/],
+  safelist: [/ss-*/],
   })
 }
