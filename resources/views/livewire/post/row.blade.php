@@ -50,7 +50,8 @@
       <x-lucide-pencil class="icon" width="30" height="30" fill="none" />
     </a>
     @if ($this->post->trashed())
-      <button class="button is-danger" wire:click='restore' wire:target='restore' wire:loading.class='is-loading'>
+      <button x-on:click.stop class="button is-danger" wire:click='restore' wire:target='restore'
+        wire:loading.class='is-loading'>
         <x-lucide-archive-restore class="icon" width="30" height="30" fill="none" />
       </button>
     @else

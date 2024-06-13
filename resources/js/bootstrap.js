@@ -73,7 +73,7 @@ import("bulma-toast")
     });
 })
 
-document.addEventListener('post-removed', (event) => {
+document.addEventListener('content-removed', (event) => {
     event.target.classList.add('animate__animated', 'animate__fadeOut');
     setTimeout(() => {
         event.target.remove();

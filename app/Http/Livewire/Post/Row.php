@@ -22,7 +22,7 @@ class Row extends Component
             ]);
             return;
         }
-        $this->dispatchBrowserEvent("post-removed", [
+        $this->dispatchBrowserEvent("content-removed", [
             "id" => $this->post->id,
         ]);
         $this->dispatchBrowserEvent("success", [
@@ -38,7 +38,7 @@ class Row extends Component
             ]);
             return;
         }
-        $this->dispatchBrowserEvent("post-removed", [
+        $this->dispatchBrowserEvent("content-removed", [
             "id" => $this->post->id,
         ]);
         $this->dispatchBrowserEvent("success", [
