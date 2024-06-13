@@ -123,10 +123,6 @@ Route::middleware("auth")->group(function () {
         ->name("users.settings.update")
         ->middleware("verified");
 
-    Route::put("/users/{user}/consent", UpdateUserConsentHandler::class)
-        ->name("users.consent.update")
-        ->middleware("verified");
-
     Route::patch("/users/{user}/consent", UpdateUserConsentHandler::class)
         ->name("users.consent.update")
         ->middleware("verified");
