@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Contracts\Commentable;
+use App\Contracts\IsSearchable;
 use App\Enums\Standard;
+use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\HasRichText;
@@ -31,7 +33,7 @@ use Parental\HasChildren;
  * @property \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
  */
-class Content extends Model implements Commentable
+class Content extends Model implements Commentable, IsSearchable
 {
     use HasFactory,
         HasChildren,
@@ -209,5 +211,122 @@ class Content extends Model implements Commentable
         return $query->where("published", true);
     }
 
+    /**
+     * Apply search constraints to the query.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @param array<string, mixed> $constraints
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopeWithSearchConstraints($query, array $constraints)
+    {
+        return $query
+            ->where("published", true)
+            ->when(
+                mb_strlen($constraints["type"]) > 0,
+                fn($query) => $query->where("type", $constraints["type"]),
+            )
+            ->when(
+                count($constraints["grades"]) > 0,
+                fn($query) => $query->whereJsonContains(
+                    "metadata->grades",
+                    $constraints["grades"],
+                ),
+            )
+            ->when(
+                count($constraints["standards"]) > 0,
+                fn($query) => $query->whereJsonContains(
+                    "metadata->standards",
+                    $constraints["standards"],
+                ),
+            )
+            ->when(count($constraints["standard_groups"]) > 0, function (
+                $query
+            ) use ($constraints) {
+                $standards = collect($constraints["standard_groups"])
+                    ->map(
+                        fn($group) => Standard::getGroup(
+                            StandardGroup::from($group),
+                        ),
+                    )
+                    ->flatten();
+                return $query->where(
+                    fn($query) => $standards->map(
+                        fn($standard) => $query->orWhereJsonContains(
+                            "metadata->standards",
+                            $standard,
+                        ),
+                    ),
+                );
+            })
+            ->when(
+                count($constraints["practices"]) > 0,
+                fn($query) => $query->whereJsonContains(
+                    "metadata->practices",
+                    $constraints["practices"],
+                ),
+            )
+            ->when(
+                count($constraints["languages"]) > 0,
+                fn($query) => $query->whereJsonContains(
+                    "metadata->languages",
+                    $constraints["languages"],
+                ),
+            )
+            ->when(
+                count($constraints["categories"]) > 0,
+                fn($query) => $query->whereIn(
+                    "metadata->category",
+                    $constraints["categories"],
+                ),
+            )
+            ->when(
+                count($constraints["audiences"]) > 0,
+                fn($query) => $query->whereIn(
+                    "metadata->audience",
+                    $constraints["audiences"],
+                ),
+            )
+            ->whereHas("likes", null, ">=", $constraints["likes_count"])
+            ->whereHas("views", null, ">=", $constraints["views_count"]);
+    }
+
     // Methods
+
+    public static function normalizeSearchConstraints(array $constraints): array
+    {
+        $normalize_as_array = fn($value) => is_array($value)
+            ? $value
+            : [$value];
+        return [
+            "q" => isset($constraints["q"]) ? $constraints["q"] : "",
+            "type" => isset($constraints["type"]) ? $constraints["type"] : "",
+            "categories" => isset($constraints["categories"])
+                ? $normalize_as_array($constraints["categories"])
+                : [],
+            "audiences" => isset($constraints["audiences"])
+                ? $normalize_as_array($constraints["audiences"])
+                : [],
+            "grades" => isset($constraints["grades"])
+                ? $normalize_as_array($constraints["grades"])
+                : [],
+            "standards" => isset($constraints["standards"])
+                ? $normalize_as_array($constraints["standards"])
+                : [],
+            "practices" => isset($constraints["practices"])
+                ? $normalize_as_array($constraints["practices"])
+                : [],
+            "languages" => isset($constraints["languages"])
+                ? $normalize_as_array($constraints["languages"])
+                : [],
+            "standard_groups" => isset($constraints["standard_groups"])
+                ? $normalize_as_array($constraints["standard_groups"])
+                : [],
+            "likes_count" => isset($constraints["likes_count"])
+                ? $constraints["likes_count"]
+                : 0,
+            "views_count" => isset($constraints["views_count"])
+                ? $constraints["views_count"]
+                : 0,
+        ];
+    }
 }

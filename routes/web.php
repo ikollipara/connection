@@ -6,7 +6,8 @@ use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
-use App\Http\Controllers\UpdateUserConsentHandler;
+use App\Http\Handlers\ContentSearchHandler;
+use App\Http\Handlers\UpdateUserConsentHandler;
 use App\Http\Controllers\UserFollowersController;
 use App\Http\Controllers\UserFollowingController;
 use App\Http\Controllers\UserProfilesController;
@@ -14,11 +15,9 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Livewire\User;
 use App\Http\Livewire\Post;
 use App\Http\Livewire\Collection;
 use App\Http\Livewire\Home;
-use App\Http\Livewire\Search;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,7 +82,7 @@ Route::middleware("auth")->group(function () {
         "question",
     );
     Route::get("/home", Home::class)->name("home");
-    Route::get("/search", Search::class)
+    Route::get("/search", ContentSearchHandler::class)
         ->name("search")
         ->middleware("verified");
     Route::resource("users", UsersController::class)->only([
