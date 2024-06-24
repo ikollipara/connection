@@ -194,6 +194,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's content
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Content>
+     */
+    public function content()
+    {
+        return $this->hasMany(Content::class);
+    }
+
+    /**
      * Get the user's posts
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
      */
@@ -248,7 +257,7 @@ class User extends Authenticatable implements MustVerifyEmail
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
             "grades" => array_map(
-                fn($grade) => Grade::from($grade),
+                fn ($grade) => Grade::from($grade),
                 is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
             ),
             "gender" => "",
@@ -281,7 +290,7 @@ class User extends Authenticatable implements MustVerifyEmail
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
             "grades" => array_map(
-                fn($grade) => Grade::from($grade),
+                fn ($grade) => Grade::from($grade),
                 is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
             ),
             "gender" => "",

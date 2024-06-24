@@ -1,3 +1,10 @@
+{{--
+file: resources/views/components/forms/input.blade.php
+author: Ian Kollipara
+date: 2024-06-13
+description: This file contains the HTML for an input field.
+ --}}
+
 @props(['label', 'name', 'hasAddons' => false, 'withoutLabel' => false, 'fieldClasses' => []])
 
 @php

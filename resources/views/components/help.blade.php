@@ -1,10 +1,15 @@
-@props(['title', 'showVar' => 'show'])
-<span x-data="{ {{ $showVar }}: false }">
-  <button type="button" @@click="{{ $showVar }} = true"
-    {{ $attributes->merge(['class' => 'button is-primary']) }}>
+{{--
+file: resources/views/components/help.blade.php
+author: Ian Kollipara
+date: 2024-06-17
+description: The HTML for a help button
+ --}}
+
+@props(['title'])
+
+<x-modal :title="$title">
+  <x-slot name="btn" class="is-primary">
     <x-lucide-help-circle class="icon" />
-  </button>
-  <x-modal show-var="{{ $showVar }}" title="{{ $title }}">
-    {{ $slot }}
-  </x-modal>
-</span>
+  </x-slot>
+  {{ $slot }}
+</x-modal>

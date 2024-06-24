@@ -5,7 +5,15 @@ date: 2024-06-13
 description: This file contains the HTML for a select input.
  --}}
 
-@props(['name', 'label' => null, 'options' => null, 'enum' => null, 'fieldClasses' => [], 'multiple' => false])
+@props([
+    'name',
+    'label' => null,
+    'options' => null,
+    'enum' => null,
+    'fieldClasses' => [],
+    'multiple' => false,
+    'selected' => [],
+])
 
 @php
   $label ??= ucwords($name);
@@ -14,7 +22,8 @@ description: This file contains the HTML for a select input.
   }
   $is_enum = !is_null($enum);
   $fieldClasses = is_array($fieldClasses) ? implode(' ', $fieldClasses) : $fieldClasses;
-  $selected = old($name) ?? [];
+  $selected = old($name) ?? $selected;
+  $selected = is_array($selected) ? $selected : [$selected];
   $name = $multiple ? $name . '[]' : $name;
 @endphp
 

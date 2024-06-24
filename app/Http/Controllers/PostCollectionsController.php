@@ -9,38 +9,6 @@ use Illuminate\Http\Request;
 class PostCollectionsController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function index(Request $request)
-    {
-        $status = $request->query("status", "draft");
-
-        /** @var \App\Models\User */
-        $user = $this->current_user();
-
-        return view("collections.index", [
-            "collections" => $user
-                ->postCollections()
-                /** @phpstan-ignore-next-line */
-                ->status($status)
-                ->get(),
-            "status" => $status,
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
-    {
-        return view("collections.create");
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\Models\PostCollection  $postCollection
@@ -62,20 +30,10 @@ class PostCollectionsController extends Controller
 
         return view("collections.show", [
             "collection" => $postCollection->load("user.profile"),
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @return \Illuminate\View\View
-     */
-    public function edit(PostCollection $postCollection)
-    {
-        $this->authorize("update", $postCollection);
-        return view("collections.edit", [
-            "collection" => $postCollection,
+            "liked_by_user" => $postCollection
+                ->likes()
+                ->where("user_id", $user->id)
+                ->first(),
         ]);
     }
 }

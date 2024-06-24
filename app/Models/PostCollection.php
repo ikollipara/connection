@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 
 /**
@@ -12,8 +13,6 @@ use Parental\HasParent;
 class PostCollection extends Content
 {
     use HasFactory, HasParent;
-
-    protected $withCount = ["likes", "views", "entries"];
 
     /**
      * Get all the entries for the post collection.
@@ -26,6 +25,24 @@ class PostCollection extends Content
             "entries",
             "collection_id",
             "content_id",
-        )->using(Entry::class);
+        )
+            ->using(Entry::class)
+            ->withPivot("id")
+            ->withTimestamps();
+    }
+
+    /* ===== Methods ===== */
+
+    /**
+     * Check if a content is an entry of the post collection.
+     * @param  \App\Models\Content|string  $content
+     * @return bool
+     */
+    public function hasEntry($content): bool
+    {
+        $content = $content instanceof Content ? $content->id : $content;
+        return $this->entries()
+            ->where("content_id", $content)
+            ->exists();
     }
 }

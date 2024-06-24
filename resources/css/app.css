@@ -39,6 +39,16 @@
     --bulma-link-text: #D6DBFF;
 }
 
+.preserve-rounding {
+    border-radius: var(--bulma-control-radius) !important;
+}
+
+.level.bordered {
+    padding-block: 0.25rem;
+    border-top: var(--bulma-white) 1px solid;
+    border-bottom: var(--bulma-white) 1px solid;
+}
+
 /* Vendored from animate.css */
 .animate__animated {
     -webkit-animation-duration: 1s;

@@ -77,6 +77,19 @@ class FrequentlyAskedQuestion extends Model
     }
 
     /**
+     * Scope a query to include questions that contain a specific string.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query, string $search)
+    {
+        return $query
+            ->where("title", "like", "%{$search}%")
+            ->orWhere("content", "like", "%{$search}%");
+    }
+
+    /**
      * Get the overall rating of the question.
      */
     public function getRatingAttribute()

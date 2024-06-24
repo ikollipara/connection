@@ -1,23 +1,28 @@
 <?php
 
+use App\Http\Controllers\ContentLikesController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PostCollectionEntriesController;
+use App\Http\Controllers\PostCollectionsCommentsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
+use App\Http\Controllers\PostsCommentsController;
 use App\Http\Handlers\ContentSearchHandler;
 use App\Http\Handlers\UpdateUserConsentHandler;
 use App\Http\Controllers\UserFollowersController;
 use App\Http\Controllers\UserFollowingController;
+use App\Http\Controllers\UserPostCollectionsController;
+use App\Http\Controllers\UserPostsController;
 use App\Http\Controllers\UserProfilesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
+use App\Http\Handlers\CollectionsEntryHandler;
+use App\Http\Handlers\DashboardHandler;
 use Illuminate\Support\Facades\Route;
-use App\Http\Livewire\Post;
-use App\Http\Livewire\Collection;
-use App\Http\Livewire\Home;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,11 +82,28 @@ Route::delete("/weekly-digest/subscription/{user}", [
     ->middleware("signed");
 
 Route::middleware("auth")->group(function () {
+    Route::post("/content/{content}/likes", [
+        ContentLikesController::class,
+        "store",
+    ])
+        ->name("content.likes.store")
+        ->middleware("verified");
+
+    Route::delete("/content/{content}/likes/{contentLike}", [
+        ContentLikesController::class,
+        "destroy",
+    ])
+        ->name("content.likes.destroy")
+        ->middleware("verified");
     Route::resource("faq", FrequentlyAskedQuestionController::class)->parameter(
         "faq",
         "question",
     );
-    Route::get("/home", Home::class)->name("home");
+    Route::post("/entries", CollectionsEntryHandler::class)
+        ->name("entries.toggle")
+        ->middleware("verified");
+    Route::get("/dashboard", DashboardHandler::class)->name("dashboard");
+    Route::redirect("/home", "/dashboard")->name("home");
     Route::get("/search", ContentSearchHandler::class)
         ->name("search")
         ->middleware("verified");
@@ -135,29 +157,69 @@ Route::middleware("auth")->group(function () {
         ->middleware("verified");
 
     // Post Routes
-    Route::get("/posts", Post\Index::class)
-        ->name("posts.index")
+    Route::resource("users.posts", UserPostsController::class)->only([
+        "create",
+        "store",
+    ]);
+    Route::get("/users/{user}/posts/{post}/edit", [
+        UserPostsController::class,
+        "edit",
+    ])
+        ->name("users.posts.edit")
         ->withTrashed()
         ->middleware("verified");
-    Route::get("/posts/create", Post\Editor::class)
-        ->name("posts.create")
+    Route::get("/users/{user}/posts", [UserPostsController::class, "index"])
+        ->name("users.posts.index")
+        ->middleware("verified");
+    Route::patch("/users/{user}/posts/{post}", [
+        UserPostsController::class,
+        "update",
+    ])
+        ->name("users.posts.update")
+        ->withTrashed()
         ->middleware("verified");
     Route::get("/posts/{post}", [PostsController::class, "show"])
         ->name("posts.show")
         ->withTrashed()
         ->middleware("verified");
-    Route::get("/posts/{uuid}/edit", Post\Editor::class)
-        ->name("posts.edit")
-        ->withTrashed()
-        ->middleware("verified");
-    Route::get("/posts/{post}/comments", Post\Comments::class)
+    Route::get("/posts/{post}/comments", [
+        PostsCommentsController::class,
+        "index",
+    ])
         ->name("posts.comments.index")
         ->withTrashed()
         ->middleware("verified");
+    Route::post("/posts/{post}/comments", [
+        PostsCommentsController::class,
+        "store",
+    ])
+        ->name("posts.comments.store")
+        ->middleware("verified");
 
     // Post Collection Routes
-    Route::get("/collections/create", Collection\Editor::class)
-        ->name("collections.create")
+    Route::resource("users.collections", UserPostCollectionsController::class)
+        ->parameter("collection", "post_collection")
+        ->only(["create", "store"]);
+    Route::get("/users/{user}/collections/{post_collection}/edit", [
+        UserPostCollectionsController::class,
+        "edit",
+    ])
+        ->name("users.collections.edit")
+        ->withTrashed()
+        ->middleware("verified");
+    Route::get("/users/{user}/collections", [
+        UserPostCollectionsController::class,
+        "index",
+    ])
+        ->name("users.collections.index")
+        ->withTrashed()
+        ->middleware("verified");
+    Route::patch("/users/{user}/collections/{post_collection}", [
+        UserPostCollectionsController::class,
+        "update",
+    ])
+        ->name("users.collections.update")
+        ->withTrashed()
         ->middleware("verified");
     Route::get("/collections/{post_collection}", [
         PostCollectionsController::class,
@@ -166,19 +228,32 @@ Route::middleware("auth")->group(function () {
         ->name("collections.show")
         ->withTrashed()
         ->middleware("verified");
-    Route::get("/collections/{uuid}/edit", Collection\Editor::class)
-        ->name("collections.edit")
-        ->withTrashed()
-        ->middleware("verified");
-    Route::get("/collections", Collection\Index::class)
-        ->name("collections.index")
-        ->withTrashed()
-        ->middleware("verified");
-    Route::get(
-        "/collections/{post_collection}/comments",
-        Collection\Comments::class,
-    )
+    Route::get("/collections/{post_collection}/comments", [
+        PostCollectionsCommentsController::class,
+        "index",
+    ])
         ->name("collections.comments.index")
         ->withTrashed()
+        ->middleware("verified");
+
+    Route::post("/collections/{post_collection}/entries", [
+        PostCollectionEntriesController::class,
+        "store",
+    ])
+        ->name("collections.entries.store")
+        ->middleware("verified");
+
+    Route::delete("/collections/{post_collection}/entries/{entry}", [
+        PostCollectionEntriesController::class,
+        "destroy",
+    ])
+        ->name("collections.entries.destroy")
+        ->middleware("verified");
+
+    Route::post("/collections/{post_collection}/comments", [
+        PostCollectionsCommentsController::class,
+        "store",
+    ])
+        ->name("collections.comments.store")
         ->middleware("verified");
 });

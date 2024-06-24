@@ -124,20 +124,33 @@
  *------------------------------------------------------------**/
 
 import EditorJS from "@editorjs/editorjs";
-import header from "@editorjs/header";
-import attaches from "./attaches-override";
-import delimiter from "@editorjs/delimiter";
-import embed from "@editorjs/embed";
-import image from "./image-override";
-import list from "@editorjs/nested-list";
-import quote from "@editorjs/quote";
-import table from "@editorjs/table";
-import textVariantTune from "@editorjs/text-variant-tune";
-import underline from "@editorjs/underline";
-import code from "@editorjs/code";
 
-function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
-    const tools = {
+async function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
+    return await Promise.all([
+        import("@editorjs/header"),
+        import("@editorjs/delimiter"),
+        import("@editorjs/nested-list"),
+        import("@editorjs/quote"),
+        import("@editorjs/embed"),
+        import("@editorjs/table"),
+        import("@editorjs/code"),
+        import("@editorjs/underline"),
+        import("@editorjs/text-variant-tune"),
+        canUpload ? import("./image-override") : Promise.resolve({ default: null }),
+        canUpload ? import("./attaches-override") : Promise.resolve({ default: null }),
+    ]).then(([
+        { default: header },
+        { default: delimiter },
+        { default: list },
+        { default: quote },
+        { default: embed },
+        { default: table },
+        { default: code },
+        { default: underline },
+        { default: textVariantTune },
+        { default: image },
+        { default: attaches },
+    ]) => ({
         header,
         delimiter,
         list,
@@ -162,9 +175,7 @@ function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
             },
         },
         textVariantTune,
-    };
-    if(canUpload) {
-        tools["image"] = {
+        image: canUpload ? {
             class: image,
             config: {
                 imagesToDelete,
@@ -176,8 +187,8 @@ function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
                     "X-CSRF-TOKEN": csrf,
                 },
             },
-        };
-        tools["attaches"] = {
+        } : null,
+        attaches: canUpload ? {
             class: attaches,
             config: {
                 attachesToDelete,
@@ -186,10 +197,8 @@ function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
                     "X-CSRF-TOKEN": csrf,
                 },
             },
-        };
-    }
-
-    return tools;
+        } : null,
+    }));
 }
 
 export default ({ name, readOnly = false, canUpload = true, csrf, body = { blocks: [] }}) => ({
@@ -205,49 +214,46 @@ export default ({ name, readOnly = false, canUpload = true, csrf, body = { block
         ['x-ref']: name,
         type: "hidden",
         name,
-        // value: JSON.stringify(body),
     },
     editor: {
         'class': 'content is-medium editor',
-        destroy() {
-            this.editor.destroy();
-        },
         ['x-ref']: `${name}-editor`,
         ['x-data']() {
             const that = this;
             return {
-            init() {
-            this.imagesToDelete = [];
-            this.attachesToDelete = [];
-            this.tools = configureTools(canUpload, csrf, this.imagesToDelete, this.attachesToDelete);
-            this.editor = new EditorJS({
-                readOnly,
-                holder: this.$el,
-                data: JSON.parse(that.body),
-                placeholder: readOnly ? "" : "Write your story...",
-                tools: this.tools,
-                tunes: ["textVariantTune"],
-                onReady: () => {
-                    this.$dispatch(`editor-${this.name}-ready`);
-                },
-                onChange: async (api, event) => {
-                    this.$dispatch(`editor-${event.type.toLowerCase()}-changed`, {
-                        api,
-                        event,
-                        name,
+                async init() {
+                    this.imagesToDelete = [];
+                    this.attachesToDelete = [];
+                    this.tools = await configureTools(canUpload, csrf, this.imagesToDelete, this.attachesToDelete);
+                    this.editor = new EditorJS({
+                        readOnly,
+                        holder: this.$el,
+                        data: JSON.parse(that.body),
+                        placeholder: readOnly ? "" : "Write your story...",
+                        tools: this.tools,
+                        tunes: ["textVariantTune"],
+                        onReady: () => {
+                            this.$dispatch(`editor-${this.name}-ready`);
+                        },
+                        onChange: async (api, event) => {
+                            const data = await api.saver.save();
+                            that.body = JSON.stringify(data);
+                            that.$dispatch('editor:unsaved');
+                            that.$dispatch('input', JSON.stringify(data));
+                        },
                     })
-                    const data = await api.saver.save();
-                    that.body = JSON.stringify(data);
-                    that.$dispatch('input', JSON.stringify(data));
-                },
-            })
-        }}},
+        },
+        destroy() {
+            this.editor.destroy();
+        }
+    }
+    },
         [`x-on:editor-${name}-persisted`]() {
             if(canUpload) {
                 Promise
                     .allSettled([
-                        ...this.imagesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } })),
-                        ...this.attachesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } })),
+                        ...this.imagesToDelete.map(path => fetch(route('upload.destroy'), { method: 'DELETE', body: JSON.stringify({ path }) })),
+                        ...this.attachesToDelete.map(path => fetch(route('upload.destroy'), { method: 'DELETE', body: JSON.stringify({ path }) })),
                     ])
                     .finally(() => {
                         this.imagesToDelete.length = 0;

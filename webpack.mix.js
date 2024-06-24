@@ -26,7 +26,7 @@ mix
         extensions: [".*",".wasm",".mjs",".js",".jsx",".json", ".css"]
       },
       plugins: [
-        new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
       ]
     }
   })

@@ -32,6 +32,7 @@ use Parental\HasChildren;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection<PostCollection> $collections
  */
 class Content extends Model implements Commentable, IsSearchable
 {
@@ -126,6 +127,12 @@ class Content extends Model implements Commentable, IsSearchable
             $this->getAttribute($this->getRouteKeyName());
     }
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $id = last(explode("--", $value));
+        return parent::resolveRouteBinding($id, $field);
+    }
+
     public function resolveSoftDeletableRouteBinding($value, $field = null)
     {
         $id = last(explode("--", $value));
@@ -179,6 +186,19 @@ class Content extends Model implements Commentable, IsSearchable
         return $this->hasMany(View::class);
     }
 
+    /**
+     *
+     */
+    public function collections()
+    {
+        return $this->belongsToMany(
+            PostCollection::class,
+            "entries",
+            "content_id",
+            "collection_id",
+        )->using(Entry::class);
+    }
+
     // Scopes
 
     /**
@@ -209,6 +229,33 @@ class Content extends Model implements Commentable, IsSearchable
     public function scopeWherePublished($query)
     {
         return $query->where("published", true);
+    }
+
+    /**
+     * Filter to only include top content for the last month. Top is
+     * defined as having the most likes, views, and comments.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopeTopLastMonth($query)
+    {
+        return $query
+            ->where("published", true)
+            ->withCount([
+                "likes as last_month_likes" => function ($query) {
+                    return $query->lastMonth();
+                },
+                "views as last_month_views" => function ($query) {
+                    return $query->lastMonth();
+                },
+                "comments as last_month_comments" => function ($query) {
+                    return $query->lastMonth();
+                },
+            ])
+            ->orderByDesc("last_month_likes")
+            ->orderByDesc("last_month_views")
+            ->orderByDesc("last_month_comments")
+            ->orderByDesc("created_at");
     }
 
     /**

@@ -6,10 +6,10 @@
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import("axios").then(({ default: axios }) => {
-    window.axios = axios;
-    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-});
+// import("axios").then(({ default: axios }) => {
+//     window.axios = axios;
+//     window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// });
 // window.axios = require('axios');
 
 /**
@@ -32,12 +32,14 @@ import("axios").then(({ default: axios }) => {
 import editor from "./editor";
 import slimSelect from "./slim-select";
 import Alpine from 'alpinejs'
-import * as Turbo from "@hotwired/turbo";
+import addToCollection from "./add-to-collection";
+// import * as Turbo from "@hotwired/turbo";
 
-window.Turbo = Turbo;
+// window.Turbo = Turbo;
 window.Alpine = Alpine;
 Alpine.data("editor", editor);
 Alpine.data("slimSelect", slimSelect);
+Alpine.data("add-to-collection", addToCollection);
 
 Alpine.start()
 
