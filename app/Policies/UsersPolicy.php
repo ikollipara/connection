@@ -53,7 +53,7 @@ class UsersPolicy
      */
     public function update(User $user, User $model)
     {
-        return $model->id == $user->id;
+        return $model->is($user);
     }
 
     /**
@@ -65,6 +65,6 @@ class UsersPolicy
      */
     public function delete(User $user, User $model)
     {
-        return $model->id == $user->id;
+        return $model->is($user);
     }
 }

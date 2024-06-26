@@ -59,4 +59,26 @@ class Comment extends Model
     {
         return $this->morphTo();
     }
+
+    // Scopes
+
+    public function scopeThisMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()->startOfMonth(),
+            now()->endOfMonth(),
+        ]);
+    }
+
+    public function scopeLastMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()
+                ->subMonth()
+                ->startOfMonth(),
+            now()
+                ->subMonth()
+                ->endOfMonth(),
+        ]);
+    }
 }

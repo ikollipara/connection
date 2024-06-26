@@ -55,4 +55,21 @@ class ContentLike extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Scopes
+
+    public function scopeThisMonth($query)
+    {
+        return $query->where("created_at", ">", now()->startOfMonth());
+    }
+
+    public function scopeLastMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()
+                ->subMonth()
+                ->startOfMonth(),
+            now()->startOfMonth(),
+        ]);
+    }
 }

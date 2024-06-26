@@ -50,4 +50,26 @@ class View extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Scopes
+
+    public function scopeThisMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()->startOfMonth(),
+            now()->endOfMonth(),
+        ]);
+    }
+
+    public function scopeLastMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()
+                ->subMonth()
+                ->startOfMonth(),
+            now()
+                ->subMonth()
+                ->endOfMonth(),
+        ]);
+    }
 }

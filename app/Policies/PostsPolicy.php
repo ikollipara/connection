@@ -30,7 +30,7 @@ class PostsPolicy
      */
     public function view(User $user, Post $post)
     {
-        return $post->published or $post->user_id === $user->id;
+        return $post->user()->is($user) or $post->published;
     }
 
     /**
@@ -41,7 +41,7 @@ class PostsPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasVerifiedEmail();
     }
 
     /**
@@ -53,7 +53,7 @@ class PostsPolicy
      */
     public function update(User $user, Post $post)
     {
-        return $post->user_id == $user->id;
+        return $post->user()->is($user);
     }
 
     /**
@@ -65,7 +65,7 @@ class PostsPolicy
      */
     public function delete(User $user, Post $post)
     {
-        return $post->user_id == $user->id;
+        return $post->user()->is($user);
     }
 
     /**
@@ -77,7 +77,7 @@ class PostsPolicy
      */
     public function restore(User $user, Post $post)
     {
-        return $post->user_id == $user->id;
+        return $post->user()->is($user);
     }
 
     /**

@@ -1,3 +1,10 @@
+{{--
+file: resources/views/components/forms/audiences.blade.php
+author: Ian Kollipara
+date: 2024-06-13
+description: This file contains the HTML for a select input for audiences.
+ --}}
+
 @php
   use App\Enums\Audience;
 @endphp

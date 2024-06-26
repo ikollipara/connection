@@ -17,7 +17,38 @@ description: This file contains the HTML for editing a user's profile.
       <h1 class="title is-1 mb-0">Edit Profile</h1>
       <div class="buttons">
         <button form="profile-form" class="button is-light" type="submit">Update</button>
-        <button x-on:click="show = true" class="button is-dark">Update Consent Status</button>
+        <x-modal x-data="{ checked: {{ $user->consented ? 'true' : 'false' }}, above: {{ $user->consented ? 'true' : 'false' }}, fullName: '{{ $user->consented ? $user->full_name : '' }}' }" title="conneCTION Consent Form" btn="Update Consent Status" btn-class="is-dark">
+          <form action="{{ route('users.consent.update', 'me') }}" method="post" id="update-consent-form">
+            @csrf
+            @method('PATCH')
+            <x-research.consent-form>
+              <div class="field">
+                <label class="checkbox">
+                  <input type="checkbox" name="consented" x-model='checked'>
+                  I want to participate in the conneCTION Research Study
+                </label>
+              </div>
+              <div class="field">
+                <label class="checkbox" x-bind:class="{ 'is-hidden': !checked }">
+                  <input type="checkbox" x-model="above" x-effect="if(!checked) above = false;">
+                  I am 19 years or older
+                </label>
+              </div>
+              <span x-show="above">
+                <x-forms.input label="Please enter your full name to consent." x-model="fullName" name="" />
+              </span>
+            </x-research.consent-form>
+          </form>
+          <x-slot name="footer">
+            <div class="buttons">
+              <button type="button" x-on:click="show = false" class="button is-danger">Cancel</button>
+              <button type="submit" x-bind:disabled="checked && !above && fullName.length == 0"
+                form="update-consent-form" class="button is-primary">
+                Update Consent
+              </button>
+            </div>
+          </x-slot>
+        </x-modal>
         <x-users.delete-account :user="$user" />
       </div>
     </div>
@@ -68,37 +99,5 @@ description: This file contains the HTML for editing a user's profile.
         </x-forms.field>
       </section>
     </form>
-    <x-modal title="conneCTION Consent Form" show-var="show">
-      <form action="{{ route('users.consent.update', 'me') }}" method="post" id="update-consent-form">
-        @csrf
-        @method('PATCH')
-        <x-research.consent-form>
-          <div class="field">
-            <label class="checkbox">
-              <input type="checkbox" name="consented" x-model='checked'>
-              I want to participate in the conneCTION Research Study
-            </label>
-          </div>
-          <div class="field">
-            <label class="checkbox" x-bind:class="{ 'is-hidden': !checked }">
-              <input type="checkbox" x-model="above" x-effect="if(!checked) above = false;">
-              I am 19 years or older
-            </label>
-          </div>
-          <span x-show="above">
-            <x-forms.input label="Please enter your full name to consent." x-model="fullName" name="" />
-          </span>
-        </x-research.consent-form>
-      </form>
-      <x-slot name="footer">
-        <div class="buttons">
-          <button type="button" x-on:click="show = false" class="button is-danger">Cancel</button>
-          <button type="submit" x-bind:disabled="checked && !above && fullName.length == 0" form="update-consent-form"
-            class="button is-primary">
-            Update Consent
-          </button>
-        </div>
-      </x-slot>
-    </x-modal>
   </x-container>
 </x-layout>

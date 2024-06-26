@@ -13,7 +13,7 @@ description: This file contains the HTML for the 500 error page.
   <x-hero class="is-primary has-text-centered">
     <h1 class="title is-1">{{ __('Uh Oh!') }}</h1>
   </x-hero>
-  <x-container class="mt-5">
+  <x-container class="mt-5 has-text-centered">
     <p>
       {{ __('An error occurred on the server. We are working to fix this issue as soon as possible. We are sorry for the inconvience!') }}
     </p>

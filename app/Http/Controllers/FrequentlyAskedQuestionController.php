@@ -16,7 +16,17 @@ class FrequentlyAskedQuestionController extends Controller
      */
     public function index(Request $request)
     {
-        return view("frequently-asked-questions.index");
+        $validated = $request->validate([
+            "q" => "sometimes|string|nullable",
+        ]);
+        $questions = FrequentlyAskedQuestion::query()
+            ->when(
+                isset($validated["q"]) and is_string($validated["q"]),
+                fn($query) => $query->search($validated["q"]),
+            )
+            ->answered()
+            ->paginate(15);
+        return view("frequently-asked-questions.index", compact("questions"));
     }
 
     /**
