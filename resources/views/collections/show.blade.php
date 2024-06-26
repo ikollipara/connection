@@ -16,7 +16,7 @@ description: The view for showing a collection
 <x-layout :title="$title" no-livewire>
   <x-hero class="is-primary" hero-body-class="has-text-centered">
     <h1 class="title is-1">{{ $collection->title }}</h1>
-    <div class="column is-flex is-align-items-center is-justify-content-center">
+    <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
       <figure class="image is-64x64"><img src="{{ $avatar }}" alt=""></figure>
       <a @if ($collection->user) href="{{ route('users.show', $collection->user) }}" @endif
         class="link is-italic">
