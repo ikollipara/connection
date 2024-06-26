@@ -16,7 +16,7 @@ description: Show view for a post
 <x-layout :title="$title" no-livewire>
   <x-hero class="is-primary" hero-body-class="has-text-centered">
     <h1 class="title is-1">{{ $post->title }}</h1>
-    <div class="column is-flex is-align-items-center is-justify-content-center">
+    <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
       <figure class="image is-64x64"><img src="{{ $avatar }}" alt=""></figure>
       <a @if ($post->user) href="{{ route('users.show', $post->user) }}" @endif class="link is-italic">
         {{ $full_name }} - {{ $short_title }}
