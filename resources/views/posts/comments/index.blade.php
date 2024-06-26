@@ -6,7 +6,7 @@ description: Comments index view for a post
  --}}
 
 @php
-  $title = $post->title . ' Comments';
+  $title = 'conneCTION - ' . $post->title . ' Comments';
 @endphp
 
 <x-layout :title="$title" no-livewire>

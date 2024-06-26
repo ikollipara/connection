@@ -23,6 +23,10 @@ class UserPostsController extends Controller
      */
     public function index(User $user, Request $request)
     {
+        $this->authorize("viewAny", [Post::class, $user]);
+        if ($user->isNot(auth()->user())) {
+            return redirect()->route("users.posts.index", ["me"], 303);
+        }
         $status =
             Status::tryFrom($request->query("status", "draft")) ??
             Status::draft();
@@ -60,6 +64,7 @@ class UserPostsController extends Controller
      */
     public function create(User $user)
     {
+        $this->authorize("create", [Post::class, $user]);
         return view("users.posts.create", compact("user"));
     }
 
@@ -83,18 +88,6 @@ class UserPostsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user, Post $post)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\User  $user
@@ -103,6 +96,7 @@ class UserPostsController extends Controller
      */
     public function edit(User $user, Post $post)
     {
+        $this->authorize("update", [$post, $user]);
         return view("users.posts.edit", compact("user", "post"));
     }
 
@@ -132,17 +126,5 @@ class UserPostsController extends Controller
         $validated["metadata"] = new Metadata($validated["metadata"]);
         $post = $post->update($validated);
         return back(303)->with("success", __("Post successfully updated"));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user, Post $post)
-    {
-        //
     }
 }

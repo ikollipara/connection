@@ -1,117 +1,3 @@
-
-// export default (readOnly, cannotUpload, csrf, body) => ({
-//         async init() {
-//             this.imagesToDelete = [];
-//             this.attachesToDelete = [];
-//             await Promise.all([
-//                 /* webpackPreload: true */ import("@editorjs/editorjs"),
-//                 import("@editorjs/header"),
-//                 import("./attaches-override"),
-//                 import("@editorjs/delimiter"),
-//                 import("@editorjs/embed"),
-//                 import("./image-override"),
-//                 import("@editorjs/nested-list"),
-//                 import("@editorjs/quote"),
-//                 import("@editorjs/table"),
-//                 import("@editorjs/text-variant-tune"),
-//                 import("@editorjs/underline"),
-//                 import("@editorjs/code")
-//             ]).then(
-//                 ([
-//                     { default: EditorJS },
-//                     { default: header },
-//                     { default: attaches },
-//                     { default: delimiter },
-//                     { default: embed },
-//                     { default: image },
-//                     { default: list },
-//                     { default: quote },
-//                     { default: table },
-//                     { default: textVariantTune },
-//                     { default: underline },
-//                     { default: code }
-//                 ]) => {
-//                     const tools = {
-//                         header,
-//                         delimiter,
-//                         list,
-//                         quote,
-//                         table,
-//                         code,
-//                         underline,
-//                         embed: {
-//                             class: embed,
-//                             config: {
-//                                 services: {
-//                                     youtube: true,
-//                                     imgur: true,
-//                                     pintrest: true,
-//                                     scratch: {
-//                                         regex: /https?:\/\/scratch.mit.edu\/projects\/(\d+)/,
-//                                         embedUrl:
-//                                             "https://scratch.mit.edu/projects/<%= remote_id %>/embed",
-//                                         html: "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
-//                                     },
-//                                 },
-//                             },
-//                         },
-//                         textVariantTune,
-//                     };
-//                     if (!cannotUpload) {
-//                         tools["image"] = {
-//                             class: image,
-//                             config: {
-//                                 endpoints: {
-//                                     byFile: route('upload.store'),
-//                                     byUrl: route('upload.store'),
-//                                 },
-//                                 additionalRequestHeaders: {
-//                                     "X-CSRF-TOKEN": csrf,
-//                                 },
-//                                 imagesToDelete: this.imagesToDelete,
-//                             },
-//                         };
-//                         tools["attaches"] = {
-//                             class: attaches,
-//                             config: {
-//                                 endpoint: route('upload.store'),
-//                                 additionalRequestHeaders: {
-//                                     "X-CSRF-TOKEN": csrf,
-//                                 },
-//                                 attachesToDelete: this.attachesToDelete,
-//                             },
-//                         };
-//                     }
-//                     this.editor = new EditorJS({
-//                         holder: this.$el,
-//                         data: body,
-//                         placeholder: "Write your story...",
-//                         readOnly,
-//                         tools,
-//                         tunes: ["textVariantTune"],
-//                         onChange: async (api, event) => {
-//                             this.$dispatch("editor-changed");
-//                             console.log(event);
-//                             console.log(this.imagesToDelete);
-//                             this.body = JSON.stringify(await api.saver.save());
-//                         },
-//                     });
-//                 }
-//             );
-//         },
-
-
-
-//         async save() {
-//             return await this.editor.save();
-//         },
-
-//         async destroy() {
-//             this.editor.destroy();
-//         }
-//     });
-
-
 /**------------------------------------------------------------
  * editor.js
  * Ian Kollipara
@@ -122,8 +8,6 @@
  * the methods for persisting deleted images and saving the
  * editor content.
  *------------------------------------------------------------**/
-
-import EditorJS from "@editorjs/editorjs";
 
 async function configureTools(canUpload, csrf, imagesToDelete, attachesToDelete) {
     return await Promise.all([
@@ -224,7 +108,14 @@ export default ({ name, readOnly = false, canUpload = true, csrf, body = { block
                 async init() {
                     this.imagesToDelete = [];
                     this.attachesToDelete = [];
-                    this.tools = await configureTools(canUpload, csrf, this.imagesToDelete, this.attachesToDelete);
+                    Promise.all([
+                        import("@editorjs/editorjs"),
+                        configureTools(canUpload, csrf, this.imagesToDelete, this.attachesToDelete),
+                    ]).then(([
+                        { default: EditorJS },
+                        tools,
+                    ]) => {
+                    this.tools = tools
                     this.editor = new EditorJS({
                         readOnly,
                         holder: this.$el,
@@ -242,6 +133,7 @@ export default ({ name, readOnly = false, canUpload = true, csrf, body = { block
                             that.$dispatch('input', JSON.stringify(data));
                         },
                     })
+                    });
         },
         destroy() {
             this.editor.destroy();

@@ -1,10 +1,12 @@
 const mix = require('laravel-mix');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-require("laravel-mix-purgecss");
 require("laravel-mix-compress");
 require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
-const BundleAnalyer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const nanocss = require("cssnano");
+const pruneVar = require("postcss-prune-var")
+const varCompress = require("postcss-variable-compress")
+const purgeCssLaravel = require("postcss-purgecss-laravel");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /*
  |--------------------------------------------------------------------------
@@ -19,7 +21,21 @@ const BundleAnalyer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 mix
   .js('resources/js/app.js', 'public/js')
-  .css('resources/css/app.css', 'public/css')
+  .css('resources/css/slim-select.css', 'public/css/slim-select.css')
+  .css('resources/css/animate.css', 'public/css/animate.css')
+  .sass('resources/scss/app.scss', 'public/css/app.css', {}, [
+        purgeCssLaravel({
+            safelist: [/ss-*/],
+        }),
+        nanocss({
+            preset: ['default', {
+                discardComments: { removeAll: true },
+                normalizeWhitespace: true,
+            }],
+        }),
+        pruneVar(),
+        varCompress(),
+  ])
   .webpackConfig(webpack => {
     return {
       resolve: {
@@ -30,14 +46,12 @@ mix
       ]
     }
   })
-  .imagemin("images/*", { context: "resources" })
 
 
 if (mix.inProduction()) {
   mix
-  .polyfill()
   .version()
-  .purgeCss({
-  safelist: [/ss-*/],
+  .compress({
+    minRatio: 1
   })
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentCommentLikesController;
 use App\Http\Controllers\ContentLikesController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FileUploadController;
@@ -255,5 +256,19 @@ Route::middleware("auth")->group(function () {
         "store",
     ])
         ->name("collections.comments.store")
+        ->middleware("verified");
+
+    Route::post("/comments/{comment}/likes", [
+        CommentCommentLikesController::class,
+        "store",
+    ])
+        ->name("comments.likes.store")
+        ->middleware("verified");
+
+    Route::delete("/comments/{comment}/likes/{commentLike}", [
+        CommentCommentLikesController::class,
+        "destroy",
+    ])
+        ->name("comments.likes.destroy")
         ->middleware("verified");
 });

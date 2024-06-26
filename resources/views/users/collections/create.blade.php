@@ -45,7 +45,7 @@ description: The HTML for the create collection form
       <div class="control">
         <input id="collection-publish" type="hidden" name="published" form="create-collection-form" value="0">
         <button type="submit" form="create-collection-form"
-          x-on:click="document.getElementById('#collection-publish').value = '1';"
+          x-on:click="document.getElementById('collection-publish').value = '1';"
           class="button is-link">Publish</button>
       </div>
     </x-forms.input>

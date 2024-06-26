@@ -46,7 +46,7 @@ description: The HTML for the edit post page
         <input id="post-publish" type="hidden" name="published" form="edit-post-form"
           value="{{ $post->published ? '1' : '0' }}">
         @unless ($post->published)
-          <button type="submit" form="edit-post-form" x-on:click="document.getElementById('#post-publish').value = '1'"
+          <button type="submit" form="edit-post-form" x-on:click="document.getElementById('post-publish').value = '1'"
             class="button is-link">Publish</button>
         @endunless
       </div>

@@ -48,8 +48,7 @@ description: Edit view for a collection
           value="{{ $collection->published ? '1' : '0' }}">
         @unless ($collection->published)
           <button type="submit" form="edit-collection-form"
-            x-on:click="document.getElementById('#collection-publish').value = '1'"
-            class="button is-link">Publish</button>
+            x-on:click="document.getElementById('collection-publish').value = '1'" class="button is-link">Publish</button>
         @endunless
       </div>
       <div class="control">

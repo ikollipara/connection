@@ -5,7 +5,14 @@ date: 2024-06-24
 description: Comment component for displaying a comment
  --}}
 
-@props(['comment', 'buttons' => null, 'mediaClass' => [], 'contentClass' => [], 'figureClass' => []])
+@props([
+    'comment',
+    'buttons' => null,
+    'mediaClass' => [],
+    'contentClass' => [],
+    'figureClass' => [],
+    'liked_by_user' => null,
+])
 
 @php
   $full_name = $comment->user ? $comment->user->full_name : '[Deleted]';

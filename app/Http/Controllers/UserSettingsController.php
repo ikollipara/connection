@@ -59,6 +59,7 @@ class UserSettingsController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize("update", $user);
         $user = $user->load("settings");
         return view("users.settings.edit", compact("user"));
     }

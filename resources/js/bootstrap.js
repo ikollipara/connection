@@ -43,45 +43,39 @@ Alpine.data("add-to-collection", addToCollection);
 
 Alpine.start()
 
-import("bulma-toast")
-.then(({ toast }) => {
-    window.toast = toast;
-    window.success = (message) => {
-        toast({
-            message: message,
-            type: 'is-success',
-            dismissible: true,
-            duration: 3000,
-            animate: {in: 'fadeIn', out: 'fadeOut'},
-        });
-    };
-    window.error = (message) => {
-        toast({
-            message: message,
-            type: 'is-danger',
-            dismissible: true,
-            duration: 3000,
-            animate: {in: 'fadeIn', out: 'fadeOut'},
-        });
-    }
-
-    document.addEventListener('success', event => {
-        window.success(event.detail.message)
-    });
-    document.addEventListener('error', event => {
-        window.error(event.detail.message)
-    });
-})
+// import("bulma-toast")
+// .then(({ toast }) => {
+//     window.toast = toast;
+//     window.success = (message) => {
+//         toast({
+//             message: message,
+//             type: 'is-success',
+//             dismissible: true,
+//             duration: 3000,
+//             animate: {in: 'fadeIn', out: 'fadeOut'},
+//         });
+//     };
+//     window.error = (message) => {
+//         toast({
+//             message: message,
+//             type: 'is-danger',
+//             dismissible: true,
+//             duration: 3000,
+//             animate: {in: 'fadeIn', out: 'fadeOut'},
+//         });
+//     }
+//
+//     document.addEventListener('success', event => {
+//         window.success(event.detail.message)
+//     });
+//     document.addEventListener('error', event => {
+//         window.error(event.detail.message)
+//     });
+// })
 
 document.addEventListener('content-removed', (event) => {
     event.target.classList.add('animate__animated', 'animate__fadeOut');
     setTimeout(() => {
         event.target.remove();
     }, 1000);
-})
-
-document.addEventListener('livewire:load', () => {
-    Livewire.onPageExpired(() => {
-        window.error('Your session has expired. Please refresh the page. Nothing will be saved, so please copy your work before refreshing.');
-    });
 })

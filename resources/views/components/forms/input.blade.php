@@ -23,11 +23,11 @@ description: This file contains the HTML for an input field.
       <span class="control is-expanded">
         <input id="{{ $name }}" name="{{ $name }}"
           {{ $attributes->class(['input', 'is-danger' => $errors->has($name)])->merge(['value' => old($name) ?? '']) }}>
+        @error($name)
+          <p class="help mb-0">{{ $message }}</p>
+        @enderror
       </span>
   @endif
-  @error($name)
-    <p class="help is-danger">{{ $message }}</p>
-  @enderror
   @if ($hasAddons)
     {{ $slot }}
   @endif

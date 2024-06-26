@@ -20,6 +20,10 @@ class UserPostCollectionsController extends Controller
      */
     public function index(User $user)
     {
+        $this->authorize("viewAny", [PostCollection::class, $user]);
+        if ($user->isNot(auth()->user())) {
+            return redirect()->route("users.collections.index", ["me"], 303);
+        }
         $status =
             Status::tryFrom(request()->query("status", "draft")) ??
             Status::draft();
@@ -57,6 +61,7 @@ class UserPostCollectionsController extends Controller
      */
     public function create(User $user)
     {
+        $this->authorize("create", [PostCollection::class, $user]);
         return view("users.collections.create", compact("user"));
     }
 
@@ -74,10 +79,10 @@ class UserPostCollectionsController extends Controller
         $validated["metadata"] = new Metadata($validated["metadata"]);
         $collection = $user->collections()->create($validated);
 
-        return redirect()
-            ->setStatusCode(303)
-            ->route("users.collections.edit", [$user, $collection])
-            ->with("success", __("Collection successfully created."));
+        return redirect(
+            route("users.collections.edit", [$user, $collection]),
+            303,
+        )->with("success", __("Collection successfully created."));
     }
 
     /**
@@ -101,6 +106,7 @@ class UserPostCollectionsController extends Controller
      */
     public function edit(User $user, PostCollection $postCollection)
     {
+        $this->authorize("update", [$postCollection, $user]);
         return view("users.collections.edit", [
             "user" => $user,
             "collection" => $postCollection->load("entries"),

@@ -27,6 +27,10 @@ description: This file contains the HTML for a select input.
   $name = $multiple ? $name . '[]' : $name;
 @endphp
 
+@push('styles')
+  <link rel="stylesheet" href="{{ mix('css/slim-select.css') }}">
+@endpush
+
 <x-forms.field :label="$label" :class="$fieldClasses">
   <select {{ $attributes }} x-data="slimSelect('{{ $label }}...')" name="{{ $name }}" {{ $multiple ? 'multiple' : '' }}>
     @if ($is_enum)

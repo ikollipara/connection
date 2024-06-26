@@ -1,8 +1,8 @@
 {{--
-file: resources/views/errors/500.blade.php
+file: resources/views/errors/403.blade.php
 author: Ian Kollipara
-date: 2024-06-10
-description: This file contains the HTML for the 500 error page.
+date: 2024-06-26
+description: The HTML for the 403 error page
  --}}
 
 @php
@@ -15,7 +15,7 @@ description: This file contains the HTML for the 500 error page.
   </x-hero>
   <x-container class="mt-5 has-text-centered">
     <p>
-      {{ __('An error occurred on the server. We are working to fix this issue as soon as possible. We are sorry for the inconvience!') }}
+      {{ __('Looks like you are not allowed to access this page! Let\'s not do that.') }}
     </p>
     <x-errors.go-btn />
   </x-container>

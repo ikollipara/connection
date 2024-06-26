@@ -41,7 +41,7 @@ description: The HTML for the create post page
       </div>
       <div class="control">
         <input id="post-publish" type="hidden" name="published" form="create-post-form" value="0">
-        <button type="submit" form="create-post-form" x-on:click="document.getElementById('#post-publish').value = '1'"
+        <button type="submit" form="create-post-form" x-on:click="document.getElementById('post-publish').value = '1'"
           class="button is-link">Publish</button>
       </div>
     </x-forms.input>
