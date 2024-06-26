@@ -44,6 +44,9 @@ Header set Cache-Control "max-age=7200, must-revalidate"
     </FilesMatch>
 </IfModule>
 
+<ifmodule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml
+</ifmodule>
 
 <IfModule mod_rewrite.c>
 
