@@ -76,7 +76,10 @@ class UserProfilesController extends Controller
     {
         $validated = $request->validated();
         $user->updateWithProfile($validated);
-        return back()->with("success", __("Your profile has been updated."));
+        return redirect(route("users.profile.edit", "me"), 303)->with(
+            "success",
+            __("Your profile has been updated."),
+        );
     }
 
     /**
