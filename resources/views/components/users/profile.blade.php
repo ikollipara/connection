@@ -7,6 +7,11 @@ description: This file contains the HTML for displaying a user's profile.
 
 @props(['user'])
 
+@php
+  $is_follower = $user->followers->contains(auth()->user());
+  $route = $is_follower ? route('users.followers.destroy', [$user, auth()->user()]) : route('users.followers.store', $user);
+@endphp
+
 <div class="is-flex" style="gap: 1rem;">
   <figure class="image is-128x128 mt-auto mb-auto">
     <img loading="lazy" src="{{ $user->avatar }}" alt="{{ $user->full_name }}">
@@ -23,5 +28,24 @@ description: This file contains the HTML for displaying a user's profile.
         <span class="tag is-link">{{ $grade->label }}</span>
       @endforeach
     </p>
+    @unless ($user->is(auth()->user()))
+      <form action="{{ $route }}" method="post">
+        @csrf
+        @if ($is_follower)
+          @method('DELETE')
+        @else
+          <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+        @endif
+        <button type="submit" @class([
+            'button',
+            'is-success' => !$is_follower,
+            'is-danger' => $is_follower,
+        ])>
+          <x-bulma-icon icon="{{ $is_follower ? 'lucide-user-minus' : 'lucide-user-plus' }}">
+            {{ $is_follower ? 'Unfollow' : 'Follow' }}
+          </x-bulma-icon>
+        </button>
+      </form>
+    @endunless
   </article>
 </div>

@@ -114,9 +114,25 @@ Route::middleware("auth")->group(function () {
         "show",
         "destroy",
     ]);
-    Route::resource("users.followers", UserFollowersController::class)->only([
+    Route::get("/users/{user}/followers", [
+        UserFollowersController::class,
         "index",
-    ]);
+    ])
+        ->name("users.followers.index")
+        ->middleware("verified");
+    Route::post("/users/{user}/followers", [
+        UserFollowersController::class,
+        "store",
+    ])
+        ->name("users.followers.store")
+        ->middleware("verified");
+
+    Route::delete("/users/{user}/followers/{follower}", [
+        UserFollowersController::class,
+        "destroy",
+    ])
+        ->name("users.followers.destroy")
+        ->middleware("verified");
     Route::resource("users.following", UserFollowingController::class)->only([
         "index",
     ]);
