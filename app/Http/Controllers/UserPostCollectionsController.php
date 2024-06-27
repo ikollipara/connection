@@ -140,7 +140,7 @@ class UserPostCollectionsController extends Controller
         }
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
-        $postCollection = $postCollection->update($validated);
+        $postCollection->update($validated);
         return redirect(
             route("users.collections.edit", [$user, $postCollection]),
             303,
