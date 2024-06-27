@@ -75,7 +75,7 @@ class UserSettingsController extends Controller
     {
         $data = $this->transformUpdateRequest($request);
         $success = $user->settings->update($data);
-        return back()->with(
+        return redirect(route("users.settings.edit", $user), 303)->with(
             $success ? "success" : "error",
             $success
                 ? "Settings successfully updated"
