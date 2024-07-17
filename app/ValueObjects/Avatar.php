@@ -16,11 +16,13 @@ class Avatar
 {
     private string $path;
     private ?string $default;
+    private $storage;
 
-    public function __construct(string $path)
+    public function __construct(string $path, string $disk = "public")
     {
         $this->path = $path;
         $this->default = null;
+        $this->storage = Storage::disk($disk);
     }
 
     public function setDefault(string $default): void
@@ -32,12 +34,12 @@ class Avatar
      * Create an Avatar object from an uploaded file
      * @param ?UploadedFile $file The uploaded file
      */
-    public static function fromUploadedFile($file)
+    public static function fromUploadedFile($file, $disk = "public"): self
     {
         if ($file === null) {
             return new static("");
         }
-        return new static($file->store("avatars", "public"));
+        return new static($file->store("avatars", $disk));
     }
 
     public static function is($value): bool
@@ -52,17 +54,19 @@ class Avatar
 
     public function delete(): bool
     {
-        return Storage::disk("public")->delete($this->path);
+        return $this->storage->delete($this->path);
     }
 
     public function url()
     {
-        return $this->exists() ? Storage::url($this->path) : $this->default;
+        return $this->exists()
+            ? $this->storage->url($this->path)
+            : $this->default;
     }
 
     public function exists(): bool
     {
-        return Storage::exists($this->path);
+        return $this->storage->exists($this->path);
     }
 
     public function __toString(): string

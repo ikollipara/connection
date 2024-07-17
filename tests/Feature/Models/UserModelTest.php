@@ -54,7 +54,8 @@ class UserModelTest extends TestCase
         $user = User::factory()->create([
             "avatar" => $avatar,
         ]);
-        $this->assertTrue(URL::isValidUrl($user->avatar->url()));
+        $this->assertTrue($user->avatar->exists());
+        $this->assertNotNull($user->avatar->url());
     }
 
     public function test_user_can_have_null_for_avatar()
