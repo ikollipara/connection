@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
+use App\ValueObjects\Avatar;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\User
@@ -24,7 +25,7 @@ use Illuminate\Http\UploadedFile;
  * @property string $first_name
  * @property string $last_name
  * @property-read string $full_name
- * @property string $avatar
+ * @property Avatar $avatar
  * @property string $email
  * @property bool $consented
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -50,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = ["first_name", "last_name", "avatar", "email"];
+    protected $fillable = ["id", "first_name", "last_name", "avatar", "email"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -121,27 +122,26 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's avatar
-     * @return string The user's avatar
+     * @return Avatar The user's avatar
      */
-    public function getAvatarAttribute(): string
+    public function getAvatarAttribute(): Avatar
     {
-        if (!$this->attributes["avatar"]) {
-            $full_name = trim(str_replace(" ", "+", $this->full_name));
-            return "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF";
-        }
-        return Storage::url($this->attributes["avatar"]);
+        $avatar = new Avatar($this->attributes["avatar"]);
+        $full_name = trim(str_replace(" ", "+", $this->full_name));
+        $avatar->setDefault(
+            "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF",
+        );
+        return $avatar;
     }
 
     /**
      * Set the user's avatar
-     * @param UploadedFile $value The new avatar file
+     * @param Avatar|string $value The new avatar object
      */
-    public function setAvatarAttribute(UploadedFile $value): void
+    public function setAvatarAttribute($value): void
     {
-        if ($this->attributes["avatar"]) {
-            Storage::delete($this->attributes["avatar"]);
-        }
-        $this->attributes["avatar"] = $value->store("avatars", "public");
+        $value = is_string($value) ? new Avatar($value) : $value;
+        $this->attributes["avatar"] = $value->path();
     }
 
     // Relationships
@@ -257,26 +257,31 @@ class User extends Authenticatable implements MustVerifyEmail
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
             "grades" => array_map(
-                fn ($grade) => Grade::from($grade),
+                fn($grade) => Grade::from($grade),
                 is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
             ),
             "gender" => "",
         ];
 
-        $user = User::create([
-            "first_name" => $data["first_name"],
-            "last_name" => $data["last_name"],
-            "email" => $data["email"],
-        ]);
-        $user->profile()->create($profile);
-        $user->settings()->create([
-            "receive_weekly_digest" => true,
-            "receive_comment_notifications" => true,
-            "receive_new_follower_notifications" => true,
-            "receive_follower_notifications" => true,
-        ]);
-
-        return $user;
+        return DB::transaction(function () use ($data, $profile) {
+            $user = User::create([
+                "id" => Str::uuid()->toString(),
+                "first_name" => $data["first_name"],
+                "last_name" => $data["last_name"],
+                "email" => $data["email"],
+                "avatar" => Avatar::is($data["avatar"])
+                    ? $data["avatar"]
+                    : Avatar::fromUploadedFile($data["avatar"]),
+            ]);
+            $user->profile()->create($profile);
+            $user->settings()->create([
+                "receive_weekly_digest" => true,
+                "receive_comment_notifications" => true,
+                "receive_new_follower_notifications" => true,
+                "receive_follower_notifications" => true,
+            ]);
+            return $user;
+        });
     }
 
     public function updateWithProfile(array $data)
@@ -290,7 +295,7 @@ class User extends Authenticatable implements MustVerifyEmail
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
             "grades" => array_map(
-                fn ($grade) => Grade::from($grade),
+                fn($grade) => Grade::from($grade),
                 is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
             ),
             "gender" => "",

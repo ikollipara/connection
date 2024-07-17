@@ -97,7 +97,7 @@
           </form>
         </li>
       @else
-        <x-nav.item is-button class="is-outlined" route="{{ route('registration.create') }}">Sign Up</x-nav.item>
+        <x-nav.item is-button class="is-outlined" route="{{ route('users.create') }}">Sign Up</x-nav.item>
         <x-nav.item is-button route="{{ route('login.create') }}">Login</x-nav.item>
       @endauth
     </ul>

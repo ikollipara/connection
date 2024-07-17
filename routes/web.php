@@ -50,11 +50,9 @@ if (env("APP_DEBUG")) {
 }
 
 Route::get("/sign-up", [UsersController::class, "create"])
-    ->name("registration.create")
+    ->name("users.create")
     ->middleware("guest");
-Route::post("/users", [UsersController::class, "store"])->name(
-    "registration.store",
-);
+Route::post("/users", [UsersController::class, "store"])->name("users.store");
 
 Route::resource("login", LoginController::class)
     ->only(["create", "store", "show"])

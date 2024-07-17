@@ -11,7 +11,7 @@
     <div class="buttons is-justify-content-center">
       <a href="{{ route('about') }}" class="button is-primary">About Us</a>
       <a href="{{ route('videos') }}" class="button is-primary is-outlined">Learn More</a>
-      <a href="{{ route('registration.create') }}" class="button is-primary">Sign Up</a>
+      <a href="{{ route('users.create') }}" class="button is-primary">Sign Up</a>
     </div>
   </x-hero>
   <x-container class="mt-5">

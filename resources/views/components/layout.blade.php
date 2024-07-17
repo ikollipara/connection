@@ -9,8 +9,8 @@
   @stack('meta')
   @routes
   <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-  <link rel="stylesheet" href="{{ mix('css/animate.css') }}">
-  <link rel="stylesheet" href="{{ mix('css/slim-select.css') }}">
+  <x-style href="{{ mix('css/animate.css') }}" />
+  <x-style href="{{ mix('css/slim-select.css') }}" />
   <script defer src="{{ mix('js/app.js') }}"></script>
   @stack('styles')
   @stack('scripts')
