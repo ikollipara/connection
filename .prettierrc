@@ -6,8 +6,10 @@
         {
             "files": ["*.blade.php"],
             "options": {
-                "parser": "blade",
-               "tabWidth": 2
+               "parser": "blade",
+               "tabWidth": 2,
+               "sortHtmlAttributes": "code-guide",
+               "wrapAttributes": "force-aligned"
             }
         }]
 }
