@@ -81,7 +81,8 @@
         <x-nav.item route="{{ route('index') }}">Home</x-nav.item>
         <x-nav.item route="{{ route('about') }}">About</x-nav.item>
       @endauth
-      <x-nav.item route="{{ route('videos') }}">Videos</x-nav.item>
+      <x-nav.item aria-label="A Set of videos describing how to use and interact with connection"
+                  route="{{ route('videos') }}">Videos</x-nav.item>
     </ul>
     <ul class="navbar-end">
       @auth
