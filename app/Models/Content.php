@@ -24,7 +24,6 @@ use Parental\HasChildren;
  * @property string $id
  * @property string $title
  * @property array<string, string> $body
- * @property-read string $body_text
  * @property-read Status $status
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -109,7 +108,7 @@ class Content extends Model implements Commentable, IsSearchable
     {
         return [
             "title" => $this->title,
-            "body" => $this->body_text,
+            "body" => $this->asPlainText("body"),
         ];
     }
 
@@ -270,18 +269,18 @@ class Content extends Model implements Commentable, IsSearchable
             ->where("published", true)
             ->when(
                 mb_strlen($constraints["type"]) > 0,
-                fn($query) => $query->where("type", $constraints["type"]),
+                fn ($query) => $query->where("type", $constraints["type"]),
             )
             ->when(
                 count($constraints["grades"]) > 0,
-                fn($query) => $query->whereJsonContains(
+                fn ($query) => $query->whereJsonContains(
                     "metadata->grades",
                     $constraints["grades"],
                 ),
             )
             ->when(
                 count($constraints["standards"]) > 0,
-                fn($query) => $query->whereJsonContains(
+                fn ($query) => $query->whereJsonContains(
                     "metadata->standards",
                     $constraints["standards"],
                 ),
@@ -291,14 +290,14 @@ class Content extends Model implements Commentable, IsSearchable
             ) use ($constraints) {
                 $standards = collect($constraints["standard_groups"])
                     ->map(
-                        fn($group) => Standard::getGroup(
+                        fn ($group) => Standard::getGroup(
                             StandardGroup::from($group),
                         ),
                     )
                     ->flatten();
                 return $query->where(
-                    fn($query) => $standards->map(
-                        fn($standard) => $query->orWhereJsonContains(
+                    fn ($query) => $standards->map(
+                        fn ($standard) => $query->orWhereJsonContains(
                             "metadata->standards",
                             $standard,
                         ),
@@ -307,28 +306,28 @@ class Content extends Model implements Commentable, IsSearchable
             })
             ->when(
                 count($constraints["practices"]) > 0,
-                fn($query) => $query->whereJsonContains(
+                fn ($query) => $query->whereJsonContains(
                     "metadata->practices",
                     $constraints["practices"],
                 ),
             )
             ->when(
                 count($constraints["languages"]) > 0,
-                fn($query) => $query->whereJsonContains(
+                fn ($query) => $query->whereJsonContains(
                     "metadata->languages",
                     $constraints["languages"],
                 ),
             )
             ->when(
                 count($constraints["categories"]) > 0,
-                fn($query) => $query->whereIn(
+                fn ($query) => $query->whereIn(
                     "metadata->category",
                     $constraints["categories"],
                 ),
             )
             ->when(
                 count($constraints["audiences"]) > 0,
-                fn($query) => $query->whereIn(
+                fn ($query) => $query->whereIn(
                     "metadata->audience",
                     $constraints["audiences"],
                 ),
@@ -341,7 +340,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     public static function normalizeSearchConstraints(array $constraints): array
     {
-        $normalize_as_array = fn($value) => is_array($value)
+        $normalize_as_array = fn ($value) => is_array($value)
             ? $value
             : [$value];
         return [

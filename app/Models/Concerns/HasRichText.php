@@ -27,39 +27,12 @@ trait HasRichText
         return $this->rich_text_attributes ?? [];
     }
 
-    public static function bootHasRichText()
+    public function asPlainText(string $attribute): string
     {
-        static::retrieved(function ($model) {
-            foreach ($model->getRichTextAttributes() as $attribute) {
-                $model->{"get" .
-                    ucfirst($attribute) .
-                    "TextAttribute"} = function () use ($model, $attribute) {
-                    return BodyExtractor::extract(
-                        is_string($model->{$attribute})
-                            ? json_decode($model->{$attribute}, true)
-                            : $model->{$attribute},
-                    );
-                };
-            }
-        });
-        static::saving(function ($model) {
-            foreach ($model->getRichTextAttributes() as $attribute) {
-                unset($model->{"get" . ucfirst($attribute) . "TextAttribute"});
-            }
-        });
-
-        static::saved(function ($model) {
-            foreach ($model->getRichTextAttributes() as $attribute) {
-                $model->{"get" .
-                    ucfirst($attribute) .
-                    "TextAttribute"} = function () use ($model, $attribute) {
-                    return BodyExtractor::extract(
-                        is_string($model->{$attribute})
-                            ? json_decode($model->{$attribute}, true)
-                            : $model->{$attribute},
-                    );
-                };
-            }
-        });
+        return BodyExtractor::extract(
+            is_string($this->{$attribute})
+                ? json_decode($this->{$attribute}, true)
+                : $this->{$attribute},
+        );
     }
 }
