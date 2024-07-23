@@ -1,7 +1,6 @@
 {
     "parser": "php",
     "plugins": ["@prettier/plugin-php", "@shufo/prettier-plugin-blade"],
-    "phpVersion": "7.4",
     "overrides": [
         {
             "files": ["*.blade.php"],
@@ -11,5 +10,14 @@
                "sortHtmlAttributes": "code-guide",
                "wrapAttributes": "force-aligned"
             }
-        }]
+        },
+        {
+            "files": ["*.php"],
+            "options": {
+                "parser": "php",
+                "phpVersion": "7.4",
+                "printWidth": 120
+            }
+        }
+    ]
 }

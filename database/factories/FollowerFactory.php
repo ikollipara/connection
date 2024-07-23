@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class FrequentlyAskedQuestionFactory extends Factory
+class FollowerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -15,9 +15,8 @@ class FrequentlyAskedQuestionFactory extends Factory
     public function definition()
     {
         return [
-            "title" => $this->faker->sentence(),
-            "content" => $this->faker->paragraphs(3, true),
-            "user_id" => User::factory(),
+            "follower_id" => User::factory(),
+            "followed_id" => User::factory(),
         ];
     }
 }

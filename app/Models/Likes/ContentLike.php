@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ContentLike extends Model
 {
+    use HasFactory;
     protected $table = "content_likes";
 
     /**

@@ -25,20 +25,12 @@ trait HasMetadata
 {
     public function getMetadataAttribute()
     {
-        $data = is_string($attrs = $this->attributes["metadata"])
-            ? json_decode($attrs, true)
-            : $attrs;
-        return new Metadata($data);
+        return new Metadata(json_decode($this->attributes["metadata"], true));
     }
 
     public function setMetadataAttribute(Metadata $metadata)
     {
-        is_string($this->attributes["metadata"])
-            ? ($this->attributes["metadata"] = $metadata->__toString())
-            : ($this->attributes["metadata"] = json_decode(
-                $metadata->__toString(),
-                true,
-            ));
+        $this->attributes["metadata"] = $metadata->__toString();
     }
 
     public static function bootHasMetadata()

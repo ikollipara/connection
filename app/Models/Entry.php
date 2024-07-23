@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
  */
 class Entry extends Model
 {
-    use AsPivot;
+    use HasFactory, AsPivot;
 
     protected $table = "entries";
     public $timestamps = true;

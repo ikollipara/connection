@@ -27,11 +27,11 @@ class ContentSearchHandler extends Controller
     public function __invoke(SearchRequest $request)
     {
         $validated = $request->validated();
-        $has_params = count($validated);
-        $this->logSearch($request, $validated);
-        $results = $has_params
-            ? $this->search_service->search($validated)
-            : collect();
+        $results = collect();
+        if (filled($validated)) {
+            $this->logSearch($request, $validated);
+            $results = $this->search_service->search($validated);
+        }
 
         session()->flashInput($validated);
         return view("search", compact("results"));
@@ -43,9 +43,7 @@ class ContentSearchHandler extends Controller
             ->user()
             ->searches()
             ->create([
-                "search_params" => json_encode(
-                    array_merge($validated, ["model" => Content::class]),
-                ),
+                "search_params" => json_encode(array_merge($validated, ["model" => Content::class])),
             ]);
     }
 }

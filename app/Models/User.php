@@ -5,7 +5,8 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Enums\Grade;
-use App\Traits\HasUuids;
+use App\Services\SurveyService;
+use App\Models\Concerns\HasUuids;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Collection;
 use App\ValueObjects\Avatar;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -51,7 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = ["id", "first_name", "last_name", "avatar", "email"];
+    protected $fillable = ["first_name", "last_name", "avatar", "email"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -72,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
         "yearly_survey_sent_at" => "datetime",
     ];
 
-    public static function booted()
+    protected static function booted()
     {
         // Before creating the user, we normalize the email.
         static::creating(function (User $user) {
@@ -80,24 +82,25 @@ class User extends Authenticatable implements MustVerifyEmail
         });
         static::created(function (User $user) {
             event(new Registered($user));
+            $user->notifyIfConsented();
         });
-        // static::saved(function (User $user) {
-        //     if ($user->consented and $user->wasChanged("consented")) {
-        //         $url =
-        //             env("APP_QUALTRICS_CONSENT_LINK") . "?user_id={$user->id}";
-        //         Mail::to($user)->queue(new Survey($url));
-        //     }
-        // });
+        static::saved(function (User $user) {
+            $user->notifyIfConsented();
+        });
+    }
+
+    private function notifyIfConsented()
+    {
+        if ($this->consented and ($this->wasChanged("consented") or $this->wasRecentlyCreated)) {
+            (new SurveyService($this))->sendSurvey(Arr::wrap(SurveyService::SCALES), SurveyService::ONCE);
+        }
     }
 
     // Overrides
 
     public function getRouteKey()
     {
-        return "@" .
-            Str::slug($this->full_name, "-") .
-            "--" .
-            $this->getAttribute($this->getRouteKeyName());
+        return "@" . Str::slug($this->full_name, "-") . "--" . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -115,7 +118,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * Get the user's full name.
      * @return string The user's full name
      */
-    public function getFullNameAttribute(): string
+    protected function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
     }
@@ -128,9 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $avatar = new Avatar($this->attributes["avatar"]);
         $full_name = trim(str_replace(" ", "+", $this->full_name));
-        $avatar->setDefault(
-            "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF",
-        );
+        $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
         return $avatar;
     }
 
@@ -153,12 +154,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function followers()
     {
-        return $this->belongsToMany(
-            self::class,
-            "followers",
-            "followed_id",
-            "follower_id",
-        )->using(Follower::class);
+        return $this->belongsToMany(self::class, "followers", "followed_id", "follower_id")->using(Follower::class);
     }
 
     /**
@@ -167,12 +163,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function following()
     {
-        return $this->belongsToMany(
-            self::class,
-            "followers",
-            "follower_id",
-            "followed_id",
-        )->using(Follower::class);
+        return $this->belongsToMany(self::class, "followers", "follower_id", "followed_id")->using(Follower::class);
     }
 
     /**
@@ -249,17 +240,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function createWithProfileAndSettings(array $data): User
     {
         $profile = [
-            "school" => isset($data["school"]) ? $data["school"] : "",
-            "is_preservice" => isset($data["is_preservice"]) ? true : false,
-            "years_of_experience" => isset($data["years_of_experience"])
-                ? $data["years_of_experience"]
-                : 0,
+            "school" => $data["school"],
+            "is_preservice" => isset($data["is_preservice"]),
+            "years_of_experience" => data_get($data, "years_of_experience", 0),
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
-            "grades" => array_map(
-                fn($grade) => Grade::from($grade),
-                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
-            ),
+            "grades" => collect($data["grades"])
+                ->map(fn($grade) => Grade::from($grade))
+                ->toArray(),
             "gender" => "",
         ];
 
@@ -269,9 +257,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 "first_name" => $data["first_name"],
                 "last_name" => $data["last_name"],
                 "email" => $data["email"],
-                "avatar" => Avatar::is($data["avatar"])
-                    ? $data["avatar"]
-                    : Avatar::fromUploadedFile($data["avatar"]),
+                "avatar" => Avatar::is($data["avatar"]) ? $data["avatar"] : Avatar::fromUploadedFile($data["avatar"]),
             ]);
             $user->profile()->create($profile);
             $user->settings()->create([
@@ -282,34 +268,5 @@ class User extends Authenticatable implements MustVerifyEmail
             ]);
             return $user;
         });
-    }
-
-    public function updateWithProfile(array $data)
-    {
-        $profile = [
-            "school" => isset($data["school"]) ? $data["school"] : "",
-            "is_preservice" => isset($data["is_preservice"]) ? true : false,
-            "years_of_experience" => isset($data["years_of_experience"])
-                ? $data["years_of_experience"]
-                : 0,
-            "subject" => $data["subject"],
-            "bio" => json_decode($data["bio"], true),
-            "grades" => array_map(
-                fn($grade) => Grade::from($grade),
-                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
-            ),
-            "gender" => "",
-        ];
-        $this->update([
-            "first_name" => $data["first_name"],
-            "last_name" => $data["last_name"],
-            "email" => $data["email"],
-        ]);
-        if (isset($data["avatar"])) {
-            $this->avatar = $data["avatar"];
-        }
-        $profile_save = $this->profile()->update($profile);
-        $user_save = $this->save();
-        return $profile_save and $user_save;
     }
 }

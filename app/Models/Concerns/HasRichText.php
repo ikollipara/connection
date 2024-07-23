@@ -22,17 +22,10 @@ use App\Services\BodyExtractor;
  * |=============================================================================| */
 trait HasRichText
 {
-    protected function getRichTextAttributes(): array
-    {
-        return $this->rich_text_attributes ?? [];
-    }
-
     public function asPlainText(string $attribute): string
     {
         return BodyExtractor::extract(
-            is_string($this->{$attribute})
-                ? json_decode($this->{$attribute}, true)
-                : $this->{$attribute},
+            is_string($this->{$attribute}) ? json_decode($this->{$attribute}, true) : $this->{$attribute},
         );
     }
 }
