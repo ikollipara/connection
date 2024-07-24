@@ -48,15 +48,20 @@ class Event extends Model
         "end_time",
         "is_all_day",
         "display_picture",
+        "metadata",
     ];
 
     protected $casts = [
         "description" => "array",
         "start_date" => "date",
         "end_date" => "date",
-        "start_time" => "time",
-        "end_time" => "time",
+        // "start_time" => "time",
+        // "end_time" => "time",
         "is_all_day" => "boolean",
+    ];
+
+    protected $attributes = [
+        "metadata" => '{"category": "material", "audience": "Teachers"}',
     ];
 
     protected $rich_text_attributes = ["description"];
@@ -113,5 +118,34 @@ class Event extends Model
             "events",
             "public",
         );
+    }
+
+    public function getEndDateAttribute($value)
+    {
+        if($this->is_all_day) {
+            return $this->start_date;
+        }
+        return $value;
+    }
+
+    // Methods
+
+    public function toFullCalendar($user)
+    {
+        $event = [
+            "title" => $this->title,
+            "description"=> $this->description,
+            "start" => $this->start_date->toDateString(),
+            'was_created_by_user' => $this->user()->is($user),
+            'user_id' => $this->user_id,
+            "id" => $this->id,
+        ];
+
+        if($this->end_date) {
+            $event["end"] = $this->end_date->addDay()->toDateString();
+        };
+        // need to add for start and end times too
+
+        return $event;
     }
 }

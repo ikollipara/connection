@@ -43,6 +43,7 @@ mix
       },
       plugins: [
         // new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
       ]
     }
   })

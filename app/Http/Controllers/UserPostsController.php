@@ -66,7 +66,7 @@ class UserPostsController extends Controller
     {
         $this->authorize("create", [Post::class, $user]);
         return view("users.posts.create", compact("user"));
-    }
+    }   
 
     /**
      * Store a newly created resource in storage.

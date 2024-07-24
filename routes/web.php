@@ -23,6 +23,8 @@ use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use App\Http\Handlers\CollectionsEntryHandler;
 use App\Http\Handlers\DashboardHandler;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -83,6 +85,41 @@ Route::delete("/weekly-digest/subscription/{user}", [
     ->middleware("signed");
 
 Route::middleware("auth")->group(function () {
+    Route::get("/events", [UserEventController::class, "index"])
+        ->name("users.events.index");
+    Route::get("/users/{user}/events/create", [UserEventController::class,"create"])
+        ->name("users.events.create");
+    Route::get("/events/show", [EventController::class,"show"])
+        ->name("events.show");
+    Route::post('/users/{user}/events', [UserEventController::class,"store"])
+        ->name("users.events.store")
+        ->middleware("verified");
+
+    Route::get("/users/{user}/events/{event}/edit", [
+        UserEventController::class,
+        "edit",
+    ])
+        ->name("users.events.edit")
+        ->withTrashed()
+        ->middleware("verified");
+
+    Route::patch("/users/{user}/events/{event}", [
+        UserEventController::class,
+        "update",
+    ])
+        ->name("users.events.update")
+        ->withTrashed()
+        ->middleware("verified");
+
+    Route::delete("/users/{user}/events/{event}", [
+        UserEventController::class,
+        "destroy",
+    ])
+        ->name("users.events.destroy")
+        ->withTrashed()
+        ->middleware("verified");
+
+        
     Route::post("/content/{content}/likes", [
         ContentLikesController::class,
         "store",
