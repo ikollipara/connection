@@ -18,24 +18,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
         $schedule
             ->call(function () {
                 User::query()
                     ->where("consented", true)
                     ->each(
                         fn($user) => (new SurveyService($user))
-                            ->sendSurvey(
-                                [SurveyService::CT_CAST],
-                                SurveyService::ONCE,
-                            )
-                            ->sendSurvey(
-                                [SurveyService::CT_CAST, SurveyService::SCALES],
-                                SurveyService::YEARLY,
-                            ),
+                            ->sendSurvey([SurveyService::CT_CAST], SurveyService::ONCE)
+                            ->sendSurvey([SurveyService::CT_CAST, SurveyService::SCALES], SurveyService::YEARLY),
                     );
             })
             ->daily();
+        $schedule
+            ->command("queue:work --stop-when-empty")
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

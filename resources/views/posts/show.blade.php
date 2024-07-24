@@ -13,39 +13,62 @@ description: Show view for a post
   $route = $liked_by_user ? route('content.likes.destroy', [$post, $liked_by_user->id]) : route('content.likes.store', $post);
 @endphp
 
-<x-layout :title="$title" no-livewire>
-  <x-hero class="is-primary" hero-body-class="has-text-centered">
+<x-layout :title="$title"
+          no-livewire>
+  @push('meta')
+    <meta name="description"
+          content="{{ Str::limit($post->body_text, 150) }}">
+    <meta name="og:title"
+          content="{{ $title }}">
+    <meta name="og:description"
+          content="{{ Str::limit($post->body_text, 150) }}">
+    <meta name="og:image"
+          content="{{ $avatar }}">
+  @endpush
+  <x-hero class="is-primary"
+          hero-body-class="has-text-centered">
     <h1 class="title is-1">{{ $post->title }}</h1>
     <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-      <figure class="image is-64x64"><img src="{{ $avatar }}" alt=""></figure>
-      <a @if ($post->user) href="{{ route('users.show', $post->user) }}" @endif class="link is-italic">
+      <figure class="image is-64x64"><img src="{{ $avatar }}"
+             alt=""></figure>
+      <a class="link is-italic"
+         @if ($post->user) href="{{ route('users.show', $post->user) }}" @endif>
         {{ $full_name }} - {{ $short_title }}
       </a>
     </div>
     <div class="level bordered">
       <div class="level-left">
         <x-bulma-icon icon="lucide-eye">{{ $post->views_count }}</x-bulma-icon>
-        <form action="{{ $route }}" method="post">
+        <form action="{{ $route }}"
+              method="post">
           @csrf
           @method($liked_by_user ? 'DELETE' : 'POST')
-          <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-          <button type="submit" class="button is-primary">
+          <input name="user_id"
+                 type="hidden"
+                 value="{{ auth()->id() }}">
+          <button class="button is-primary"
+                  type="submit">
             <x-bulma-icon fill="{{ $liked_by_user ? 'white' : 'none' }}"
-              icon="lucide-heart">{{ $post->likes_count }}</x-bulma-icon>
+                          icon="lucide-heart">{{ $post->likes_count }}</x-bulma-icon>
           </button>
         </form>
       </div>
       <div class="level-right">
-        <x-add-to-collection :content="$post" :collections="auth()->user()->collections" />
-        <a href="{{ route('posts.comments.index', $post) }}" class="button is-primary">See Comments</a>
+        <x-add-to-collection :content="$post"
+                             :collections="auth()->user()->collections" />
+        <a class="button is-primary"
+           href="{{ route('posts.comments.index', $post) }}">See Comments</a>
       </div>
     </div>
   </x-hero>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <details class="is-clickable">
       <summary>Metadata</summary>
       <x-metadata.table :metadata="$post->metadata" />
     </details>
-    <x-editor value="{{ Js::from($post->body) }}" name="editor" read-only />
+    <x-editor name="editor"
+              value="{{ Js::from($post->body) }}"
+              read-only />
   </x-container>
 </x-layout>

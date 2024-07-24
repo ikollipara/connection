@@ -39,9 +39,8 @@ class SearchService
         string $query_key = "q"
     ): Collection {
         $constraints = $this->model::normalizeSearchConstraints($constraints);
-        return $this->model
-            ::search($constraints[$query_key])
-            ->query(fn($query) => $query->withSearchConstraints($constraints))
+        return $this->model::search(trim($constraints[$query_key]))
+            ->query(fn ($query) => $query->withSearchConstraints($constraints))
             ->get();
     }
 }

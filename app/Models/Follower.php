@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
  * @property int $id
  * @property string $followed_id
  * @property string $follower_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
  */
 class Follower extends Model
 {
@@ -35,15 +35,6 @@ class Follower extends Model
      * @var array
      */
     protected $fillable = ["followed_id", "follower_id"];
-
-    /**
-     * The attributes that should be cast to native types.
-     * @var array
-     */
-    protected $casts = [
-        "user_id" => "string",
-        "follower_id" => "string",
-    ];
 
     /**
      * Get the user that the followed belongs to.

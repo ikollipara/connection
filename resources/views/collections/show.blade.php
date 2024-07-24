@@ -13,36 +13,56 @@ description: The view for showing a collection
   $route = $liked_by_user ? route('content.likes.destroy', [$collection, $liked_by_user->id]) : route('content.likes.store', $collection);
 @endphp
 
-<x-layout :title="$title" no-livewire>
-  <x-hero class="is-primary" hero-body-class="has-text-centered">
+<x-layout :title="$title"
+          no-livewire>
+  @push('meta')
+    <meta name="description"
+          content="{{ Str::limit($collection->body_text, 150) }}">
+    <meta name="og:title"
+          content="{{ $title }}">
+    <meta name="og:description"
+          content="{{ Str::limit($collection->body_text, 150) }}">
+    <meta name="og:image"
+          content="{{ $avatar }}">
+  @endpush
+  <x-hero class="is-primary"
+          hero-body-class="has-text-centered">
     <h1 class="title is-1">{{ $collection->title }}</h1>
     <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-      <figure class="image is-64x64"><img src="{{ $avatar }}" alt=""></figure>
-      <a @if ($collection->user) href="{{ route('users.show', $collection->user) }}" @endif
-        class="link is-italic">
+      <figure class="image is-64x64"><img src="{{ $avatar }}"
+             alt=""></figure>
+      <a class="link is-italic"
+         @if ($collection->user) href="{{ route('users.show', $collection->user) }}" @endif>
         {{ $full_name }} - {{ $short_title }}
       </a>
     </div>
     <div class="level bordered">
       <div class="level-left">
         <x-bulma-icon icon="lucide-eye">{{ $collection->views_count }}</x-bulma-icon>
-        <form action="{{ $route }}" method="post">
+        <form action="{{ $route }}"
+              method="post">
           @csrf
           @method($liked_by_user ? 'DELETE' : 'POST')
-          <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-          <button type="submit" class="button is-primary">
+          <input name="user_id"
+                 type="hidden"
+                 value="{{ auth()->id() }}">
+          <button class="button is-primary"
+                  type="submit">
             <x-bulma-icon fill="{{ $liked_by_user ? 'white' : 'none' }}"
-              icon="lucide-heart">{{ $collection->likes_count }}</x-bulma-icon>
+                          icon="lucide-heart">{{ $collection->likes_count }}</x-bulma-icon>
           </button>
         </form>
       </div>
       <div class="level-right">
-        <x-add-to-collection :content="$collection" :collections="auth()->user()->collections" />
-        <a href="{{ route('collections.comments.index', $collection) }}" class="button is-primary">See Comments</a>
+        <x-add-to-collection :content="$collection"
+                             :collections="auth()->user()->collections" />
+        <a class="button is-primary"
+           href="{{ route('collections.comments.index', $collection) }}">See Comments</a>
       </div>
     </div>
   </x-hero>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <x-tabs tab-titles="Description, Entries">
       <x-tabs.tab title="Description">
         <details class="is-clickable">
@@ -50,7 +70,9 @@ description: The view for showing a collection
           <x-metadata.table :metadata="$collection->metadata" />
         </details>
         <section>
-          <x-editor value="{{ Js::from($collection->body) }}" name="editor" read-only />
+          <x-editor name="editor"
+                    value="{{ Js::from($collection->body) }}"
+                    read-only />
         </section>
       </x-tabs.tab>
       <x-tabs.tab title="Entries">

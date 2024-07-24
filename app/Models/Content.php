@@ -9,12 +9,12 @@ use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\HasRichText;
-use App\Traits\HasComments;
-use App\Traits\HasUuids;
+use App\Models\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Parental\HasChildren;
@@ -24,7 +24,6 @@ use Parental\HasChildren;
  * @property string $id
  * @property string $title
  * @property array<string, string> $body
- * @property-read string $body_text
  * @property-read Status $status
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -36,14 +35,7 @@ use Parental\HasChildren;
  */
 class Content extends Model implements Commentable, IsSearchable
 {
-    use HasFactory,
-        HasChildren,
-        HasUuids,
-        HasRichText,
-        HasMetadata,
-        SoftDeletes,
-        Searchable,
-        HasComments;
+    use HasFactory, HasChildren, HasUuids, HasRichText, HasMetadata, SoftDeletes, Searchable;
 
     protected $table = "content";
 
@@ -69,14 +61,7 @@ class Content extends Model implements Commentable, IsSearchable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        "title",
-        "body",
-        "metadata",
-        "published",
-        "user_id",
-        "type",
-    ];
+    protected $fillable = ["title", "body", "metadata", "published", "user_id", "type"];
 
     /**
      * The attributes that should be cast.
@@ -109,7 +94,7 @@ class Content extends Model implements Commentable, IsSearchable
     {
         return [
             "title" => $this->title,
-            "body" => $this->body_text,
+            "body" => $this->asPlainText("body"),
         ];
     }
 
@@ -122,9 +107,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     public function getRouteKey()
     {
-        return Str::slug($this->title) .
-            "--" .
-            $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title) . "--" . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -191,12 +174,18 @@ class Content extends Model implements Commentable, IsSearchable
      */
     public function collections()
     {
-        return $this->belongsToMany(
-            PostCollection::class,
-            "entries",
-            "content_id",
-            "collection_id",
-        )->using(Entry::class);
+        return $this->belongsToMany(PostCollection::class, "entries", "content_id", "collection_id")->using(
+            Entry::class,
+        );
+    }
+
+    /**
+     * Get all of the comments for the model.
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\App\Models\Comment>
+     */
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, "commentable");
     }
 
     // Scopes
@@ -209,16 +198,14 @@ class Content extends Model implements Commentable, IsSearchable
      */
     public function scopeStatus($query, Status $status)
     {
-        if ($status->equals(Status::archived())) {
-            return $query->onlyTrashed();
+        switch (true) {
+            case $status->equals(Status::archived()):
+                return $query->onlyTrashed();
+            case $status->equals(Status::published()):
+                return $query->where("published", true);
+            case $status->equals(Status::draft()):
+                return $query->where("published", false);
         }
-        if ($status->equals(Status::published())) {
-            return $query->where("published", true);
-        }
-        if ($status->equals(Status::draft())) {
-            return $query->where("published", false);
-        }
-        return $query;
     }
 
     /**
@@ -268,70 +255,43 @@ class Content extends Model implements Commentable, IsSearchable
     {
         return $query
             ->where("published", true)
+            ->when($constraints["type"], fn($query, $types) => $query->where("type", $types))
             ->when(
-                mb_strlen($constraints["type"]) > 0,
-                fn($query) => $query->where("type", $constraints["type"]),
+                $constraints["grades"],
+                fn($query, $grades) => $query->whereJsonContains("metadata->grades", $grades),
             )
             ->when(
-                count($constraints["grades"]) > 0,
-                fn($query) => $query->whereJsonContains(
-                    "metadata->grades",
-                    $constraints["grades"],
+                $constraints["standards"],
+                fn($query, $standards) => $query->whereJsonContains("metadata->standards", $standards),
+            )
+            ->when(
+                $constraints["standard_groups"],
+                fn($query, $standard_groups) => $query->where(
+                    fn($query) => collect($standard_groups)
+                        ->map(
+                            fn($group) => $query->orWhereJsonContains(
+                                "metadata->standards",
+                                Standard::getGroup(StandardGroup::from($group)),
+                            ),
+                        )
+                        ->flatten(),
                 ),
             )
             ->when(
-                count($constraints["standards"]) > 0,
-                fn($query) => $query->whereJsonContains(
-                    "metadata->standards",
-                    $constraints["standards"],
-                ),
-            )
-            ->when(count($constraints["standard_groups"]) > 0, function (
-                $query
-            ) use ($constraints) {
-                $standards = collect($constraints["standard_groups"])
-                    ->map(
-                        fn($group) => Standard::getGroup(
-                            StandardGroup::from($group),
-                        ),
-                    )
-                    ->flatten();
-                return $query->where(
-                    fn($query) => $standards->map(
-                        fn($standard) => $query->orWhereJsonContains(
-                            "metadata->standards",
-                            $standard,
-                        ),
-                    ),
-                );
-            })
-            ->when(
-                count($constraints["practices"]) > 0,
-                fn($query) => $query->whereJsonContains(
-                    "metadata->practices",
-                    $constraints["practices"],
-                ),
+                $constraints["practices"],
+                fn($query, $practices) => $query->whereJsonContains("metadata->practices", $practices),
             )
             ->when(
-                count($constraints["languages"]) > 0,
-                fn($query) => $query->whereJsonContains(
-                    "metadata->languages",
-                    $constraints["languages"],
-                ),
+                $constraints["languages"],
+                fn($query, $languages) => $query->whereJsonContains("metadata->languages", $languages),
             )
             ->when(
-                count($constraints["categories"]) > 0,
-                fn($query) => $query->whereIn(
-                    "metadata->category",
-                    $constraints["categories"],
-                ),
+                $constraints["categories"],
+                fn($query, $categories) => $query->whereIn("metadata->category", $categories),
             )
             ->when(
-                count($constraints["audiences"]) > 0,
-                fn($query) => $query->whereIn(
-                    "metadata->audience",
-                    $constraints["audiences"],
-                ),
+                $constraints["audiences"],
+                fn($query, $audiences) => $query->whereIn("metadata->audience", $audiences),
             )
             ->whereHas("likes", null, ">=", $constraints["likes_count"])
             ->whereHas("views", null, ">=", $constraints["views_count"]);
@@ -341,39 +301,17 @@ class Content extends Model implements Commentable, IsSearchable
 
     public static function normalizeSearchConstraints(array $constraints): array
     {
-        $normalize_as_array = fn($value) => is_array($value)
-            ? $value
-            : [$value];
         return [
-            "q" => isset($constraints["q"]) ? $constraints["q"] : "",
-            "type" => isset($constraints["type"]) ? $constraints["type"] : "",
-            "categories" => isset($constraints["categories"])
-                ? $normalize_as_array($constraints["categories"])
-                : [],
-            "audiences" => isset($constraints["audiences"])
-                ? $normalize_as_array($constraints["audiences"])
-                : [],
-            "grades" => isset($constraints["grades"])
-                ? $normalize_as_array($constraints["grades"])
-                : [],
-            "standards" => isset($constraints["standards"])
-                ? $normalize_as_array($constraints["standards"])
-                : [],
-            "practices" => isset($constraints["practices"])
-                ? $normalize_as_array($constraints["practices"])
-                : [],
-            "languages" => isset($constraints["languages"])
-                ? $normalize_as_array($constraints["languages"])
-                : [],
-            "standard_groups" => isset($constraints["standard_groups"])
-                ? $normalize_as_array($constraints["standard_groups"])
-                : [],
-            "likes_count" => isset($constraints["likes_count"])
-                ? $constraints["likes_count"]
-                : 0,
-            "views_count" => isset($constraints["views_count"])
-                ? $constraints["views_count"]
-                : 0,
+            "type" => data_get($constraints, "type", ""),
+            "categories" => Arr::wrap(data_get($constraints, "categories", [])),
+            "audiences" => Arr::wrap(data_get($constraints, "audiences", [])),
+            "grades" => Arr::wrap(data_get($constraints, "grades", [])),
+            "standards" => Arr::wrap(data_get($constraints, "standards", [])),
+            "practices" => Arr::wrap(data_get($constraints, "practices", [])),
+            "languages" => Arr::wrap(data_get($constraints, "languages", [])),
+            "standard_groups" => Arr::wrap(data_get($constraints, "standard_groups", [])),
+            "likes_count" => data_get($constraints, "likes_count", 0),
+            "views_count" => data_get($constraints, "views_count", 0),
         ];
     }
 }

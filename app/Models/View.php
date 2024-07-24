@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class View extends Model
 {
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      * @var array<int, string>
@@ -55,10 +57,7 @@ class View extends Model
 
     public function scopeThisMonth($query)
     {
-        return $query->whereBetween("created_at", [
-            now()->startOfMonth(),
-            now()->endOfMonth(),
-        ]);
+        return $query->whereBetween("created_at", [now()->startOfMonth(), now()->endOfMonth()]);
     }
 
     public function scopeLastMonth($query)

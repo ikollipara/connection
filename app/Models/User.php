@@ -5,7 +5,8 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Enums\Grade;
-use App\Traits\HasUuids;
+use App\Services\SurveyService;
+use App\Models\Concerns\HasUuids;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,9 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
+use App\ValueObjects\Avatar;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\User
@@ -24,7 +27,7 @@ use Illuminate\Http\UploadedFile;
  * @property string $first_name
  * @property string $last_name
  * @property-read string $full_name
- * @property string $avatar
+ * @property Avatar $avatar
  * @property string $email
  * @property bool $consented
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -72,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
         "yearly_survey_sent_at" => "datetime",
     ];
 
-    public static function booted()
+    protected static function booted()
     {
         // Before creating the user, we normalize the email.
         static::creating(function (User $user) {
@@ -80,24 +83,25 @@ class User extends Authenticatable implements MustVerifyEmail
         });
         static::created(function (User $user) {
             event(new Registered($user));
+            $user->notifyIfConsented();
         });
-        // static::saved(function (User $user) {
-        //     if ($user->consented and $user->wasChanged("consented")) {
-        //         $url =
-        //             env("APP_QUALTRICS_CONSENT_LINK") . "?user_id={$user->id}";
-        //         Mail::to($user)->queue(new Survey($url));
-        //     }
-        // });
+        static::saved(function (User $user) {
+            $user->notifyIfConsented();
+        });
+    }
+
+    private function notifyIfConsented()
+    {
+        if ($this->consented and ($this->wasChanged("consented") or $this->wasRecentlyCreated)) {
+            (new SurveyService($this))->sendSurvey(Arr::wrap(SurveyService::SCALES), SurveyService::ONCE);
+        }
     }
 
     // Overrides
 
     public function getRouteKey()
     {
-        return "@" .
-            Str::slug($this->full_name, "-") .
-            "--" .
-            $this->getAttribute($this->getRouteKeyName());
+        return "@" . Str::slug($this->full_name, "-") . "--" . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -115,34 +119,31 @@ class User extends Authenticatable implements MustVerifyEmail
      * Get the user's full name.
      * @return string The user's full name
      */
-    public function getFullNameAttribute(): string
+    protected function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
     }
 
     /**
      * Get the user's avatar
-     * @return string The user's avatar
+     * @return Avatar The user's avatar
      */
-    public function getAvatarAttribute(): string
+    public function getAvatarAttribute(): Avatar
     {
-        if (!$this->attributes["avatar"]) {
-            $full_name = trim(str_replace(" ", "+", $this->full_name));
-            return "https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF";
-        }
-        return Storage::url($this->attributes["avatar"]);
+        $avatar = new Avatar($this->attributes["avatar"]);
+        $full_name = trim(str_replace(" ", "+", $this->full_name));
+        $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
+        return $avatar;
     }
 
     /**
      * Set the user's avatar
-     * @param UploadedFile $value The new avatar file
+     * @param Avatar|string $value The new avatar object
      */
-    public function setAvatarAttribute(UploadedFile $value): void
+    public function setAvatarAttribute($value): void
     {
-        if ($this->attributes["avatar"]) {
-            Storage::delete($this->attributes["avatar"]);
-        }
-        $this->attributes["avatar"] = $value->store("avatars", "public");
+        $value = is_string($value) ? new Avatar($value) : $value;
+        $this->attributes["avatar"] = $value->path();
     }
 
     // Relationships
@@ -154,12 +155,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function followers()
     {
-        return $this->belongsToMany(
-            self::class,
-            "followers",
-            "followed_id",
-            "follower_id",
-        )->using(Follower::class);
+        return $this->belongsToMany(self::class, "followers", "followed_id", "follower_id")->using(Follower::class);
     }
 
     /**
@@ -168,12 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function following()
     {
-        return $this->belongsToMany(
-            self::class,
-            "followers",
-            "follower_id",
-            "followed_id",
-        )->using(Follower::class);
+        return $this->belongsToMany(self::class, "followers", "follower_id", "followed_id")->using(Follower::class);
     }
 
     /**
@@ -259,62 +250,33 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function createWithProfileAndSettings(array $data): User
     {
         $profile = [
-            "school" => isset($data["school"]) ? $data["school"] : "",
-            "is_preservice" => isset($data["is_preservice"]) ? true : false,
-            "years_of_experience" => isset($data["years_of_experience"])
-                ? $data["years_of_experience"]
-                : 0,
+            "school" => $data["school"],
+            "is_preservice" => isset($data["is_preservice"]),
+            "years_of_experience" => data_get($data, "years_of_experience", 0),
             "subject" => $data["subject"],
             "bio" => json_decode($data["bio"], true),
-            "grades" => array_map(
-                fn ($grade) => Grade::from($grade),
-                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
-            ),
+            "grades" => collect($data["grades"])
+                ->map(fn($grade) => Grade::from($grade))
+                ->toArray(),
             "gender" => "",
         ];
 
-        $user = User::create([
-            "first_name" => $data["first_name"],
-            "last_name" => $data["last_name"],
-            "email" => $data["email"],
-        ]);
-        $user->profile()->create($profile);
-        $user->settings()->create([
-            "receive_weekly_digest" => true,
-            "receive_comment_notifications" => true,
-            "receive_new_follower_notifications" => true,
-            "receive_follower_notifications" => true,
-        ]);
-
-        return $user;
-    }
-
-    public function updateWithProfile(array $data)
-    {
-        $profile = [
-            "school" => isset($data["school"]) ? $data["school"] : "",
-            "is_preservice" => isset($data["is_preservice"]) ? true : false,
-            "years_of_experience" => isset($data["years_of_experience"])
-                ? $data["years_of_experience"]
-                : 0,
-            "subject" => $data["subject"],
-            "bio" => json_decode($data["bio"], true),
-            "grades" => array_map(
-                fn ($grade) => Grade::from($grade),
-                is_array($data["grades"]) ? $data["grades"] : [$data["grades"]],
-            ),
-            "gender" => "",
-        ];
-        $this->update([
-            "first_name" => $data["first_name"],
-            "last_name" => $data["last_name"],
-            "email" => $data["email"],
-        ]);
-        if (isset($data["avatar"])) {
-            $this->avatar = $data["avatar"];
-        }
-        $profile_save = $this->profile()->update($profile);
-        $user_save = $this->save();
-        return $profile_save and $user_save;
+        return DB::transaction(function () use ($data, $profile) {
+            $user = User::create([
+                "id" => Str::uuid()->toString(),
+                "first_name" => $data["first_name"],
+                "last_name" => $data["last_name"],
+                "email" => $data["email"],
+                "avatar" => Avatar::is($data["avatar"]) ? $data["avatar"] : Avatar::fromUploadedFile($data["avatar"]),
+            ]);
+            $user->profile()->create($profile);
+            $user->settings()->create([
+                "receive_weekly_digest" => true,
+                "receive_comment_notifications" => true,
+                "receive_new_follower_notifications" => true,
+                "receive_follower_notifications" => true,
+            ]);
+            return $user;
+        });
     }
 }

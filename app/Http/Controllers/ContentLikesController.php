@@ -42,7 +42,11 @@ class ContentLikesController extends Controller
     {
         $validated = $request->validated();
         $content->likes()->create($validated);
-        return back(303)->with("success", __("{$content->name} liked"));
+        $route = $content->type === "post" ? "posts.show" : "collections.show";
+        return redirect(route($route, $content), 303)->with(
+            "success",
+            __("{$content->name} liked"),
+        );
     }
 
     /**
@@ -95,8 +99,12 @@ class ContentLikesController extends Controller
     public function destroy(Content $content, ContentLike $contentLike)
     {
         $successful = $contentLike->delete();
+        $route = $content->type === "post" ? "posts.show" : "collections.show";
         if ($successful) {
-            return back(303)->with("success", __("Like removed successfully"));
+            return redirect(route($route, $content), 303)->with(
+                "success",
+                __("Like removed successfully"),
+            );
         }
     }
 }

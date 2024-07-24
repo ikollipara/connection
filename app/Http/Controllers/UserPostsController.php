@@ -124,7 +124,10 @@ class UserPostsController extends Controller
         }
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
-        $post = $post->update($validated);
-        return back(303)->with("success", __("Post successfully updated"));
+        $post->update($validated);
+        return redirect(route("users.posts.edit", [$user, $post]), 303)->with(
+            "success",
+            __("Post successfully updated"),
+        );
     }
 }

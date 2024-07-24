@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Contracts\Commentable;
-use App\Traits\HasComments;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Parental\HasParent;
 
@@ -12,5 +11,5 @@ use Parental\HasParent;
  */
 class Post extends Content implements Commentable
 {
-    use HasFactory, HasParent, HasComments;
+    use HasFactory, HasParent;
 }

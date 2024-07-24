@@ -45,7 +45,11 @@ class UserFollowersController extends Controller
      */
     public function store(Request $request, User $user)
     {
-        //
+        $validated = $request->validate([
+            "user_id" => "required|string|exists:users,id",
+        ]);
+        $user->followers()->attach($validated["user_id"]);
+        return redirect(route("users.show", $user), 303);
     }
 
     /**
@@ -89,11 +93,12 @@ class UserFollowersController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Follower  $follower
+     * @param  \App\Models\User  $follower
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user, Follower $follower)
+    public function destroy(User $user, User $follower)
     {
-        //
+        $user->followers()->detach($follower);
+        return redirect(route("users.show", $user), 303);
     }
 }

@@ -112,6 +112,32 @@ class Metadata
         ]);
     }
 
+    public static function fromFaker($faker): self
+    {
+        $data = [
+            "grades" => $faker->randomElements(
+                Grade::toValues(),
+                $faker->numberBetween(1, 3),
+            ),
+            "languages" => $faker->randomElements(
+                Language::toValues(),
+                $faker->numberBetween(1, 3),
+            ),
+            "standards" => $faker->randomElements(
+                Standard::toValues(),
+                $faker->numberBetween(1, 3),
+            ),
+            "practices" => $faker->randomElements(
+                Practice::toValues(),
+                $faker->numberBetween(1, 3),
+            ),
+            "category" => $faker->randomElement(Category::toValues()),
+            "audience" => $faker->randomElement(Audience::toValues()),
+        ];
+
+        return new static($data);
+    }
+
     /**
      * Parse the provided key data or return an empty array.
      * @param string $key

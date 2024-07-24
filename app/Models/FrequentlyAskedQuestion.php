@@ -84,9 +84,7 @@ class FrequentlyAskedQuestion extends Model
      */
     public function scopeSearch($query, string $search)
     {
-        return $query
-            ->where("title", "like", "%{$search}%")
-            ->orWhere("content", "like", "%{$search}%");
+        return $query->where("title", "like", "%{$search}%")->orWhere("content", "like", "%{$search}%");
     }
 
     /**
@@ -94,14 +92,7 @@ class FrequentlyAskedQuestion extends Model
      */
     public function getRatingAttribute()
     {
-        $rating = $this->history->reduce(function (int $carry, array $item) {
-            if ($item["action"] === "upvote") {
-                return $carry + 1;
-            }
-            if ($item["action"] === "downvote") {
-                return $carry - 1;
-            }
-        }, 0);
+        $rating = $this->history->filter(fn($item) => $item["action"] === "upvote")->count();
         if ($rating > 0) {
             $rating = ($rating / $this->history->count()) * 100;
         }
@@ -123,28 +114,9 @@ class FrequentlyAskedQuestion extends Model
         return Str::limit($this->answer, 20);
     }
 
-    protected static function booted()
-    {
-        static::saving(function (FrequentlyAskedQuestion $question) {
-            if ($question->isDirty("answer")) {
-                $question->answered_at = now();
-            }
-        });
-
-        static::saved(function (FrequentlyAskedQuestion $question) {
-            if ($question->wasChanged("answer")) {
-                if (!is_null($question->user)) {
-                    $question->user->notify(new QuestionAnswered($question));
-                }
-            }
-        });
-    }
-
     public function getRouteKey()
     {
-        return Str::slug($this->title) .
-            "-" .
-            $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title) . "-" . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -155,19 +127,34 @@ class FrequentlyAskedQuestion extends Model
 
     public function upvote()
     {
-        $this->history->add([
+        $this->history = $this->history->add([
             "action" => "upvote",
             "user_id" => auth()->id(),
             "timestamp" => now(),
         ]);
+        return $this->save();
     }
 
     public function downvote()
     {
-        $this->history->add([
+        $this->history = $this->history->add([
             "action" => "downvote",
             "user_id" => auth()->id(),
             "timestamp" => now(),
         ]);
+        return $this->save();
+    }
+
+    public function answerQuestion(string $answer)
+    {
+        $this->answer = $answer;
+        $this->answered_at = now();
+        $successful = $this->save();
+
+        if ($successful) {
+            $this->user->notify(new QuestionAnswered($this));
+        }
+
+        return $successful;
     }
 }
