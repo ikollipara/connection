@@ -8,8 +8,10 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Mockery\Mock;
 use Tests\TestCase;
 
 class UsersControllerTest extends TestCase
@@ -23,17 +25,14 @@ class UsersControllerTest extends TestCase
         $response->assertViewIs("users.create");
     }
 
-    public function test_create_preservice_user()
+    public function test_create_user()
     {
         Storage::fake("public");
         $response = $this->post(route("users.store"), [
             "first_name" => $this->faker->firstName(),
             "last_name" => $this->faker->lastName(),
             "email" => $this->faker->unique()->safeEmail(),
-            "grades" => $this->faker->randomElements(
-                Grade::toValues(),
-                $this->faker->numberBetween(1, 3),
-            ),
+            "grades" => $this->faker->randomElements(Grade::toValues(), $this->faker->numberBetween(1, 3)),
             "school" => $this->faker->company(),
             "years_of_experience" => $this->faker->numberBetween(0, 10),
             "subject" => $this->faker->word(),
@@ -49,9 +48,44 @@ class UsersControllerTest extends TestCase
         $user = User::first();
         Storage::disk("public")->assertExists($user->avatar->path());
         $response->assertRedirect(route("login.create"));
-        $response->assertSessionHas(
-            "success",
-            __("Your account has been created. Please log in."),
-        );
+        $response->assertSessionHas("success", __("Your account has been created. Please log in."));
+    }
+
+    public function test_show_user()
+    {
+        $user = User::factory()
+            ->hasProfile()
+            ->hasSettings()
+            ->create();
+        $response = $this->actingAs($user)->get(route("users.show", $user));
+        $response->assertStatus(200);
+        $response->assertViewIs("users.show");
+        $response->assertViewHas("user", $user);
+    }
+
+    public function test_delete_user()
+    {
+        $user = User::factory()
+            ->hasProfile()
+            ->hasSettings()
+            ->create();
+        $response = $this->actingAs($user)->delete(route("users.destroy", $user));
+        $response->assertRedirect(route("users.create"));
+        $this->assertDatabaseCount("users", 0);
+        $this->assertDatabaseCount("user_profiles", 0);
+        $this->assertDatabaseCount("user_settings", 0);
+    }
+
+    public function test_delete_user_fail()
+    {
+        $user = User::factory()
+            ->hasProfile()
+            ->hasSettings()
+            ->create();
+        $response = $this->actingAs($user)->delete(route("users.destroy", $user));
+        $response->assertRedirect(route("users.create"));
+        $this->assertDatabaseCount("users", 0);
+        $this->assertDatabaseCount("user_profiles", 0);
+        $this->assertDatabaseCount("user_settings", 0);
     }
 }

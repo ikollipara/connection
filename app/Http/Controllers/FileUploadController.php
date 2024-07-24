@@ -15,69 +15,22 @@ class FileUploadController extends Controller
 {
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $request->validate([
-            "file" => "file|nullable",
-            "image" => "image|nullable",
-            "url" => "url",
+        $validated = $request->validate([
+            "file" => "file|required_without_all:image,url",
+            "image" => "image|required_without_all:file,url",
+            "url" => "url|required_without_all:image,file",
         ]);
 
-        $path = false;
-        if ($file = $request->file("file") ?? $request->file("image")) {
-            if ($file instanceof UploadedFile) {
-                if ($path = $file->store("files", "public")) {
-                    // @phpstan-ignore-next-line
-                    if (!App::environment("local")) {
-                        Log::debug("File uploaded to " . Storage::path($path));
-                        $webp_path = Str::beforeLast($path, ".") . ".webp";
-                        Log::debug("Converting to webp: $webp_path");
-                        Image::load(Storage::path($path))
-                            ->format("webp")
-                            ->optimize()
-                            ->save($webp_path);
-                    }
-                }
-            }
-        }
+        $path = isset($validated["url"])
+            ? $this->saveUrl($validated["url"])
+            : $this->saveFile($request->file("file") ?? $request->file("image"));
 
-        if ($url = $request->get("url")) {
-            $request = Http::get($url);
-            if ($request->successful()) {
-                $ext = Str::of($request->header("content-type"))
-                    ->split("/\//")
-                    ->last();
-                $path = "files/" . Str::random(40) . "." . $ext;
-                if (Storage::disk("public")->put($path, $request->body())) {
-                    if (
-                        (Str::endsWith($path, ".webp") === false or
-                            collect(["png", "jpeg", "jpg"])->contains($ext)) and
-                        !App::environment("local")
-                    ) {
-                        $webp_path = Str::beforeLast($path, ".") . ".webp";
-                    }
-                    // @phpstan-ignore-next-line
-                    Image::load($path)
-                        ->format("webp")
-                        ->optimize()
-                        ->save(Str::beforeLast($path, ".") . ".webp");
-                }
-            }
-        }
-
-        if ($path) {
-            return response()->json([
-                "success" => 1,
-                "file" => [
-                    "url" => Storage::url($webp_path ?? $path),
-                ],
-            ]);
-        } else {
-            return response()->json([
-                "success" => 0,
-                "file" => [
-                    "url" => "",
-                ],
-            ]);
-        }
+        return response()->json([
+            "success" => $path ? 1 : 0,
+            "file" => [
+                "url" => $path ? Storage::url($path) : "",
+            ],
+        ]);
     }
 
     public function destroy(Request $request): void
@@ -86,13 +39,30 @@ class FileUploadController extends Controller
             "path" => "required|string",
         ]);
 
-        if (Str::of($validated["path"])->startsWith("/storage/")) {
-            $validated["path"] = Str::of($validated["path"])->replace(
-                "/storage/",
-                "",
-            );
+        if (str($validated["path"])->startsWith("/storage/")) {
+            $validated["path"] = str($validated["path"])->replace("/storage/", "");
         }
 
         Storage::disk("public")->delete($validated["path"]);
+    }
+
+    private function saveFile(UploadedFile $file)
+    {
+        return $file->store("files", "public");
+    }
+
+    private function saveUrl(string $url)
+    {
+        $request = Http::get($url);
+        if ($request->failed()) {
+            return false;
+        }
+
+        $ext = str($request->header("content-type"))
+            ->split("/\//")
+            ->last();
+        $hashName = Str::random(40);
+        $successful = Storage::disk("public")->put("files/{$hashName}.{$ext}", $request->body());
+        return $successful ? "files/{$hashName}.{$ext}" : false;
     }
 }
