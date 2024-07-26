@@ -1,5 +1,5 @@
 {
-    "parser": "php",
+    "$schema": "https://json.schemastore.org/prettierrc",
     "plugins": ["@prettier/plugin-php", "@shufo/prettier-plugin-blade"],
     "overrides": [
         {
@@ -12,7 +12,7 @@
             }
         },
         {
-            "files": ["*.php"],
+            "files": ["*[^blade].php"],
             "options": {
                 "parser": "php",
                 "phpVersion": "7.4",
