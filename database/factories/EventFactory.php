@@ -3,11 +3,7 @@
 namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Enums\Audience;
-use App\Enums\Category;
-use App\Enums\Grade;
-use App\Enums\Practice;
-use App\Enums\Standard;
+use App\ValueObjects\Metadata;
 class EventFactory extends Factory
 {
     /**
@@ -17,18 +13,19 @@ class EventFactory extends Factory
      */
     public function definition()
     {
-        $start_date = $this->faker->dateTime();
-        $end_date = $this->faker->dateTimeBetween($start_date, '+5 days');
+        $start_date = $this->faker->dateTimeBetween('next Monday', 'next Monday +31 days');
+        $end_date = $this->faker->dateTimeBetween($start_date, $start_date->format('Y-m-d H:i:s').' +3 days');
         return [
             //
-            'title' => $this->faker->title(),
-            'description'=> ['blocks' => []],
+            'title' => $this->faker->word(),
+            'description'=> $this->faker->paragraph(),
+            'location'=> $this->faker->address(),
             'user_id'=> User::factory(),
             'start_date'=> $start_date,
             'end_date'=> $this->faker->boolean() ? $end_date : null,
             'start_time'=> null,
             'end_time'=> null,
-            'metadata' => ['category' => $this->faker->randomElement(Category::cases()), 'audience' => $this->faker->randomElement(Audience::cases()), 'grades' => $this->faker->randomElements(Grade::cases()), 'standards' => $this->faker->randomElements(Standard::cases()), 'practices' => $this->faker->randomElements(Practice::cases())],
+            'metadata' => Metadata::fromFaker($this->faker),
             'is_all_day'=> True,
 
 

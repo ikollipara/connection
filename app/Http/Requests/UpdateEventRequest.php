@@ -32,6 +32,7 @@ class UpdateEventRequest extends FormRequest
             "archive" => "sometimes|boolean",
             'title' => 'required|string',
             'description' => 'required|json',
+            'location'=>'required|string',
             'is_all_day' => 'accepted|sometimes',
             'has_end_date' => 'required_with:end_date|accepted|sometimes',
             'start_date' => 'required|date',

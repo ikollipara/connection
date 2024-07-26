@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventAttendeeController;
 use App\Http\Controllers\CommentCommentLikesController;
 use App\Http\Controllers\ContentLikesController;
 use App\Http\Controllers\EmailVerificationController;
@@ -83,16 +84,17 @@ Route::delete("/weekly-digest/subscription/{user}", [
     ->middleware("signed");
 
 Route::middleware("auth")->group(function () {
+    // Event Routes
+    //Index (calendar)
     Route::get("/events", [UserEventController::class, "index"])
         ->name("users.events.index");
+    // Create
     Route::get("/users/{user}/events/create", [UserEventController::class,"create"])
         ->name("users.events.create");
-    Route::get("/events/show", [EventController::class,"show"])
+    // Show
+    Route::get("/events/{event}/show", [EventController::class,"show"])
         ->name("events.show");
-    Route::post('/users/{user}/events', [UserEventController::class,"store"])
-        ->name("users.events.store")
-        ->middleware("verified");
-
+    // Edit
     Route::get("/users/{user}/events/{event}/edit", [
         UserEventController::class,
         "edit",
@@ -100,7 +102,11 @@ Route::middleware("auth")->group(function () {
         ->name("users.events.edit")
         ->withTrashed()
         ->middleware("verified");
-
+    // store
+    Route::post('/users/{user}/events', [UserEventController::class,"store"])
+        ->name("users.events.store")
+        ->middleware("verified");
+    // Update
     Route::patch("/users/{user}/events/{event}", [
         UserEventController::class,
         "update",
@@ -108,7 +114,7 @@ Route::middleware("auth")->group(function () {
         ->name("users.events.update")
         ->withTrashed()
         ->middleware("verified");
-
+    // Delete
     Route::delete("/users/{user}/events/{event}", [
         UserEventController::class,
         "destroy",
@@ -116,7 +122,19 @@ Route::middleware("auth")->group(function () {
         ->name("users.events.destroy")
         ->withTrashed()
         ->middleware("verified");
+    // Attendees
+    Route::post("/events/{event}/attendee", [EventAttendeeController::class,"store"])
+        ->name("events.attendee.store")
+        ->middleware("verified");
+    // Route::post("events/{event}/attendee",function($event)
+    // {
+    //     dd('hello');
+    // })
+    //     ->name('events.attendee.store');
 
+    
+    Route::delete("/attendee/{attendee}", [EventAttendeeController::class,"destroy"])
+        ->name("events.attendee.destroy");
         
     Route::post("/content/{content}/likes", [
         ContentLikesController::class,

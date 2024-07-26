@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  *
  * @property int $id The unique identifier of the event.
  * @property string $title The title of the event.
+ * @property string $location where the event is happening
  * @property array $description The description of the event.
  * @property string $user_id The unique identifier of the user who created the event.
  * @property Carbon $start_date The date when the event starts.
@@ -33,6 +34,7 @@ use Illuminate\Support\Str;
  * @property Carbon $deleted_at The date and time when the event was deleted.
  * @property-read string $description_text The description of the event as plain text.
  * @property User $user The user who created the event.
+ * @property Attendee $attendees people who are attending the event
  */
 class Event extends Model
 {
@@ -40,6 +42,7 @@ class Event extends Model
 
     protected $fillable = [
         "title",
+        "location",
         "description",
         "user_id",
         "start_date",
@@ -53,6 +56,7 @@ class Event extends Model
 
     protected $casts = [
         "description" => "array",
+        "location"=>"string",
         "start_date" => "date",
         "end_date" => "date",
         // "start_time" => "time",
@@ -94,6 +98,16 @@ class Event extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function attendees()
+    {
+        return $this->hasMany(Attendee::class);
+    }
+
+    public function getAttendeeFor(User $user)
+    {
+        return $this->attendees()->where('user_id', $user->id)->first();
     }
 
     /* ===== Accessors and Mutators ===== */

@@ -15,8 +15,12 @@
           select: function(start){
           },
           eventClick: (info) => {
-            console.log(info)
-            // window.location.href = route('users.events.edit', ['me', info.event.id]);
+            if (info.event._def.extendedProps.was_created_by_user){
+              window.location.href = route('users.events.edit', ['me', info.event.id]);
+            }
+            else{
+              window.location.href = route('events.show', [info.event.id]);
+            }
           },
           events: {{ Js::from($events->map(fn($event) => $event->toFullCalendar(auth()->user()))) }}
         });

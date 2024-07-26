@@ -17,7 +17,6 @@
       </p>
     </x-help>
     <x-unsaved-indicator />
-    <input type="hidden" name="_token" value="{{ csrf_token() }}" form="edit-event-form" />
     <x-forms.input has-addons without-label form="edit-event-form" name="title" placeholder="Event Title..."
       x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor:unsaved')"
       value="{{ $event->title }}" field-classes="is-flex-grow-1">
@@ -73,6 +72,12 @@
                 value="{{$event->start_date->toDateString()}}"
                 min="{{ old('start_date', today()->toDateString()) }}" 
                 required />
+              <x-forms.input 
+                label="Location"  
+                name="location" 
+                type="string" 
+                form="edit-event-form" 
+                value="{{$event->location}}"/>
             <label class="checkbox">
                 <input 
                 x-model="has_end_date" 

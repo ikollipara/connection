@@ -43,6 +43,7 @@ class UserEventController extends Controller{
     }
     public function update(UpdateEventRequest $request, User $user, Event $event)
     {
+        dd($event->location);
         $validated = $request->validated();
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
@@ -62,7 +63,6 @@ class UserEventController extends Controller{
     }
     public function destroy(User $user, Event $event)
     {
-        // dd('hello');
         $successful = $event->delete();
         if ($successful) {
             return redirect()

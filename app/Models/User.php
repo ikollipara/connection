@@ -167,6 +167,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(self::class, "followers", "follower_id", "followed_id")->using(Follower::class);
     }
 
+    public function attending()
+    {
+        return $this->belongsToMany(self::class,"user_id","event_id")->using(Attendee::Class);
+    }
+
     /**
      * Get the user's settings
      * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\UserSettings>
