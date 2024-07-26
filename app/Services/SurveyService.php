@@ -21,7 +21,6 @@ class SurveyService
     public const SCALES = "SCALES";
     public const ONCE = 1;
     public const YEARLY = 2;
-    public const BIYEARLY = 3;
 
     public User $user;
 
@@ -59,8 +58,8 @@ class SurveyService
     private function handleYearly(Collection $urls)
     {
         if (
-            $this->user->created_at->diffInDays(now()) % 365 !== 0 or
-            $this->user->created_at->diffInDays(now()) === 0
+            $this->user->yearly_survey_sent_at and
+            $this->user->yearly_survey_sent_at->diffInYears(now()) === 0
         ) {
             return;
         }
@@ -71,19 +70,13 @@ class SurveyService
 
     private function validateArgs(array $survey_types, int $frequency)
     {
-        if (
-            !in_array($frequency, [
-                static::ONCE,
-                static::YEARLY,
-                static::BIYEARLY,
-            ])
-        ) {
+        if (!in_array($frequency, [static::ONCE, static::YEARLY])) {
             throw new \InvalidArgumentException(
                 "Invalid frequency, must be one of: SurveyService::ONCE, SurveyService::YEARLY, SurveyService::BIYEARLY",
             );
         }
         if (
-            collect($survey_types)
+            !collect($survey_types)
                 ->map(
                     fn($survey_type) => in_array($survey_type, [
                         static::CT_CAST,

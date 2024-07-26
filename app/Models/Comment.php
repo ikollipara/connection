@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuids;
+use App\Models\Concerns\HasUuids;
 use App\Contracts\Likable;
 use App\Events\CommentLiked;
 use Illuminate\Database\Eloquent\Model;
@@ -18,12 +18,7 @@ class Comment extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        "body",
-        "user_id",
-        "commentable_id",
-        "commentable_type",
-    ];
+    protected $fillable = ["body", "user_id", "commentable_id", "commentable_type"];
 
     /**
      * The attributes that should be cast.
@@ -58,5 +53,24 @@ class Comment extends Model
     public function commentable()
     {
         return $this->morphTo();
+    }
+
+    // Scopes
+
+    public function scopeThisMonth($query)
+    {
+        return $query->whereBetween("created_at", [now()->startOfMonth(), now()->endOfMonth()]);
+    }
+
+    public function scopeLastMonth($query)
+    {
+        return $query->whereBetween("created_at", [
+            now()
+                ->subMonth()
+                ->startOfMonth(),
+            now()
+                ->subMonth()
+                ->endOfMonth(),
+        ]);
     }
 }

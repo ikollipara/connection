@@ -16,7 +16,17 @@ class FrequentlyAskedQuestionController extends Controller
      */
     public function index(Request $request)
     {
-        return view("frequently-asked-questions.index");
+        $validated = $request->validate([
+            "q" => "sometimes|string|nullable",
+        ]);
+        $questions = FrequentlyAskedQuestion::query()
+            ->when(
+                isset($validated["q"]) and is_string($validated["q"]),
+                fn($query) => $query->search($validated["q"]),
+            )
+            ->answered()
+            ->paginate(15);
+        return view("frequently-asked-questions.index", compact("questions"));
     }
 
     /**
@@ -42,14 +52,12 @@ class FrequentlyAskedQuestionController extends Controller
         $validated["user_id"] = auth()->id();
         $question = FrequentlyAskedQuestion::create($validated);
 
-        return redirect()
-            ->route("faq.show", compact("question"))
-            ->with(
-                "success",
-                __(
-                    "Your question has been submitted. We will get back to you soon.",
-                ),
-            );
+        return redirect(route("faq.show", compact("question")), 303)->with(
+            "success",
+            __(
+                "Your question has been submitted. We will get back to you soon.",
+            ),
+        );
     }
 
     /**
@@ -90,15 +98,10 @@ class FrequentlyAskedQuestionController extends Controller
         $safe = $request->safe();
         $frequentlyAskedQuestion->update($safe);
 
-        return redirect()
-            ->route(
-                "frequently-asked-questions.show",
-                $frequentlyAskedQuestion->id,
-            )
-            ->with(
-                "success",
-                __("The question has been updated successfully."),
-            );
+        return redirect(
+            route("frequently-asked-questions.show", $frequentlyAskedQuestion),
+            303,
+        )->with("success", __("The question has been updated successfully."));
     }
 
     /**
@@ -110,15 +113,16 @@ class FrequentlyAskedQuestionController extends Controller
     public function destroy(FrequentlyAskedQuestion $frequentlyAskedQuestion)
     {
         if ($frequentlyAskedQuestion->is_answered) {
-            return redirect()
-                ->route(
+            return redirect(
+                route(
                     "frequently-asked-questions.show",
-                    $frequentlyAskedQuestion->id,
-                )
-                ->with(
-                    "error",
-                    __("You cannot delete a question that has been answered."),
-                );
+                    $frequentlyAskedQuestion,
+                ),
+                303,
+            )->with(
+                "error",
+                __("You cannot delete a question that has been answered."),
+            );
         }
         $frequentlyAskedQuestion->delete();
         return redirect()

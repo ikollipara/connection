@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  *
  * @property int $id The unique identifier of the event.
  * @property string $title The title of the event.
+ * @property string $location where the event is happening
  * @property array $description The description of the event.
  * @property string $user_id The unique identifier of the user who created the event.
  * @property Carbon $start_date The date when the event starts.
@@ -33,6 +34,7 @@ use Illuminate\Support\Str;
  * @property Carbon $deleted_at The date and time when the event was deleted.
  * @property-read string $description_text The description of the event as plain text.
  * @property User $user The user who created the event.
+ * @property Attendee $attendees people who are attending the event
  */
 class Event extends Model
 {
@@ -40,6 +42,7 @@ class Event extends Model
 
     protected $fillable = [
         "title",
+        "location",
         "description",
         "user_id",
         "start_date",
@@ -48,15 +51,21 @@ class Event extends Model
         "end_time",
         "is_all_day",
         "display_picture",
+        "metadata",
     ];
 
     protected $casts = [
         "description" => "array",
+        "location"=>"string",
         "start_date" => "date",
         "end_date" => "date",
-        "start_time" => "time",
-        "end_time" => "time",
+        // "start_time" => "time",
+        // "end_time" => "time",
         "is_all_day" => "boolean",
+    ];
+
+    protected $attributes = [
+        "metadata" => '{"category": "material", "audience": "Teachers"}',
     ];
 
     protected $rich_text_attributes = ["description"];
@@ -91,6 +100,16 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function attendees()
+    {
+        return $this->hasMany(Attendee::class);
+    }
+
+    public function getAttendeeFor(User $user)
+    {
+        return $this->attendees()->where('user_id', $user->id)->first();
+    }
+
     /* ===== Accessors and Mutators ===== */
 
     /**
@@ -113,5 +132,34 @@ class Event extends Model
             "events",
             "public",
         );
+    }
+
+    public function getEndDateAttribute($value)
+    {
+        if($this->is_all_day) {
+            return $this->start_date;
+        }
+        return $value;
+    }
+
+    // Methods
+
+    public function toFullCalendar($user)
+    {
+        $event = [
+            "title" => $this->title,
+            "description"=> $this->description,
+            "start" => $this->start_date->toDateString(),
+            'was_created_by_user' => $this->user()->is($user),
+            'user_id' => $this->user_id,
+            "id" => $this->id,
+        ];
+
+        if($this->end_date) {
+            $event["end"] = $this->end_date->addDay()->toDateString();
+        };
+        // need to add for start and end times too
+
+        return $event;
     }
 }

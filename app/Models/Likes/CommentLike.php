@@ -4,6 +4,7 @@ namespace App\Models\Likes;
 
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CommentLike extends Model
 {
+    use HasFactory;
     protected $table = "comment_likes";
 
     /**

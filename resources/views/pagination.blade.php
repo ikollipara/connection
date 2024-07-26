@@ -7,14 +7,14 @@
           {!! __('pagination.previous') !!}
         </a>
       @else
-        <button wire:click="previousPage" wire:loading.attr="disabled" rel="prev" class="pagination-previous">
+        <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="pagination-previous">
           {!! __('pagination.previous') !!}
-        </button>
+        </a>
       @endif
 
       {{-- Next Page Link --}}
       @if ($paginator->hasMorePages())
-        <a wire:click="nextPage" wire:loading.attr="disabled" rel="next" class="pagination-next">
+        <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="pagination-next">
           {!! __('pagination.next') !!}
         </a>
       @else

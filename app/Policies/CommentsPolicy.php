@@ -41,7 +41,7 @@ class CommentsPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasVerifiedEmail();
     }
 
     /**
@@ -53,7 +53,7 @@ class CommentsPolicy
      */
     public function update(User $user, Comment $comment)
     {
-        return $comment->user_id == $user->id;
+        return $comment->user()->is($user);
     }
 
     /**

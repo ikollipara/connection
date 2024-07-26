@@ -1,41 +1,68 @@
-<x-layout title="conneCTION - {{ $collection->title }}">
-  <x-hero class="is-primary">
-    <h1 class="title is-1 has-text-centered">{{ $collection->title }}</h1>
-    <div class="is-flex is-flex-direction-column mb-2 is-align-items-center is-justify-content-center has-text-centered"
-      style="gap: 0.5rem;">
-      <figure class="image is-64x64 is-flex is-justify-content-center is-align-items-center">
-        <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded" src="{{ $collection->user->avatar }}"
-          alt="">
-      </figure>
-      @if ($collection->user)
-        <a href="{{ route('users.show', ['user' => $collection->user]) }}" class="link is-italic">
-          {{ $collection->user->full_name }} - {{ $collection->user->profile->short_title }}
-        </a>
-      @else
-        <p class="is-italic content">[Deleted]</p>
-      @endif
+{{--
+file: resources/views/collections/show.blade.php
+author: Ian Kollipara
+date: 2024-06-24
+description: The view for showing a collection
+ --}}
+
+@php
+  $title = 'conneCTION - ' . $collection->title;
+  $avatar = $collection->user ? $collection->user->avatar : 'https://ui-avatars.com/api/?name=Deleted&color=7F9CF5&background=EBF4FF';
+  $full_name = $collection->user ? $collection->user->full_name : 'Deleted';
+  $short_title = $collection->user ? $collection->user->profile->short_title : '';
+  $route = $liked_by_user ? route('content.likes.destroy', [$collection, $liked_by_user->id]) : route('content.likes.store', $collection);
+@endphp
+
+<x-layout :title="$title"
+          no-livewire>
+  @push('meta')
+    <meta name="description"
+          content="{{ Str::limit($collection->body_text, 150) }}">
+    <meta name="og:title"
+          content="{{ $title }}">
+    <meta name="og:description"
+          content="{{ Str::limit($collection->body_text, 150) }}">
+    <meta name="og:image"
+          content="{{ $avatar }}">
+  @endpush
+  <x-hero class="is-primary"
+          hero-body-class="has-text-centered">
+    <h1 class="title is-1">{{ $collection->title }}</h1>
+    <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+      <figure class="image is-64x64"><img src="{{ $avatar }}"
+             alt=""></figure>
+      <a class="link is-italic"
+         @if ($collection->user) href="{{ route('users.show', $collection->user) }}" @endif>
+        {{ $full_name }} - {{ $short_title }}
+      </a>
     </div>
-    <div class="level" style="padding-block: 0.25rem; border-top: white 1px solid; border-bottom: white 1px solid;">
+    <div class="level bordered">
       <div class="level-left">
-        <div class="level-item">
-          <p class="icon-text">
-            <x-lucide-eye class="icon" width="30" height="30" />
-            <span>{{ $collection->views }}</span>
-          </p>
-        </div>
-        <div class="level-item">
-          @livewire('like-button', ['likable' => $collection])
-        </div>
+        <x-bulma-icon icon="lucide-eye">{{ $collection->views_count }}</x-bulma-icon>
+        <form action="{{ $route }}"
+              method="post">
+          @csrf
+          @method($liked_by_user ? 'DELETE' : 'POST')
+          <input name="user_id"
+                 type="hidden"
+                 value="{{ auth()->id() }}">
+          <button class="button is-primary"
+                  type="submit">
+            <x-bulma-icon fill="{{ $liked_by_user ? 'white' : 'none' }}"
+                          icon="lucide-heart">{{ $collection->likes_count }}</x-bulma-icon>
+          </button>
+        </form>
       </div>
       <div class="level-right">
-        <a href="{{ URL::route('collections.comments.index', ['post_collection' => $collection]) }}"
-          class="level-item button is-primary">
-          See Comments
-        </a>
+        <x-add-to-collection :content="$collection"
+                             :collections="auth()->user()->collections" />
+        <a class="button is-primary"
+           href="{{ route('collections.comments.index', $collection) }}">See Comments</a>
       </div>
     </div>
   </x-hero>
-  <main x-data="{ tab: 0 }" class="container is-fluid content mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <x-tabs tab-titles="Description, Entries">
       <x-tabs.tab title="Description">
         <details class="is-clickable">
@@ -43,35 +70,32 @@
           <x-metadata.table :metadata="$collection->metadata" />
         </details>
         <section>
-          <x-editor value='{{ Js::from($collection->body) }}' name="editor" read-only />
+          <x-editor name="editor"
+                    value="{{ Js::from($collection->body) }}"
+                    read-only />
         </section>
       </x-tabs.tab>
       <x-tabs.tab title="Entries">
-        <table class="table is-fullwidth">
-          <thead>
+        <x-table>
+          @forelse ($collection->entries as $entry)
             <tr>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Link</th>
+              <td>{{ $entry->title }}</td>
+              <td>
+                @if ($entry->user)
+                  {{ $entry->user->full_name }}
+                @else
+                  [Deleted]
+                @endif
+              </td>
+              <td><a href="{{ URL::route("{$entry->type}s.show", [$entry]) }}">Visit</a></td>
             </tr>
-          </thead>
-          <tbody>
-            @foreach ($collection->entries as $post)
-              <tr>
-                <td>{{ $post->title }}</td>
-                <td>
-                  @if ($post->user)
-                    {{ $post->user->full_name }}
-                  @else
-                    [Deleted]
-                  @endif
-                </td>
-                <td><a href="{{ URL::route('posts.show', ['post' => $post]) }}">Visit</a></td>
-              </tr>
-            @endforeach
-          </tbody>
-        </table>
+          @empty
+            <tr>
+              <td colspan="3">No entries yet.</td>
+            </tr>
+          @endforelse
+        </x-table>
       </x-tabs.tab>
     </x-tabs>
-  </main>
+  </x-container>
 </x-layout>

@@ -10,16 +10,6 @@ use App\Models\User;
 class UsersController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -40,10 +30,7 @@ class UsersController extends Controller
         $user = User::createWithProfileAndSettings($request->validated());
         return redirect()
             ->route("login.create")
-            ->with(
-                "success",
-                __("Your account has been created. Please log in."),
-            );
+            ->with("success", __("Your account has been created. Please log in."));
     }
 
     /**
@@ -74,28 +61,6 @@ class UsersController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateUserRequest  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateUserRequest $request, User $user)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\User  $user
@@ -107,10 +72,7 @@ class UsersController extends Controller
         if ($user->delete()) {
             auth()->logout();
             session()->regenerate();
-            return redirect(route("registration.create"), 303)->with(
-                "success",
-                __("Your account has been deleted."),
-            );
+            return redirect(route("users.create"), 303)->with("success", __("Your account has been deleted."));
         } else {
             return back()->with("error", __("Failed to delete your account."));
         }

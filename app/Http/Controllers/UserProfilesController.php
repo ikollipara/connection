@@ -60,6 +60,7 @@ class UserProfilesController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize("update", $user);
         $user = $user->load("profile");
         return view("users.profile.edit", compact("user"));
     }
@@ -75,7 +76,10 @@ class UserProfilesController extends Controller
     {
         $validated = $request->validated();
         $user->updateWithProfile($validated);
-        return back()->with("success", __("Your profile has been updated."));
+        return redirect(route("users.profile.edit", "me"), 303)->with(
+            "success",
+            __("Your profile has been updated."),
+        );
     }
 
     /**

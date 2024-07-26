@@ -22,6 +22,7 @@ class CreateEventsTable extends Migration
                 ->constrained()
                 ->nullOnDelete();
             $table->jsonb("description")->nullable();
+            $table->string("location")->nullable();
             $table->date("start_date");
             $table->date("end_date")->nullable();
             $table->time("start_time")->nullable();

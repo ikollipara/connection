@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ContentLike extends Model
 {
+    use HasFactory;
     protected $table = "content_likes";
 
     /**
@@ -54,5 +55,36 @@ class ContentLike extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Scopes
+
+    public function scopeThisMonth($query)
+    {
+        return $query->where("created_at", ">", now()->startOfMonth());
+    }
+
+    /**
+     * Scope the query to only include likes from the last month.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeLastMonth($query)
+    {
+        return $query
+            ->where(
+                "created_at",
+                ">",
+                now()
+                    ->subMonth()
+                    ->startOfMonth(),
+            )
+            ->where(
+                "created_at",
+                "<",
+                now()
+                    ->subMonth()
+                    ->endOfMonth(),
+            );
     }
 }

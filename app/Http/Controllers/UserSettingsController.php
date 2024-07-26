@@ -59,6 +59,7 @@ class UserSettingsController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize("update", $user);
         $user = $user->load("settings");
         return view("users.settings.edit", compact("user"));
     }
@@ -74,7 +75,7 @@ class UserSettingsController extends Controller
     {
         $data = $this->transformUpdateRequest($request);
         $success = $user->settings->update($data);
-        return back()->with(
+        return redirect(route("users.settings.edit", $user), 303)->with(
             $success ? "success" : "error",
             $success
                 ? "Settings successfully updated"

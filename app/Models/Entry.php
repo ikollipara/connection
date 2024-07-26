@@ -18,13 +18,18 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
  */
 class Entry extends Model
 {
-    use AsPivot;
+    use HasFactory, AsPivot;
+
+    protected $table = "entries";
+    public $timestamps = true;
+    public $incrementing = true;
 
     /**
      * The attributes that are mass assignable.
      * @var array<int, string>
      */
     protected $fillable = ["content_id", "collection_id"];
+    protected $guarded = ["id"];
 
     /**
      * The attributes that should be cast.

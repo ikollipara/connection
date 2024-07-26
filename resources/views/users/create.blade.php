@@ -14,8 +14,7 @@ description: This file contains the HTML form for creating a new user.
     <h1 class="title">{{ $title }}</h1>
   </x-hero>
   <x-container is-fluid class="mt-5 mb-5">
-    @dump($errors->all())
-    <form x-data="{ step: 0, isPreservice: false }" enctype="multipart/form-data" action="{{ route('registration.store') }}" method="post"
+    <form x-data="{ step: 0, isPreservice: false }" enctype="multipart/form-data" action="{{ route('users.store') }}" method="post"
       class="columns is-multiline">
       @csrf
       <section class="column is-half" x-show="step == 0">

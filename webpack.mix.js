@@ -1,10 +1,15 @@
-const mix = require('laravel-mix');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-require("laravel-mix-purgecss");
+const mix = require("laravel-mix");
 require("laravel-mix-compress");
 require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
-const BundleAnalyer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const nanocss = require("cssnano");
+const pruneVar = require("postcss-prune-var");
+const varCompress = require("postcss-variable-compress");
+const purgeCssLaravel = require("postcss-purgecss-laravel");
+const autoprefixer = require("autoprefixer");
+const tailwindcss = require("tailwindcss");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 /*
  |--------------------------------------------------------------------------
@@ -18,26 +23,40 @@ const BundleAnalyer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
  */
 
 mix
-  .js('resources/js/app.js', 'public/js')
-  .css('resources/css/app.css', 'public/css')
-  .webpackConfig(webpack => {
+  .js("resources/js/app.js", "public/js")
+  .css("resources/css/slim-select.css", "public/css/slim-select.css")
+  .css("resources/css/animate.css", "public/css/animate.css")
+  .sass("resources/scss/app.scss", "public/css/app.css", {}, [
+    autoprefixer,
+    tailwindcss,
+    purgeCssLaravel({
+      safelist: [/ss-*/],
+    }),
+    nanocss({
+      preset: [
+        "default",
+        {
+          discardComments: { removeAll: true },
+          normalizeWhitespace: true,
+        },
+      ],
+    }),
+    pruneVar(),
+    varCompress(),
+  ])
+  .webpackConfig((webpack) => {
     return {
       resolve: {
-        extensions: [".*",".wasm",".mjs",".js",".jsx",".json", ".css"]
+        extensions: [".*", ".wasm", ".mjs", ".js", ".jsx", ".json", ".css"],
       },
       plugins: [
-        new BundleAnalyzerPlugin(),
-      ]
-    }
-  })
-  .imagemin("images/*", { context: "resources" })
-
+        // new BundleAnalyzerPlugin(),
+      ],
+    };
+  });
 
 if (mix.inProduction()) {
-  mix
-  .polyfill()
-  .version()
-  .purgeCss({
-  safelist: [/ss-*/],
-  })
+  mix.version().compress({
+    minRatio: 1,
+  });
 }

@@ -1,0 +1,103 @@
+@use "bulma/sass/utilities" with (
+    $primary: hsl(201, 100%, 14%),
+    $success: hsl(150, 71%, 41%),
+);
+@use "bulma/sass/base";
+@use "bulma/sass/elements";
+@use "bulma/sass/components";
+@use "bulma/sass/grid";
+@use "bulma/sass/layout";
+@use "bulma/sass/form";
+@use "bulma/sass/helpers";
+
+@use "bulma/sass/themes/light";
+@use "bulma/sass/themes/setup";
+
+:root {
+    @include light.light-theme;
+    @include setup.setup-theme;
+    --ss-primary-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l));
+    --ss-focus-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), calc(var(--bulma-primary-l) + 10%));
+}
+
+.loader {
+  animation: spinAround 500ms infinite linear;
+  border: 2px solid var(--bulma-border);
+  border-radius: var(--bulma-radius-rounded);
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: "";
+  display: block;
+  height: 5em;
+  position: relative;
+  width: 5em;
+  margin: auto;
+  margin-top: 5em;
+}
+
+
+.is-primary {
+    --bulma-link-text: #D6DBFF;
+}
+
+.preserve-rounding {
+    border-radius: var(--bulma-control-radius) !important;
+}
+
+.level.bordered {
+    padding-block: 0.25rem;
+    border-top: var(--bulma-white) 1px solid;
+    border-bottom: var(--bulma-white) 1px solid;
+}
+
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    transition: 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .drawer {
+        transition: 0.0s;
+    }
+}
+
+.drawer-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 0;
+    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow-x: hidden;
+    transition: 0.0s;
+}
+
+.drawer.open > .drawer-background {
+    width: 100%;
+}
+
+.drawer-content {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    background-color: var(--bulma-background);
+    transition: 0.5s;
+}
+
+
+.drawer.open {
+    width: min(350px, 80%);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

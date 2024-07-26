@@ -30,8 +30,7 @@ class PostCollectionsPolicy
      */
     public function view(User $user, PostCollection $postCollection)
     {
-        return $postCollection->user_id == $user->id or
-            $postCollection->published;
+        return $postCollection->user()->is($user) or $postCollection->published;
     }
 
     /**
@@ -42,7 +41,7 @@ class PostCollectionsPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasVerifiedEmail();
     }
 
     /**
@@ -54,7 +53,7 @@ class PostCollectionsPolicy
      */
     public function update(User $user, PostCollection $postCollection)
     {
-        return $postCollection->user_id == $user->id;
+        return $postCollection->user()->is($user);
     }
 
     /**
@@ -66,7 +65,7 @@ class PostCollectionsPolicy
      */
     public function delete(User $user, PostCollection $postCollection)
     {
-        return $postCollection->user_id == $user->id;
+        return $postCollection->user()->is($user);
     }
 
     /**
@@ -78,7 +77,7 @@ class PostCollectionsPolicy
      */
     public function restore(User $user, PostCollection $postCollection)
     {
-        return $postCollection->user_id == $user->id;
+        return $postCollection->user()->is($user);
     }
 
     /**
