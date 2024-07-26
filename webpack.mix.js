@@ -1,12 +1,15 @@
-const mix = require('laravel-mix');
+const mix = require("laravel-mix");
 require("laravel-mix-compress");
 require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
 const nanocss = require("cssnano");
-const pruneVar = require("postcss-prune-var")
-const varCompress = require("postcss-variable-compress")
+const pruneVar = require("postcss-prune-var");
+const varCompress = require("postcss-variable-compress");
 const purgeCssLaravel = require("postcss-purgecss-laravel");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const autoprefixer = require("autoprefixer");
+const tailwindcss = require("tailwindcss");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 /*
  |--------------------------------------------------------------------------
@@ -20,38 +23,40 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
  */
 
 mix
-  .js('resources/js/app.js', 'public/js')
-  .css('resources/css/slim-select.css', 'public/css/slim-select.css')
-  .css('resources/css/animate.css', 'public/css/animate.css')
-  .sass('resources/scss/app.scss', 'public/css/app.css', {}, [
-        purgeCssLaravel({
-            safelist: [/ss-*/],
-        }),
-        nanocss({
-            preset: ['default', {
-                discardComments: { removeAll: true },
-                normalizeWhitespace: true,
-            }],
-        }),
-        pruneVar(),
-        varCompress(),
+  .js("resources/js/app.js", "public/js")
+  .css("resources/css/slim-select.css", "public/css/slim-select.css")
+  .css("resources/css/animate.css", "public/css/animate.css")
+  .sass("resources/scss/app.scss", "public/css/app.css", {}, [
+    autoprefixer,
+    tailwindcss,
+    purgeCssLaravel({
+      safelist: [/ss-*/],
+    }),
+    nanocss({
+      preset: [
+        "default",
+        {
+          discardComments: { removeAll: true },
+          normalizeWhitespace: true,
+        },
+      ],
+    }),
+    pruneVar(),
+    varCompress(),
   ])
-  .webpackConfig(webpack => {
+  .webpackConfig((webpack) => {
     return {
       resolve: {
-        extensions: [".*",".wasm",".mjs",".js",".jsx",".json", ".css"]
+        extensions: [".*", ".wasm", ".mjs", ".js", ".jsx", ".json", ".css"],
       },
       plugins: [
         // new BundleAnalyzerPlugin(),
-      ]
-    }
-  })
-
+      ],
+    };
+  });
 
 if (mix.inProduction()) {
-  mix
-  .version()
-  .compress({
-    minRatio: 1
-  })
+  mix.version().compress({
+    minRatio: 1,
+  });
 }
