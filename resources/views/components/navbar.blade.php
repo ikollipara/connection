@@ -77,6 +77,11 @@
             Create Collection
           </x-nav.item>
         </x-nav.dropdown>
+        <x-nav.dropdown title="My Events">
+          <x-nav.item route="{{ route('users.events.index') }}">My Calendar</x-nav.item>
+          <x-nav.divider />
+          <x-nav.item route="{{ route('users.events.create', ['me']) }}">Create an Event</x-nav.item>
+        </x-nav.dropdown>
       @else
         <x-nav.item route="{{ route('index') }}">Home</x-nav.item>
         <x-nav.item route="{{ route('about') }}">About</x-nav.item>

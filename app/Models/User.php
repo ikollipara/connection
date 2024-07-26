@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\DB;
  * @property-read Collection<\App\Models\Comment> $comments
  * @property-read Collection<\App\Models\PostCollection> $collections
  * @property-read Collection<\App\Models\Post> $posts
+ *  @property-read Collection<\App\Models\Event> $events
  * @property-read Collection<\App\Models\User> $followers
  * @property-read Collection<\App\Models\User> $following
  * @property-read Collection<\App\Models\Search> $searches
@@ -166,6 +167,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(self::class, "followers", "follower_id", "followed_id")->using(Follower::class);
     }
 
+    public function attending()
+    {
+        return $this->belongsToMany(self::class,"user_id","event_id")->using(Attendee::Class);
+    }
+
     /**
      * Get the user's settings
      * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\UserSettings>
@@ -209,6 +215,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function collections()
     {
         return $this->hasMany(PostCollection::class);
+    }
+
+    /**
+     * Get the user's posts
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Event>
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 
     /**
