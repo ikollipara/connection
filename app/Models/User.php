@@ -170,7 +170,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function attending()
     {
-        return $this->belongsToMany(self::class,"user_id","event_id")->using(Attendee::Class);
+        return $this->belongsToMany(self::class, "user_id", "event_id")->using(Attendee::class);
     }
 
     /**
@@ -262,7 +262,7 @@ class User extends Authenticatable implements MustVerifyEmail
             "subject" => $data["subject"],
             "bio" =>  Editor::fromJson($data["bio"]),
             "grades" => collect($data["grades"])
-                ->map(fn($grade) => Grade::from($grade))
+                ->map(fn ($grade) => Grade::from($grade))
                 ->toArray(),
             "gender" => "",
         ];

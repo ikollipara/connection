@@ -33,7 +33,7 @@ class SurveyService
     {
         $this->validateArgs($survey_types, $frequency);
         $urls = collect($survey_types)->map(
-            fn($survey_type) => $this->buildUrl($survey_type),
+            fn ($survey_type) => $this->buildUrl($survey_type),
         );
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
@@ -50,7 +50,7 @@ class SurveyService
         if ($this->user->sent_week_one_survey) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->sent_week_one_survey = true;
         $this->user->save();
     }
@@ -63,7 +63,7 @@ class SurveyService
         ) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->yearly_survey_sent_at = now();
         $this->user->save();
     }
@@ -78,12 +78,12 @@ class SurveyService
         if (
             !collect($survey_types)
                 ->map(
-                    fn($survey_type) => in_array($survey_type, [
+                    fn ($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
                         static::SCALES,
                     ]),
                 )
-                ->reduce(fn($carry, $item) => $carry && $item, true)
+                ->reduce(fn ($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
                 "Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES",

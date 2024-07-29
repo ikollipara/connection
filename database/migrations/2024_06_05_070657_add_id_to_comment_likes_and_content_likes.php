@@ -19,16 +19,10 @@ class AddIdToCommentLikesAndContentLikes extends Migration
         });
         Schema::disableForeignKeyConstraints();
         // Comment
-        DB::statement(
-            "ALTER TABLE comment_likes DROP CONSTRAINT comment_likes_user_id_foreign",
-        );
-        DB::statement(
-            "ALTER TABLE comment_likes DROP CONSTRAINT comment_likes_comment_id_foreign",
-        );
+        DB::statement("ALTER TABLE comment_likes DROP CONSTRAINT comment_likes_user_id_foreign");
+        DB::statement("ALTER TABLE comment_likes DROP CONSTRAINT comment_likes_comment_id_foreign");
         DB::statement("ALTER TABLE comment_likes DROP PRIMARY KEY");
-        DB::statement(
-            "ALTER TABLE comment_likes ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
-        );
+        DB::statement("ALTER TABLE comment_likes ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY");
         DB::statement(
             "ALTER TABLE comment_likes ADD CONSTRAINT comment_likes_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
         );
@@ -40,16 +34,10 @@ class AddIdToCommentLikesAndContentLikes extends Migration
             "ALTER TABLE comment_likes ADD CONSTRAINT comment_likes_user_id_comment_id_unique UNIQUE (user_id, comment_id)",
         );
         // Content
-        DB::statement(
-            "ALTER TABLE content_likes DROP CONSTRAINT post_likes_user_id_foreign",
-        );
-        DB::statement(
-            "ALTER TABLE content_likes DROP CONSTRAINT post_likes_post_id_foreign",
-        );
+        DB::statement("ALTER TABLE content_likes DROP CONSTRAINT post_likes_user_id_foreign");
+        DB::statement("ALTER TABLE content_likes DROP CONSTRAINT post_likes_post_id_foreign");
         DB::statement("ALTER TABLE content_likes DROP PRIMARY KEY");
-        DB::statement(
-            "ALTER TABLE content_likes ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
-        );
+        DB::statement("ALTER TABLE content_likes ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY");
         DB::statement(
             "ALTER TABLE content_likes ADD CONSTRAINT content_likes_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
         );
@@ -71,13 +59,9 @@ class AddIdToCommentLikesAndContentLikes extends Migration
     {
         Schema::disableForeignKeyConstraints();
         DB::statement("ALTER TABLE comment_likes DROP COLUMN id");
-        DB::statement(
-            "ALTER TABLE comment_likes ADD PRIMARY KEY (user_id, comment_id)",
-        );
+        DB::statement("ALTER TABLE comment_likes ADD PRIMARY KEY (user_id, comment_id)");
         DB::statement("ALTER TABLE content_likes DROP COLUMN id");
-        DB::statement(
-            "ALTER TABLE content_likes ADD PRIMARY KEY (user_id, content_id)",
-        );
+        DB::statement("ALTER TABLE content_likes ADD PRIMARY KEY (user_id, content_id)");
         Schema::enableForeignKeyConstraints();
     }
 }
