@@ -17,10 +17,11 @@ class EventAttendeeController extends Controller
     {
         $validated = $request->validated();
         $successful = Attendee::create($validated);
-        if (!$successful) {
-            return session_back()->with("error", __("Failed to attend."));
+        if (! $successful) {
+            return back(303)->with('error', __('Failed to attend.'));
         }
-        return session_back()->with("success", __("You are now attending"));
+
+        return back(303)->with('success', __('You are now attending'));
     }
 
     /**
@@ -31,9 +32,10 @@ class EventAttendeeController extends Controller
     public function destroy(Attendee $attendee)
     {
         $successful = $attendee->delete();
-        if (!$successful) {
-            return session_back()->with("error", __("Failed to remove."));
+        if (! $successful) {
+            return back(303)->with('error', __('Failed to remove.'));
         }
-        return session_back()->with("success", __("You are no longer attending."));
+
+        return back(303)->with('success', __('You are no longer attending.'));
     }
 }
