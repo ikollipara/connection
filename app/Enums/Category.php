@@ -18,6 +18,6 @@ class Category extends Enum
 {
     protected static function labels(): Closure
     {
-        return fn(string $value) => ucfirst($value);
+        return fn (string $value) => ucfirst($value);
     }
 }

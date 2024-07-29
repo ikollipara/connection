@@ -24,7 +24,7 @@ class StoreContentLikeRequest extends FormRequest
     public function rules()
     {
         return [
-            "user_id" => "required|string|exists:users,id",
+            'user_id' => 'required|string|exists:users,id',
         ];
     }
 }

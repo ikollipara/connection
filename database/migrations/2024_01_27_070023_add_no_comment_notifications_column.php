@@ -13,8 +13,8 @@ class AddNoCommentNotificationsColumn extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->boolean("no_comment_notifications")->default(false);
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('no_comment_notifications')->default(false);
         });
     }
 
@@ -25,8 +25,8 @@ class AddNoCommentNotificationsColumn extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("no_comment_notifications");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('no_comment_notifications');
         });
     }
 }

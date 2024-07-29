@@ -14,7 +14,7 @@ class FollowerTest extends TestCase
     public function test_a_follower_can_be_created()
     {
         $follower = Follower::factory()->create();
-        $this->assertDatabaseCount("followers", 1);
+        $this->assertDatabaseCount('followers', 1);
         $this->assertTrue($follower->is(Follower::sole()));
     }
 

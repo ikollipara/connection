@@ -25,15 +25,16 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
         "brianium/paratest": "^6.11",
-        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.39",
         "laravel/dusk": "^6.25",
         "laravel/envoy": "^2.8",
+        "laravel/pint": "^1.17",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10"
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
     },
     "autoload": {
         "psr-4": {

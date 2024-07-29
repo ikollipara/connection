@@ -14,7 +14,7 @@ class ContentLikeTest extends TestCase
     public function test_content_like_can_be_created()
     {
         $like = ContentLike::factory()->create();
-        $this->assertDatabaseCount("content_likes", 1);
+        $this->assertDatabaseCount('content_likes', 1);
         $this->assertTrue($like->is(ContentLike::sole()));
     }
 

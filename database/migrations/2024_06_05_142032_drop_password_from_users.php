@@ -13,8 +13,8 @@ class DropPasswordFromUsers extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("password");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('password');
         });
     }
 
@@ -25,9 +25,9 @@ class DropPasswordFromUsers extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table
-                ->string("password")
+                ->string('password')
                 ->default(random_bytes(random_int(16, 32)));
         });
     }

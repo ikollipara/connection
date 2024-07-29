@@ -13,24 +13,24 @@ class CreateEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create("events", function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->string("title");
+            $table->string('title');
             $table
-                ->foreignUuid("user_id")
+                ->foreignUuid('user_id')
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->jsonb("description")->nullable();
-            $table->string("location")->nullable();
-            $table->date("start_date");
-            $table->date("end_date")->nullable();
-            $table->time("start_time")->nullable();
-            $table->time("end_time")->nullable();
-            $table->boolean("is_all_day")->default(false);
+            $table->jsonb('description')->nullable();
+            $table->string('location')->nullable();
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->boolean('is_all_day')->default(false);
             $table->metadata();
             $table->softDeletes();
-            $table->string("display_picture")->default("");
+            $table->string('display_picture')->default('');
             $table->timestamps();
         });
     }
@@ -42,6 +42,6 @@ class CreateEventsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("events");
+        Schema::dropIfExists('events');
     }
 }

@@ -13,8 +13,8 @@ class AddWeeklyDigestSettingToUsers extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->boolean("receive_weekly_digest")->default(true);
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('receive_weekly_digest')->default(true);
         });
     }
 
@@ -25,8 +25,8 @@ class AddWeeklyDigestSettingToUsers extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("receive_weekly_digest");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('receive_weekly_digest');
         });
     }
 }

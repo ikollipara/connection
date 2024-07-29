@@ -30,20 +30,20 @@ class StorePostRequest extends FormRequest
     public function rules()
     {
         return [
-            "body" => "required|json",
-            "title" => "required|string",
-            "published" => "required|boolean",
-            "metadata" => "array",
-            "metadata.audience" => "enum:" . Audience::class,
-            "metadata.category" => "enum:" . Category::class,
-            "metadata.grades" => "sometimes|array",
-            "metadata.grades.*" => "enum:" . Grade::class,
-            "metadata.standards" => "sometimes|array",
-            "metadata.standards.*" => "enum:" . Standard::class,
-            "metadata.practices" => "sometimes|array",
-            "metadata.practices.*" => "enum:" . Practice::class,
-            "metadata.languages" => "sometimes|array",
-            "metadata.languages.*" => "enum:" . Language::class,
+            'body' => 'required|json',
+            'title' => 'required|string',
+            'published' => 'required|boolean',
+            'metadata' => 'array',
+            'metadata.audience' => 'enum:'.Audience::class,
+            'metadata.category' => 'enum:'.Category::class,
+            'metadata.grades' => 'sometimes|array',
+            'metadata.grades.*' => 'enum:'.Grade::class,
+            'metadata.standards' => 'sometimes|array',
+            'metadata.standards.*' => 'enum:'.Standard::class,
+            'metadata.practices' => 'sometimes|array',
+            'metadata.practices.*' => 'enum:'.Practice::class,
+            'metadata.languages' => 'sometimes|array',
+            'metadata.languages.*' => 'enum:'.Language::class,
         ];
     }
 }

@@ -13,8 +13,8 @@ class AddConsentedToUsers extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->boolean("consented")->default(false);
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('consented')->default(false);
         });
     }
 
@@ -25,8 +25,8 @@ class AddConsentedToUsers extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("consented");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('consented');
         });
     }
 }

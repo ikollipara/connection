@@ -12,7 +12,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function index(PostCollection $postCollection)
@@ -23,7 +22,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function create(PostCollection $postCollection)
@@ -34,8 +32,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreEntryRequest  $request
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function store(
@@ -43,14 +39,12 @@ class PostCollectionEntriesController extends Controller
         PostCollection $postCollection
     ) {
         $validated = $request->validated();
-        $postCollection->entries()->attach($validated["content_id"]);
+        $postCollection->entries()->attach($validated['content_id']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Entry  $entry
      * @return \Illuminate\Http\Response
      */
     public function show(PostCollection $postCollection, Entry $entry)
@@ -61,8 +55,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Entry  $entry
      * @return \Illuminate\Http\Response
      */
     public function edit(PostCollection $postCollection, Entry $entry)
@@ -73,9 +65,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Entry  $entry
      * @return \Illuminate\Http\Response
      */
     public function update(
@@ -89,8 +78,6 @@ class PostCollectionEntriesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Entry  $entry
      * @return \Illuminate\Http\Response
      */
     public function destroy(PostCollection $postCollection, Entry $entry)
@@ -99,6 +86,7 @@ class PostCollectionEntriesController extends Controller
         if ($successful) {
             return session_back()->with("success", __("Entry deleted successfully"));
         }
-        return back(500)->with("error", __("Failed to delete entry"));
+
+        return back(500)->with('error', __('Failed to delete entry'));
     }
 }

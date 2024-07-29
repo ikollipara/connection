@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Controllers\EventAttendeeController;
 use App\Http\Controllers\CommentCommentLikesController;
 use App\Http\Controllers\ContentLikesController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\EventAttendeeController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FrequentlyAskedQuestionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PostCollectionEntriesController;
 use App\Http\Controllers\PostCollectionsCommentsController;
-use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
 use App\Http\Controllers\PostsCommentsController;
-use App\Http\Handlers\ContentSearchHandler;
-use App\Http\Handlers\UpdateUserConsentHandler;
+use App\Http\Controllers\PostsController;
+use App\Http\Controllers\UserEventController;
 use App\Http\Controllers\UserFollowersController;
 use App\Http\Controllers\UserFollowingController;
 use App\Http\Controllers\UserPostCollectionsController;
@@ -23,6 +23,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use App\Http\Handlers\CollectionsEntryHandler;
+use App\Http\Handlers\ContentSearchHandler;
 use App\Http\Handlers\DashboardHandler;
 use App\Http\Controllers\EventController;
 use App\Http\Handlers\ICalHandler;
@@ -40,51 +41,51 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view("/", "home")->name("index");
-Route::view("/about", "about")->name("about");
-Route::view("/videos", "videos")->name("videos");
+Route::view('/', 'home')->name('index');
+Route::view('/about', 'about')->name('about');
+Route::view('/videos', 'videos')->name('videos');
 
-if (env("APP_DEBUG")) {
-    Route::get("/mail", function () {
+if (env('APP_DEBUG')) {
+    Route::get('/mail', function () {
         return new App\Mail\WeeklyDigest(auth()->user(), [
             \App\Models\Post::first(),
-            "This is a test.",
+            'This is a test.',
         ]);
     });
 }
 
-Route::get("/sign-up", [UsersController::class, "create"])
-    ->name("users.create")
-    ->middleware("guest");
-Route::post("/users", [UsersController::class, "store"])->name("users.store");
+Route::get('/sign-up', [UsersController::class, 'create'])
+    ->name('users.create')
+    ->middleware('guest');
+Route::post('/users', [UsersController::class, 'store'])->name('users.store');
 
-Route::resource("login", LoginController::class)
-    ->only(["create", "store", "show"])
-    ->parameter("login", "user")
-    ->middleware("guest");
+Route::resource('login', LoginController::class)
+    ->only(['create', 'store', 'show'])
+    ->parameter('login', 'user')
+    ->middleware('guest');
 
-Route::delete("/logout", [LoginController::class, "destroy"])
-    ->name("login.destroy")
-    ->middleware("auth");
+Route::delete('/logout', [LoginController::class, 'destroy'])
+    ->name('login.destroy')
+    ->middleware('auth');
 
-Route::get("/email/verify/{id}/{hash}", [
+Route::get('/email/verify/{id}/{hash}', [
     EmailVerificationController::class,
-    "verify",
+    'verify',
 ])
-    ->name("verification.verify")
-    ->middleware(["auth"]);
-Route::get("/email/verify", [EmailVerificationController::class, "index"])
-    ->name("verification.notice")
-    ->middleware(["auth"]);
+    ->name('verification.verify')
+    ->middleware(['auth']);
+Route::get('/email/verify', [EmailVerificationController::class, 'index'])
+    ->name('verification.notice')
+    ->middleware(['auth']);
 
-Route::delete("/weekly-digest/subscription/{user}", [
+Route::delete('/weekly-digest/subscription/{user}', [
     WeeklyDigestSubscriptionController::class,
-    "destroy",
+    'destroy',
 ])
-    ->name("weekly-digest.subscription.destroy")
-    ->middleware("signed");
+    ->name('weekly-digest.subscription.destroy')
+    ->middleware('signed');
 
-Route::middleware("auth")->group(function () {
+Route::middleware('auth')->group(function () {
     // Event Routes
     //Index (calendar)
     Route::get('/events', [EventController::class, 'index'])
@@ -92,45 +93,45 @@ Route::middleware("auth")->group(function () {
     Route::get("users/{user}/events", [UserEventController::class, "index"])
         ->name("users.events.index");
     // Create
-    Route::get("/users/{user}/events/create", [UserEventController::class,"create"])
-        ->name("users.events.create");
+    Route::get('/users/{user}/events/create', [UserEventController::class, 'create'])
+        ->name('users.events.create');
     // Show
-    Route::get("/events/{event}/show", [EventController::class,"show"])
-        ->name("events.show");
+    Route::get('/events/{event}/show', [EventController::class, 'show'])
+        ->name('events.show');
     // Edit
-    Route::get("/users/{user}/events/{event}/edit", [
+    Route::get('/users/{user}/events/{event}/edit', [
         UserEventController::class,
-        "edit",
+        'edit',
     ])
-        ->name("users.events.edit")
+        ->name('users.events.edit')
         ->withTrashed()
-        ->middleware("verified");
+        ->middleware('verified');
     // store
-    Route::post('/users/{user}/events', [UserEventController::class,"store"])
-        ->name("users.events.store")
-        ->middleware("verified");
+    Route::post('/users/{user}/events', [UserEventController::class, 'store'])
+        ->name('users.events.store')
+        ->middleware('verified');
     // Update
-    Route::patch("/users/{user}/events/{event}", [
+    Route::patch('/users/{user}/events/{event}', [
         UserEventController::class,
-        "update",
+        'update',
     ])
-        ->name("users.events.update")
+        ->name('users.events.update')
         ->withTrashed()
-        ->middleware("verified");
+        ->middleware('verified');
     // Delete
-    Route::delete("/users/{user}/events/{event}", [
+    Route::delete('/users/{user}/events/{event}', [
         UserEventController::class,
-        "destroy",
+        'destroy',
     ])
-        ->name("users.events.destroy")
+        ->name('users.events.destroy')
         ->withTrashed()
         ->middleware("verified");
     Route::get('/user/{user}/events/ical', ICalHandler::class)
         ->name('events.ical');
     // Attendees
-    Route::post("/events/{event}/attendee", [EventAttendeeController::class,"store"])
-        ->name("events.attendee.store")
-        ->middleware("verified");
+    Route::post('/events/{event}/attendee', [EventAttendeeController::class, 'store'])
+        ->name('events.attendee.store')
+        ->middleware('verified');
     // Route::post("events/{event}/attendee",function($event)
     // {
     //     dd('hello');
@@ -143,206 +144,206 @@ Route::middleware("auth")->group(function () {
 
     Route::post("/content/{content}/likes", [
         ContentLikesController::class,
-        "store",
+        'store',
     ])
-        ->name("content.likes.store")
-        ->middleware("verified");
+        ->name('content.likes.store')
+        ->middleware('verified');
 
-    Route::delete("/content/{content}/likes/{contentLike}", [
+    Route::delete('/content/{content}/likes/{contentLike}', [
         ContentLikesController::class,
-        "destroy",
+        'destroy',
     ])
-        ->name("content.likes.destroy")
-        ->middleware("verified");
-    Route::resource("faq", FrequentlyAskedQuestionController::class)->parameter(
-        "faq",
-        "question",
+        ->name('content.likes.destroy')
+        ->middleware('verified');
+    Route::resource('faq', FrequentlyAskedQuestionController::class)->parameter(
+        'faq',
+        'question',
     );
-    Route::post("/entries", CollectionsEntryHandler::class)
-        ->name("entries.toggle")
-        ->middleware("verified");
-    Route::get("/dashboard", DashboardHandler::class)->name("dashboard");
-    Route::redirect("/home", "/dashboard")->name("home");
-    Route::get("/search", ContentSearchHandler::class)
-        ->name("search")
-        ->middleware("verified");
-    Route::resource("users", UsersController::class)->only([
-        "edit",
-        "update",
-        "show",
-        "destroy",
+    Route::post('/entries', CollectionsEntryHandler::class)
+        ->name('entries.toggle')
+        ->middleware('verified');
+    Route::get('/dashboard', DashboardHandler::class)->name('dashboard');
+    Route::redirect('/home', '/dashboard')->name('home');
+    Route::get('/search', ContentSearchHandler::class)
+        ->name('search')
+        ->middleware('verified');
+    Route::resource('users', UsersController::class)->only([
+        'edit',
+        'update',
+        'show',
+        'destroy',
     ]);
-    Route::get("/users/{user}/followers", [
+    Route::get('/users/{user}/followers', [
         UserFollowersController::class,
-        "index",
+        'index',
     ])
-        ->name("users.followers.index")
-        ->middleware("verified");
-    Route::post("/users/{user}/followers", [
+        ->name('users.followers.index')
+        ->middleware('verified');
+    Route::post('/users/{user}/followers', [
         UserFollowersController::class,
-        "store",
+        'store',
     ])
-        ->name("users.followers.store")
-        ->middleware("verified");
+        ->name('users.followers.store')
+        ->middleware('verified');
 
-    Route::delete("/users/{user}/followers/{follower}", [
+    Route::delete('/users/{user}/followers/{follower}', [
         UserFollowersController::class,
-        "destroy",
+        'destroy',
     ])
-        ->name("users.followers.destroy")
-        ->middleware("verified");
-    Route::resource("users.following", UserFollowingController::class)->only([
-        "index",
+        ->name('users.followers.destroy')
+        ->middleware('verified');
+    Route::resource('users.following', UserFollowingController::class)->only([
+        'index',
     ]);
-    Route::get("/users/{user}/profile/edit", [
+    Route::get('/users/{user}/profile/edit', [
         UserProfilesController::class,
-        "edit",
+        'edit',
     ])
-        ->name("users.profile.edit")
-        ->middleware("verified");
-    Route::patch("/users/{user}/profile", [
+        ->name('users.profile.edit')
+        ->middleware('verified');
+    Route::patch('/users/{user}/profile', [
         UserProfilesController::class,
-        "update",
+        'update',
     ])
-        ->name("users.profile.update")
-        ->middleware("verified");
-    Route::get("/users/{user}/settings/edit", [
+        ->name('users.profile.update')
+        ->middleware('verified');
+    Route::get('/users/{user}/settings/edit', [
         UserSettingsController::class,
-        "edit",
+        'edit',
     ])
-        ->name("users.settings.edit")
-        ->middleware("verified");
-    Route::patch("/users/{user}/settings", [
+        ->name('users.settings.edit')
+        ->middleware('verified');
+    Route::patch('/users/{user}/settings', [
         UserSettingsController::class,
-        "update",
+        'update',
     ])
-        ->name("users.settings.update")
-        ->middleware("verified");
+        ->name('users.settings.update')
+        ->middleware('verified');
 
-    Route::patch("/users/{user}/consent", UpdateUserConsentHandler::class)
-        ->name("users.consent.update")
-        ->middleware("verified");
+    Route::patch('/users/{user}/consent', UpdateUserConsentHandler::class)
+        ->name('users.consent.update')
+        ->middleware('verified');
 
     // File Upload
-    Route::post("/upload", [FileUploadController::class, "store"])
-        ->name("upload.store")
-        ->middleware("verified");
-    Route::delete("/upload", [FileUploadController::class, "destroy"])
-        ->name("upload.destroy")
-        ->middleware("verified");
+    Route::post('/upload', [FileUploadController::class, 'store'])
+        ->name('upload.store')
+        ->middleware('verified');
+    Route::delete('/upload', [FileUploadController::class, 'destroy'])
+        ->name('upload.destroy')
+        ->middleware('verified');
 
     // Post Routes
-    Route::resource("users.posts", UserPostsController::class)->only([
-        "create",
-        "store",
+    Route::resource('users.posts', UserPostsController::class)->only([
+        'create',
+        'store',
     ]);
-    Route::get("/users/{user}/posts/{post}/edit", [
+    Route::get('/users/{user}/posts/{post}/edit', [
         UserPostsController::class,
-        "edit",
+        'edit',
     ])
-        ->name("users.posts.edit")
+        ->name('users.posts.edit')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/users/{user}/posts", [UserPostsController::class, "index"])
-        ->name("users.posts.index")
-        ->middleware("verified");
-    Route::patch("/users/{user}/posts/{post}", [
+        ->middleware('verified');
+    Route::get('/users/{user}/posts', [UserPostsController::class, 'index'])
+        ->name('users.posts.index')
+        ->middleware('verified');
+    Route::patch('/users/{user}/posts/{post}', [
         UserPostsController::class,
-        "update",
+        'update',
     ])
-        ->name("users.posts.update")
+        ->name('users.posts.update')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/posts/{post}", [PostsController::class, "show"])
-        ->name("posts.show")
+        ->middleware('verified');
+    Route::get('/posts/{post}', [PostsController::class, 'show'])
+        ->name('posts.show')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/posts/{post}/comments", [
+        ->middleware('verified');
+    Route::get('/posts/{post}/comments', [
         PostsCommentsController::class,
-        "index",
+        'index',
     ])
-        ->name("posts.comments.index")
+        ->name('posts.comments.index')
         ->withTrashed()
-        ->middleware("verified");
-    Route::post("/posts/{post}/comments", [
+        ->middleware('verified');
+    Route::post('/posts/{post}/comments', [
         PostsCommentsController::class,
-        "store",
+        'store',
     ])
-        ->name("posts.comments.store")
-        ->middleware("verified");
+        ->name('posts.comments.store')
+        ->middleware('verified');
 
     // Post Collection Routes
-    Route::resource("users.collections", UserPostCollectionsController::class)
-        ->parameter("collection", "post_collection")
-        ->only(["create", "store"]);
-    Route::get("/users/{user}/collections/{post_collection}/edit", [
+    Route::resource('users.collections', UserPostCollectionsController::class)
+        ->parameter('collection', 'post_collection')
+        ->only(['create', 'store']);
+    Route::get('/users/{user}/collections/{post_collection}/edit', [
         UserPostCollectionsController::class,
-        "edit",
+        'edit',
     ])
-        ->name("users.collections.edit")
+        ->name('users.collections.edit')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/users/{user}/collections", [
+        ->middleware('verified');
+    Route::get('/users/{user}/collections', [
         UserPostCollectionsController::class,
-        "index",
+        'index',
     ])
-        ->name("users.collections.index")
+        ->name('users.collections.index')
         ->withTrashed()
-        ->middleware("verified");
-    Route::patch("/users/{user}/collections/{post_collection}", [
+        ->middleware('verified');
+    Route::patch('/users/{user}/collections/{post_collection}', [
         UserPostCollectionsController::class,
-        "update",
+        'update',
     ])
-        ->name("users.collections.update")
+        ->name('users.collections.update')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/collections/{post_collection}", [
+        ->middleware('verified');
+    Route::get('/collections/{post_collection}', [
         PostCollectionsController::class,
-        "show",
+        'show',
     ])
-        ->name("collections.show")
+        ->name('collections.show')
         ->withTrashed()
-        ->middleware("verified");
-    Route::get("/collections/{post_collection}/comments", [
+        ->middleware('verified');
+    Route::get('/collections/{post_collection}/comments', [
         PostCollectionsCommentsController::class,
-        "index",
+        'index',
     ])
-        ->name("collections.comments.index")
+        ->name('collections.comments.index')
         ->withTrashed()
-        ->middleware("verified");
+        ->middleware('verified');
 
-    Route::post("/collections/{post_collection}/entries", [
+    Route::post('/collections/{post_collection}/entries', [
         PostCollectionEntriesController::class,
-        "store",
+        'store',
     ])
-        ->name("collections.entries.store")
-        ->middleware("verified");
+        ->name('collections.entries.store')
+        ->middleware('verified');
 
-    Route::delete("/collections/{post_collection}/entries/{entry}", [
+    Route::delete('/collections/{post_collection}/entries/{entry}', [
         PostCollectionEntriesController::class,
-        "destroy",
+        'destroy',
     ])
-        ->name("collections.entries.destroy")
-        ->middleware("verified");
+        ->name('collections.entries.destroy')
+        ->middleware('verified');
 
-    Route::post("/collections/{post_collection}/comments", [
+    Route::post('/collections/{post_collection}/comments', [
         PostCollectionsCommentsController::class,
-        "store",
+        'store',
     ])
-        ->name("collections.comments.store")
-        ->middleware("verified");
+        ->name('collections.comments.store')
+        ->middleware('verified');
 
-    Route::post("/comments/{comment}/likes", [
+    Route::post('/comments/{comment}/likes', [
         CommentCommentLikesController::class,
-        "store",
+        'store',
     ])
-        ->name("comments.likes.store")
-        ->middleware("verified");
+        ->name('comments.likes.store')
+        ->middleware('verified');
 
-    Route::delete("/comments/{comment}/likes/{commentLike}", [
+    Route::delete('/comments/{comment}/likes/{commentLike}', [
         CommentCommentLikesController::class,
-        "destroy",
+        'destroy',
     ])
-        ->name("comments.likes.destroy")
-        ->middleware("verified");
+        ->name('comments.likes.destroy')
+        ->middleware('verified');
 });

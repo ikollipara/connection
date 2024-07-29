@@ -24,8 +24,8 @@ class StoreAttendeeRequest extends FormRequest
     public function rules()
     {
         return [
-            "user_id"=> "required|exists:users,id",
-            "event_id"=> "required|exists:events,id",
+            'user_id' => 'required|exists:users,id',
+            'event_id' => 'required|exists:events,id',
         ];
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendeeRequest;
-use App\Models\Event;
 use App\Models\Attendee;
-use Illuminate\Http\Request;
+
 class EventAttendeeController extends Controller
 {
     /**
@@ -23,10 +22,10 @@ class EventAttendeeController extends Controller
         }
         return session_back()->with("success", __("You are now attending"));
     }
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Attendee  $attendee
      * @return \Illuminate\Http\Response
      */
     public function destroy(Attendee $attendee)

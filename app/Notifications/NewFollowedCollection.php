@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\PostCollection;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -21,7 +20,7 @@ class NewFollowedCollection extends Notification
      */
     public function __construct(PostCollection $post_collection)
     {
-        $this->post_collection = $post_collection->load("user");
+        $this->post_collection = $post_collection->load('user');
     }
 
     /**
@@ -32,7 +31,7 @@ class NewFollowedCollection extends Notification
      */
     public function via($notifiable)
     {
-        return ["mail"];
+        return ['mail'];
     }
 
     /**
@@ -43,7 +42,7 @@ class NewFollowedCollection extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(
                 "New Collection from {$this->post_collection->user->full_name}",
             )
@@ -51,8 +50,8 @@ class NewFollowedCollection extends Notification
                 "{$this->post_collection->user->full_name} has created a new collection!",
             )
             ->action(
-                "View Collection",
-                route("collections.show", $this->post_collection),
+                'View Collection',
+                route('collections.show', $this->post_collection),
             );
     }
 
@@ -65,7 +64,7 @@ class NewFollowedCollection extends Notification
     public function toArray($notifiable)
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }

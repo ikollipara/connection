@@ -6,8 +6,6 @@ use Illuminate\Support\Str;
 
 /**
  * Trait HasUuids
- * @package App\Traits
- * Defines a trait for models that use UUIDs as their primary key.
  */
 trait HasUuids
 {
@@ -28,7 +26,7 @@ trait HasUuids
      */
     public function getKeyType()
     {
-        return "string";
+        return 'string';
     }
 
     public static function boot()

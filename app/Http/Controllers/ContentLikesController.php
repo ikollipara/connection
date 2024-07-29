@@ -12,7 +12,6 @@ class ContentLikesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\Content  $content
      * @return \Illuminate\Http\Response
      */
     public function index(Content $content)
@@ -23,7 +22,6 @@ class ContentLikesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \App\Models\Content  $content
      * @return \Illuminate\Http\Response
      */
     public function create(Content $content)
@@ -34,17 +32,16 @@ class ContentLikesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreContentLikeRequest  $request
-     * @param  \App\Models\Content  $content
      * @return \Illuminate\Http\Response
      */
     public function store(StoreContentLikeRequest $request, Content $content)
     {
         $validated = $request->validated();
         $content->likes()->create($validated);
-        $route = $content->type === "post" ? "posts.show" : "collections.show";
+        $route = $content->type === 'post' ? 'posts.show' : 'collections.show';
+
         return redirect(route($route, $content), 303)->with(
-            "success",
+            'success',
             __("{$content->name} liked"),
         );
     }
@@ -52,8 +49,6 @@ class ContentLikesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Content  $content
-     * @param  \App\Models\Likes\ContentLike  $contentLike
      * @return \Illuminate\Http\Response
      */
     public function show(Content $content, ContentLike $contentLike)
@@ -64,8 +59,6 @@ class ContentLikesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Content  $content
-     * @param  \App\Models\Likes\ContentLike  $contentLike
      * @return \Illuminate\Http\Response
      */
     public function edit(Content $content, ContentLike $contentLike)
@@ -76,9 +69,6 @@ class ContentLikesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Content  $content
-     * @param  \App\Models\Likes\ContentLike  $contentLike
      * @return \Illuminate\Http\Response
      */
     public function update(
@@ -92,18 +82,16 @@ class ContentLikesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Content  $content
-     * @param  \App\Models\Likes\ContentLike  $contentLike
      * @return \Illuminate\Http\Response
      */
     public function destroy(Content $content, ContentLike $contentLike)
     {
         $successful = $contentLike->delete();
-        $route = $content->type === "post" ? "posts.show" : "collections.show";
+        $route = $content->type === 'post' ? 'posts.show' : 'collections.show';
         if ($successful) {
             return redirect(route($route, $content), 303)->with(
-                "success",
-                __("Like removed successfully"),
+                'success',
+                __('Like removed successfully'),
             );
         }
     }

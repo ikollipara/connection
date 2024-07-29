@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasUuids;
-use App\Contracts\Likable;
-use App\Events\CommentLiked;
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\HasLikes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
@@ -18,7 +15,7 @@ class Comment extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ["body", "user_id", "commentable_id", "commentable_type"];
+    protected $fillable = ['body', 'user_id', 'commentable_id', 'commentable_type'];
 
     /**
      * The attributes that should be cast.
@@ -29,6 +26,7 @@ class Comment extends Model
 
     /**
      * Get the user that owns the comment.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self>
      */
     public function user()
@@ -39,6 +37,7 @@ class Comment extends Model
 
     /**
      * Get the likes for the comment.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Likes\CommentLike>
      */
     public function likes()
@@ -48,6 +47,7 @@ class Comment extends Model
 
     /**
      * Get the post or post collection that owns the comment.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo<Content>
      */
     public function commentable()
@@ -59,12 +59,12 @@ class Comment extends Model
 
     public function scopeThisMonth($query)
     {
-        return $query->whereBetween("created_at", [now()->startOfMonth(), now()->endOfMonth()]);
+        return $query->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
     }
 
     public function scopeLastMonth($query)
     {
-        return $query->whereBetween("created_at", [
+        return $query->whereBetween('created_at', [
             now()
                 ->subMonth()
                 ->startOfMonth(),

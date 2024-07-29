@@ -15,10 +15,10 @@ class CreateAttendeesTable extends Migration
     {
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("event_id")->constrained()->cascadeOnDelete();
-            $table->foreignUuid("user_id")->constrained()->cascadeOnDelete();
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(["event_id","user_id"]);
+            $table->unique(['event_id', 'user_id']);
         });
     }
 

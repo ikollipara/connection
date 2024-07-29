@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
 /**
  * \App\Models\Entry
+ *
  * @property int $id
  * @property string $content_id
  * @property string $collection_id
@@ -18,32 +19,38 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
  */
 class Entry extends Model
 {
-    use HasFactory, AsPivot;
+    use AsPivot, HasFactory;
 
-    protected $table = "entries";
+    protected $table = 'entries';
+
     public $timestamps = true;
+
     public $incrementing = true;
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
-    protected $fillable = ["content_id", "collection_id"];
-    protected $guarded = ["id"];
+    protected $fillable = ['content_id', 'collection_id'];
+
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array<string, string>
      */
     protected $casts = [
-        "created_at" => "datetime",
-        "updated_at" => "datetime",
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Relationships
 
     /**
      * Get the content that the entry belongs to.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Content>
      */
     public function content()
@@ -53,6 +60,7 @@ class Entry extends Model
 
     /**
      * Get the collection that the entry belongs to.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<PostCollection>
      */
     public function collection()

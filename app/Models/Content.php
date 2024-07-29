@@ -20,6 +20,7 @@ use Parental\HasChildren;
 
 /**
  * \App\Models\Content
+ *
  * @property string $id
  * @property string $title
  * @property Editor $body
@@ -36,82 +37,88 @@ class Content extends Model implements Commentable, IsSearchable
 {
     use HasFactory, HasChildren, HasUuids, HasMetadata, SoftDeletes, Searchable;
 
-    protected $table = "content";
+    protected $table = 'content';
 
     protected $childTypes = [
-        "post" => Post::class,
-        "collection" => PostCollection::class,
+        'post' => Post::class,
+        'collection' => PostCollection::class,
     ];
 
     /**
      * The relationships that should always be loaded.
+     *
      * @var array<int, string>
      */
-    protected $with = ["user"];
+    protected $with = ['user'];
 
     /**
      * The relationships that should always be counted.
+     *
      * @var array<int, string>
      */
-    protected $withCount = ["likes", "views"];
+    protected $withCount = ['likes', 'views'];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ["title", "body", "metadata", "published", "user_id", "type"];
+    protected $fillable = ['title', 'body', 'metadata', 'published', 'user_id', 'type'];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array<string, string>
      */
     protected $casts = [
-        "body" => "array",
-        "published" => "boolean",
+        'body' => 'array',
+        'published' => 'boolean',
     ];
 
     /**
      * The attributes that should be defaults.
+     *
      * @var array<string, mixed>
      */
     protected $attributes = [
-        "published" => false,
-        "metadata" => '{"category": "material", "audience": "Teachers"}',
-        "body" => '{"blocks": []}',
-        "title" => "",
+        'published' => false,
+        'metadata' => '{"category": "material", "audience": "Teachers"}',
+        'body' => '{"blocks": []}',
+        'title' => '',
     ];
 
     // Laravel Scout configuration
     public function toSearchableArray()
     {
         return [
-            "title" => $this->title,
-            "body" => $this->asPlainText("body"),
+            'title' => $this->title,
+            'body' => $this->asPlainText('body'),
         ];
     }
 
     public function shouldBeSearchable()
     {
-        return $this->published and !$this->trashed();
+        return $this->published and ! $this->trashed();
     }
 
     // Overrides
 
     public function getRouteKey()
     {
-        return Str::slug($this->title) . "--" . $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title).'--'.$this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
     {
-        $id = last(explode("--", $value));
+        $id = last(explode('--', $value));
+
         return parent::resolveRouteBinding($id, $field);
     }
 
     public function resolveSoftDeletableRouteBinding($value, $field = null)
     {
-        $id = last(explode("--", $value));
+        $id = last(explode('--', $value));
+
         return parent::resolveSoftDeletableRouteBinding($id, $field);
     }
 
@@ -119,7 +126,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     public function getWasRecentlyPublishedAttribute()
     {
-        return $this->published and $this->wasChanged("published");
+        return $this->published and $this->wasChanged('published');
     }
 
     public function getStatusAttribute()
@@ -130,6 +137,7 @@ class Content extends Model implements Commentable, IsSearchable
         if ($this->published) {
             return Status::published();
         }
+
         return Status::draft();
     }
 
@@ -147,6 +155,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     /**
      * Get the user that owns the content.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()
@@ -156,6 +165,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     /**
      * Get the likes for the content.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Likes\ContentLike>
      */
     public function likes()
@@ -165,6 +175,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     /**
      * Get the views for the content.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\View>
      */
     public function views()
@@ -172,31 +183,29 @@ class Content extends Model implements Commentable, IsSearchable
         return $this->hasMany(View::class);
     }
 
-    /**
-     *
-     */
     public function collections()
     {
-        return $this->belongsToMany(PostCollection::class, "entries", "content_id", "collection_id")->using(
+        return $this->belongsToMany(PostCollection::class, 'entries', 'content_id', 'collection_id')->using(
             Entry::class,
         );
     }
 
     /**
      * Get all of the comments for the model.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\App\Models\Comment>
      */
     public function comments()
     {
-        return $this->morphMany(Comment::class, "commentable");
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     // Scopes
 
     /**
      * Filter the query by status.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
-     * @param Status $status
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeStatus($query, Status $status)
@@ -205,75 +214,78 @@ class Content extends Model implements Commentable, IsSearchable
             case $status->equals(Status::archived()):
                 return $query->onlyTrashed();
             case $status->equals(Status::published()):
-                return $query->where("published", true);
+                return $query->where('published', true);
             case $status->equals(Status::draft()):
-                return $query->where("published", false);
+                return $query->where('published', false);
         }
     }
 
     /**
      * Filter the query by published status.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeWherePublished($query)
     {
-        return $query->where("published", true);
+        return $query->where('published', true);
     }
 
     /**
      * Filter to only include top content for the last month. Top is
      * defined as having the most likes, views, and comments.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeTopLastMonth($query)
     {
         return $query
-            ->where("published", true)
+            ->where('published', true)
             ->withCount([
-                "likes as last_month_likes" => function ($query) {
+                'likes as last_month_likes' => function ($query) {
                     return $query->lastMonth();
                 },
-                "views as last_month_views" => function ($query) {
+                'views as last_month_views' => function ($query) {
                     return $query->lastMonth();
                 },
-                "comments as last_month_comments" => function ($query) {
+                'comments as last_month_comments' => function ($query) {
                     return $query->lastMonth();
                 },
             ])
-            ->orderByDesc("last_month_likes")
-            ->orderByDesc("last_month_views")
-            ->orderByDesc("last_month_comments")
-            ->orderByDesc("created_at");
+            ->orderByDesc('last_month_likes')
+            ->orderByDesc('last_month_views')
+            ->orderByDesc('last_month_comments')
+            ->orderByDesc('created_at');
     }
 
     /**
      * Apply search constraints to the query.
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
-     * @param array<string, mixed> $constraints
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  array<string, mixed>  $constraints
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeWithSearchConstraints($query, array $constraints)
     {
         return $query
-            ->where("published", true)
-            ->when($constraints["type"], fn($query, $types) => $query->where("type", $types))
+            ->where('published', true)
+            ->when($constraints['type'], fn ($query, $types) => $query->where('type', $types))
             ->when(
-                $constraints["grades"],
-                fn($query, $grades) => $query->whereJsonContains("metadata->grades", $grades),
+                $constraints['grades'],
+                fn ($query, $grades) => $query->whereJsonContains('metadata->grades', $grades),
             )
             ->when(
-                $constraints["standards"],
-                fn($query, $standards) => $query->whereJsonContains("metadata->standards", $standards),
+                $constraints['standards'],
+                fn ($query, $standards) => $query->whereJsonContains('metadata->standards', $standards),
             )
             ->when(
-                $constraints["standard_groups"],
-                fn($query, $standard_groups) => $query->where(
-                    fn($query) => collect($standard_groups)
+                $constraints['standard_groups'],
+                fn ($query, $standard_groups) => $query->where(
+                    fn ($query) => collect($standard_groups)
                         ->map(
-                            fn($group) => $query->orWhereJsonContains(
-                                "metadata->standards",
+                            fn ($group) => $query->orWhereJsonContains(
+                                'metadata->standards',
                                 Standard::getGroup(StandardGroup::from($group)),
                             ),
                         )
@@ -281,23 +293,23 @@ class Content extends Model implements Commentable, IsSearchable
                 ),
             )
             ->when(
-                $constraints["practices"],
-                fn($query, $practices) => $query->whereJsonContains("metadata->practices", $practices),
+                $constraints['practices'],
+                fn ($query, $practices) => $query->whereJsonContains('metadata->practices', $practices),
             )
             ->when(
-                $constraints["languages"],
-                fn($query, $languages) => $query->whereJsonContains("metadata->languages", $languages),
+                $constraints['languages'],
+                fn ($query, $languages) => $query->whereJsonContains('metadata->languages', $languages),
             )
             ->when(
-                $constraints["categories"],
-                fn($query, $categories) => $query->whereIn("metadata->category", $categories),
+                $constraints['categories'],
+                fn ($query, $categories) => $query->whereIn('metadata->category', $categories),
             )
             ->when(
-                $constraints["audiences"],
-                fn($query, $audiences) => $query->whereIn("metadata->audience", $audiences),
+                $constraints['audiences'],
+                fn ($query, $audiences) => $query->whereIn('metadata->audience', $audiences),
             )
-            ->whereHas("likes", null, ">=", $constraints["likes_count"])
-            ->whereHas("views", null, ">=", $constraints["views_count"]);
+            ->whereHas('likes', null, '>=', $constraints['likes_count'])
+            ->whereHas('views', null, '>=', $constraints['views_count']);
     }
 
     // Methods
@@ -305,16 +317,16 @@ class Content extends Model implements Commentable, IsSearchable
     public static function normalizeSearchConstraints(array $constraints): array
     {
         return [
-            "type" => data_get($constraints, "type", ""),
-            "categories" => Arr::wrap(data_get($constraints, "categories", [])),
-            "audiences" => Arr::wrap(data_get($constraints, "audiences", [])),
-            "grades" => Arr::wrap(data_get($constraints, "grades", [])),
-            "standards" => Arr::wrap(data_get($constraints, "standards", [])),
-            "practices" => Arr::wrap(data_get($constraints, "practices", [])),
-            "languages" => Arr::wrap(data_get($constraints, "languages", [])),
-            "standard_groups" => Arr::wrap(data_get($constraints, "standard_groups", [])),
-            "likes_count" => data_get($constraints, "likes_count", 0),
-            "views_count" => data_get($constraints, "views_count", 0),
+            'type' => data_get($constraints, 'type', ''),
+            'categories' => Arr::wrap(data_get($constraints, 'categories', [])),
+            'audiences' => Arr::wrap(data_get($constraints, 'audiences', [])),
+            'grades' => Arr::wrap(data_get($constraints, 'grades', [])),
+            'standards' => Arr::wrap(data_get($constraints, 'standards', [])),
+            'practices' => Arr::wrap(data_get($constraints, 'practices', [])),
+            'languages' => Arr::wrap(data_get($constraints, 'languages', [])),
+            'standard_groups' => Arr::wrap(data_get($constraints, 'standard_groups', [])),
+            'likes_count' => data_get($constraints, 'likes_count', 0),
+            'views_count' => data_get($constraints, 'views_count', 0),
         ];
     }
 }

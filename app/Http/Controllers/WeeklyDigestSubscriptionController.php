@@ -30,7 +30,6 @@ class WeeklyDigestSubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -63,7 +62,6 @@ class WeeklyDigestSubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -75,13 +73,12 @@ class WeeklyDigestSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param  User $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, User $user)
     {
-        $user->update(["receive_weekly_digest" => false]);
-        return view("weekly-digest.subscription.delete");
+        $user->update(['receive_weekly_digest' => false]);
+
+        return view('weekly-digest.subscription.delete');
     }
 }

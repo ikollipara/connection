@@ -72,12 +72,13 @@ class Event extends Model
     /* ===== Overrides ===== */
     public function getRouteKey()
     {
-        return Str::slug($this->title) . "--" . $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title).'--'.$this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveSoftDeletableRouteBinding($value, $field = null)
     {
-        $id = last(explode("--", $value));
+        $id = last(explode('--', $value));
+
         return parent::resolveSoftDeletableRouteBinding($id, $field);
     }
 
@@ -85,6 +86,7 @@ class Event extends Model
 
     /**
      * Get the user who created the event.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()
@@ -100,7 +102,7 @@ class Event extends Model
     public function getAttendeeFor(User $user)
     {
         return $this->attendees()
-            ->where("user_id", $user->id)
+            ->where('user_id', $user->id)
             ->first();
     }
 
@@ -114,6 +116,7 @@ class Event extends Model
         if (Storage::exists($value)) {
             return Storage::url($value);
         }
+
         return false;
     }
 

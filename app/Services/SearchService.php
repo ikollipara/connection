@@ -31,14 +31,16 @@ class SearchService
 
     /**
      * Search for content based on the given constraints.
-     * @param array $constraints The constraints to search by
+     *
+     * @param  array  $constraints  The constraints to search by
      * @return Collection<\App\Contracts\IsSearchable> The content that matches the constraints
      */
     public function search(
         array $constraints,
-        string $query_key = "q"
+        string $query_key = 'q'
     ): Collection {
         $constraints = $this->model::normalizeSearchConstraints($constraints);
+
         return $this->model::search(trim($constraints[$query_key]))
             ->query(fn ($query) => $query->withSearchConstraints($constraints))
             ->get();

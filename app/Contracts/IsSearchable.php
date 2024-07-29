@@ -16,6 +16,7 @@ namespace App\Contracts;
  * |-----------------------------------------------------------------------------|
  * |
  * |=============================================================================|
+ *
  * @template T of \Illuminate\Database\Eloquent\Model
  *
  * */
@@ -24,5 +25,6 @@ interface IsSearchable
     public static function normalizeSearchConstraints(
         array $constraints
     ): array;
+
     public function scopeWithSearchConstraints($query, array $constraints);
 }

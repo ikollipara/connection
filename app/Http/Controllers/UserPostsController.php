@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Audience;
-use App\Enums\Category;
 use App\Enums\Status;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
@@ -18,49 +16,46 @@ class UserPostsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\User  $user
-     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(User $user, Request $request)
     {
-        $this->authorize("viewAny", [Post::class, $user]);
+        $this->authorize('viewAny', [Post::class, $user]);
         if ($user->isNot(auth()->user())) {
-            return redirect()->route("users.posts.index", ["me"], 303);
+            return redirect()->route('users.posts.index', ['me'], 303);
         }
         $status =
-            Status::tryFrom($request->query("status", "draft")) ??
+            Status::tryFrom($request->query('status', 'draft')) ??
             Status::draft();
-        $q = $request->query("q");
+        $q = $request->query('q');
         $posts = $user
             ->posts()
             ->when($q, function ($query, $q) {
-                return $query->where("title", "like", "%{$q}%");
+                return $query->where('title', 'like', "%{$q}%");
             })
             ->status($status)
-            ->orderByDesc("created_at")
+            ->orderByDesc('created_at')
             ->select([
-                "id",
-                "title",
-                "published",
-                "created_at",
-                "updated_at",
-                "deleted_at",
-                "type",
+                'id',
+                'title',
+                'published',
+                'created_at',
+                'updated_at',
+                'deleted_at',
+                'type',
             ])
             ->paginate(10)
             ->withQueryString();
 
         return view(
-            "users.posts.index",
-            compact("posts", "status", "q", "user"),
+            'users.posts.index',
+            compact('posts', 'status', 'q', 'user'),
         );
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function create(User $user)
@@ -72,8 +67,6 @@ class UserPostsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePostRequest  $request
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function store(StorePostRequest $request, User $user)
@@ -85,29 +78,25 @@ class UserPostsController extends Controller
         $post = $user->posts()->create($validated);
 
         return redirect()
-            ->route("users.posts.edit", [$user, $post])
-            ->with("success", __("Post successfully created"));
+            ->route('users.posts.edit', [$user, $post])
+            ->with('success', __('Post successfully created'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user, Post $post)
     {
-        $this->authorize("update", [$post, $user]);
-        return view("users.posts.edit", compact("user", "post"));
+        $this->authorize('update', [$post, $user]);
+
+        return view('users.posts.edit', compact('user', 'post'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePostRequest  $request
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function update(UpdatePostRequest $request, User $user, Post $post)
@@ -119,8 +108,8 @@ class UserPostsController extends Controller
             return session_back()->with(
                 "success",
                 __(
-                    "Post successfully " .
-                        ($should_archive ? "archived" : "restored"),
+                    'Post successfully '.
+                        ($should_archive ? 'archived' : 'restored'),
                 ),
             );
         }
@@ -128,9 +117,10 @@ class UserPostsController extends Controller
         $validated["metadata"] = new Metadata($validated["metadata"]);
         $validated["body"] = Editor::fromJson($validated["body"]);
         $post->update($validated);
-        return redirect(route("users.posts.edit", [$user, $post]), 303)->with(
-            "success",
-            __("Post successfully updated"),
+
+        return redirect(route('users.posts.edit', [$user, $post]), 303)->with(
+            'success',
+            __('Post successfully updated'),
         );
     }
 }

@@ -13,18 +13,18 @@ class CreatePostCollectionViews extends Migration
      */
     public function up()
     {
-        Schema::create("post_collection_views", function (Blueprint $table) {
+        Schema::create('post_collection_views', function (Blueprint $table) {
             $table
-                ->foreignUuid("user_id")
+                ->foreignUuid('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table
-                ->foreignUuid("post_collection_id")
+                ->foreignUuid('post_collection_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->timestamps();
 
-            $table->primary(["user_id", "post_collection_id"]);
+            $table->primary(['user_id', 'post_collection_id']);
         });
     }
 
@@ -35,6 +35,6 @@ class CreatePostCollectionViews extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("post_collection_views");
+        Schema::dropIfExists('post_collection_views');
     }
 }

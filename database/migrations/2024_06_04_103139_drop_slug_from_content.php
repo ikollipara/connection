@@ -13,8 +13,8 @@ class DropSlugFromContent extends Migration
      */
     public function up()
     {
-        Schema::table("content", function (Blueprint $table) {
-            $table->dropColumn("slug");
+        Schema::table('content', function (Blueprint $table) {
+            $table->dropColumn('slug');
         });
     }
 
@@ -25,8 +25,8 @@ class DropSlugFromContent extends Migration
      */
     public function down()
     {
-        Schema::table("content", function (Blueprint $table) {
-            $table->string("slug")->unique();
+        Schema::table('content', function (Blueprint $table) {
+            $table->string('slug')->unique();
         });
     }
 }

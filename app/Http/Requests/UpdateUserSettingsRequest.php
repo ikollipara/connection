@@ -24,10 +24,10 @@ class UpdateUserSettingsRequest extends FormRequest
     public function rules()
     {
         return [
-            "receive_weekly_digest" => "sometimes|accepted",
-            "receive_comment_notifications" => "sometimes|accepted",
-            "receive_new_follower_notifications" => "sometimes|accepted",
-            "receive_follower_notifications" => "sometimes|accepted",
+            'receive_weekly_digest' => 'sometimes|accepted',
+            'receive_comment_notifications' => 'sometimes|accepted',
+            'receive_new_follower_notifications' => 'sometimes|accepted',
+            'receive_follower_notifications' => 'sometimes|accepted',
         ];
     }
 }
