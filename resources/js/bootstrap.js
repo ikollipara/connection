@@ -31,7 +31,7 @@
 
 import editor from "./editor";
 import slimSelect from "./slim-select";
-import Alpine from 'alpinejs'
+import Alpine from "alpinejs";
 import addToCollection from "./add-to-collection";
 // import * as Turbo from "@hotwired/turbo";
 
@@ -41,7 +41,7 @@ Alpine.data("editor", editor);
 Alpine.data("slimSelect", slimSelect);
 Alpine.data("add-to-collection", addToCollection);
 
-Alpine.start()
+Alpine.start();
 
 // import("bulma-toast")
 // .then(({ toast }) => {
@@ -73,9 +73,9 @@ Alpine.start()
 //     });
 // })
 
-document.addEventListener('content-removed', (event) => {
-    event.target.classList.add('animate__animated', 'animate__fadeOut');
+document.addEventListener("content-removed", (event) => {
+    event.target.classList.add("animate__animated", "animate__fadeOut");
     setTimeout(() => {
         event.target.remove();
     }, 1000);
-})
+});

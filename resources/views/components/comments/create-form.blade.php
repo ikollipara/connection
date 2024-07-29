@@ -11,14 +11,21 @@ description: Comment create form component
   $title = 'Create Comment';
 @endphp
 
-<x-modal :title="$title" btn="Create Comment">
-  <form id="create-comment-form" action="{{ $action }}" method="post">
+<x-modal :title="$title"
+         btn="Create Comment">
+  <form id="create-comment-form"
+        action="{{ $action }}"
+        method="post">
     @csrf
     {{ $slot }}
-    <x-forms.textarea name="body" label="Comment" required />
+    <x-forms.textarea name="body"
+                      label="Comment"
+                      required />
   </form>
   <x-slot name="footer">
-    <button form="create-comment-form" type="submit" class="button is-primary">
+    <button class="button is-primary"
+            form="create-comment-form"
+            type="submit">
       Create Comment
     </button>
   </x-slot>

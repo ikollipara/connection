@@ -9,7 +9,8 @@ description: This file contains the HTML for the 503 error page.
   $title = 'conneCTION - ' . __('Uh Oh!');
 @endphp
 
-<x-layout :title="$title" no-livewire>
+<x-layout :title="$title"
+          no-livewire>
   <x-hero class="is-primary has-text-centered">
     <h1 class="title is-1">{{ __('Uh Oh!') }}</h1>
   </x-hero>

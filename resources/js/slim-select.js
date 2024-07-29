@@ -10,7 +10,8 @@ export default (placeholder) => ({
                 events: {
                     afterChange: (values) => {
                         this.selected = values.map((value) => value.value);
-                        if(!this.$el.multiple) this.selected = this.selected[0];
+                        if (!this.$el.multiple)
+                            this.selected = this.selected[0];
                     },
                 },
             });
@@ -19,5 +20,5 @@ export default (placeholder) => ({
 
     async destroy() {
         this.slimSelect.destroy();
-    }
+    },
 });

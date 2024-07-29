@@ -13,7 +13,10 @@ description: The HTML for an icon
 
 <span class="icon-text">
   <span class="icon">
-    <x-icon :name="$icon" :width="$width" :height="$height" {{ $attributes }} />
+    <x-icon :name="$icon"
+            :width="$width"
+            :height="$height"
+            {{ $attributes }} />
   </span>
   @unless ($noText)
     <span>{{ $slot }}</span>

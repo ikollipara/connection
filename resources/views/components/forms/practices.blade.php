@@ -3,9 +3,14 @@
 @endphp
 
 <span wire:ignore>
-  <select x-data="slimSelect('Practices...')" x-modelable="selected" {{ $attributes }} name="practice" id="practice">
+  <select id="practice"
+          name="practice"
+          x-data="slimSelect('Practices...')"
+          x-modelable="selected"
+          {{ $attributes }}>
     @foreach (Practice::cases() as $practice)
-      <option wire:key="{{ $practice }}" value="{{ $practice }}">{{ $practice }}</option>
+      <option value="{{ $practice }}"
+              wire:key="{{ $practice }}">{{ $practice }}</option>
     @endforeach
   </select>
 </span>

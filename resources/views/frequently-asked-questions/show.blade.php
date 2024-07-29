@@ -11,9 +11,11 @@ description: Frequently Asked Questions (FAQ) show page
 
 <x-layout :title="$title">
   <x-hero class="is-primary">
-    <a href="{{ route('faq.index') }}" class="link icon-text">
+    <a class="link icon-text"
+       href="{{ route('faq.index') }}">
       <span class="icon">
-        <x-lucide-chevron-left height="30" width="30" />
+        <x-lucide-chevron-left height="30"
+                               width="30" />
       </span>
       <span>Back to FAQ</span>
     </a>
@@ -22,7 +24,8 @@ description: Frequently Asked Questions (FAQ) show page
       {{ __($question->content) }}
     </p>
   </x-hero>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     @if (session('success'))
       <div class="notification is-success">
         {{ session('success') }}
