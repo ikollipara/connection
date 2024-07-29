@@ -24,11 +24,11 @@ class PostCollectionRequest extends FormRequest
     public function rules()
     {
         return [
-            "title" => "required_if:published,true",
-            "published" => "required|boolean",
-            "body" => "required_if:published,true|json",
-            "user_id" => "required|exists:users,id",
-            "metadata" => "required_if:published,true|json",
+            'title' => 'required_if:published,true',
+            'published' => 'required|boolean',
+            'body' => 'required_if:published,true|json',
+            'user_id' => 'required|exists:users,id',
+            'metadata' => 'required_if:published,true|json',
         ];
     }
 }

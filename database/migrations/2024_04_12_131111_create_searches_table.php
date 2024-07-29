@@ -13,14 +13,14 @@ class CreateSearchesTable extends Migration
      */
     public function up()
     {
-        Schema::create("searches", function (Blueprint $table) {
+        Schema::create('searches', function (Blueprint $table) {
             $table->id();
             $table
-                ->foreignUuid("user_id")
+                ->foreignUuid('user_id')
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->jsonb("search_params");
+            $table->jsonb('search_params');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateSearchesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("searches");
+        Schema::dropIfExists('searches');
     }
 }

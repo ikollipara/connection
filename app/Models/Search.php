@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,14 +14,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Search extends Model
 {
-    protected $fillable = ["user_id", "search_params"];
+    protected $fillable = ['user_id', 'search_params'];
 
     protected $casts = [
-        "search_params" => "array",
+        'search_params' => 'array',
     ];
 
     /**
      * Get the user that owns the Search
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User>
      */
     public function user()

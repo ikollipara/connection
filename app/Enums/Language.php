@@ -31,18 +31,18 @@ class Language extends Enum
     protected static function labels(): Closure
     {
         return function (string $value) {
-            if ($value === "javascript") {
-                return "JavaScript";
-            } elseif ($value === "csharp") {
-                return "C#";
-            } elseif ($value === "cpp") {
-                return "C++";
-            } elseif ($value === "typescript") {
-                return "TypeScript";
-            } elseif ($value === "sql") {
-                return "SQL";
-            } elseif ($value === "css") {
-                return "CSS";
+            if ($value === 'javascript') {
+                return 'JavaScript';
+            } elseif ($value === 'csharp') {
+                return 'C#';
+            } elseif ($value === 'cpp') {
+                return 'C++';
+            } elseif ($value === 'typescript') {
+                return 'TypeScript';
+            } elseif ($value === 'sql') {
+                return 'SQL';
+            } elseif ($value === 'css') {
+                return 'CSS';
             } else {
                 return Str::of($value)
                     ->title()

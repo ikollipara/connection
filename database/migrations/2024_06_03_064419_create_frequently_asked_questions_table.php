@@ -13,24 +13,24 @@ class CreateFrequentlyAskedQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create("frequently_asked_questions", function (
+        Schema::create('frequently_asked_questions', function (
             Blueprint $table
         ) {
             $table->id();
-            $table->string("title", 255);
-            $table->text("content");
+            $table->string('title', 255);
+            $table->text('content');
             $table
-                ->foreignUuid("user_id")
+                ->foreignUuid('user_id')
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->dateTime("answered_at")->nullable();
-            $table->text("answer")->nullable();
-            $table->jsonb("history");
+            $table->dateTime('answered_at')->nullable();
+            $table->text('answer')->nullable();
+            $table->jsonb('history');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->fullText(["title", "content", "answer"]);
+            $table->fullText(['title', 'content', 'answer']);
         });
     }
 
@@ -41,6 +41,6 @@ class CreateFrequentlyAskedQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("frequently_asked_questions");
+        Schema::dropIfExists('frequently_asked_questions');
     }
 }

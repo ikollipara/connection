@@ -13,26 +13,26 @@ class CreateFollowersTable extends Migration
      */
     public function up()
     {
-        Schema::create("followers", function (Blueprint $table) {
+        Schema::create('followers', function (Blueprint $table) {
             $table->id();
             $table
-                ->foreignUuid("user_id")
-                ->references("id")
-                ->on("users")
+                ->foreignUuid('user_id')
+                ->references('id')
+                ->on('users')
                 ->cascadeOnDelete();
             $table
-                ->foreignUuid("follower_id")
-                ->references("id")
-                ->on("users")
+                ->foreignUuid('follower_id')
+                ->references('id')
+                ->on('users')
                 ->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(["user_id", "follower_id"]);
+            $table->unique(['user_id', 'follower_id']);
         });
 
-        Schema::table("users", function (Blueprint $table) {
-            $table->integer("followers_count")->default(0);
-            $table->integer("following_count")->default(0);
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer('followers_count')->default(0);
+            $table->integer('following_count')->default(0);
         });
     }
 
@@ -43,10 +43,10 @@ class CreateFollowersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("followers");
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("followers_count");
-            $table->dropColumn("following_count");
+        Schema::dropIfExists('followers');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('followers_count');
+            $table->dropColumn('following_count');
         });
     }
 }

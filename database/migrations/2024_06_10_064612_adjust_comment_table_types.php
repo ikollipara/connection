@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class AdjustCommentTableTypes extends Migration
 {
@@ -15,8 +13,8 @@ class AdjustCommentTableTypes extends Migration
     public function up()
     {
         DB::transaction(function () {
-            DB::table("comments")->update([
-                "commentable_type" => "App\Models\Content",
+            DB::table('comments')->update([
+                'commentable_type' => "App\Models\Content",
             ]);
         });
     }
@@ -28,6 +26,6 @@ class AdjustCommentTableTypes extends Migration
      */
     public function down()
     {
-        throw new \Exception("This migration cannot be reversed.");
+        throw new \Exception('This migration cannot be reversed.');
     }
 }

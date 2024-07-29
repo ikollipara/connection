@@ -18,6 +18,7 @@ use App\Services\BodyExtractor;
  * |-----------------------------------------------------------------------------|
  * | This trait is used to add rich text functionality to models.
  * |-----------------------------------------------------------------------------|
+ *
  * @property array<string> $rich_text_attributes
  * |=============================================================================| */
 trait HasRichText

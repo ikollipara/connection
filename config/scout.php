@@ -14,7 +14,7 @@ return [
     |
     */
 
-    "driver" => env("SCOUT_DRIVER", "algolia"),
+    'driver' => env('SCOUT_DRIVER', 'algolia'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ return [
     |
     */
 
-    "prefix" => env("SCOUT_PREFIX", ""),
+    'prefix' => env('SCOUT_PREFIX', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ return [
     |
     */
 
-    "queue" => env("SCOUT_QUEUE", false),
+    'queue' => env('SCOUT_QUEUE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +53,7 @@ return [
     |
     */
 
-    "after_commit" => false,
+    'after_commit' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -66,9 +66,9 @@ return [
     |
     */
 
-    "chunk" => [
-        "searchable" => 500,
-        "unsearchable" => 500,
+    'chunk' => [
+        'searchable' => 500,
+        'unsearchable' => 500,
     ],
 
     /*
@@ -82,7 +82,7 @@ return [
     |
     */
 
-    "soft_delete" => false,
+    'soft_delete' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ return [
     |
     */
 
-    "identify" => env("SCOUT_IDENTIFY", false),
+    'identify' => env('SCOUT_IDENTIFY', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -110,9 +110,9 @@ return [
     |
     */
 
-    "algolia" => [
-        "id" => env("ALGOLIA_APP_ID", ""),
-        "secret" => env("ALGOLIA_SECRET", ""),
+    'algolia' => [
+        'id' => env('ALGOLIA_APP_ID', ''),
+        'secret' => env('ALGOLIA_SECRET', ''),
     ],
 
     /*
@@ -128,10 +128,10 @@ return [
     |
     */
 
-    "meilisearch" => [
-        "host" => env("MEILISEARCH_HOST", "http://localhost:7700"),
-        "key" => env("MEILISEARCH_KEY", null),
-        "index-settings" => [
+    'meilisearch' => [
+        'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
+        'key' => env('MEILISEARCH_KEY', null),
+        'index-settings' => [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
@@ -151,17 +151,17 @@ return [
     |
     */
 
-    "tntsearch" => [
-        "storage" => storage_path(), //place where the index files will be stored
-        "fuzziness" => env("TNTSEARCH_FUZZINESS", false),
-        "fuzzy" => [
-            "prefix_length" => 2,
-            "max_expansions" => 50,
-            "distance" => 2,
-            "no_limit" => true,
+    'tntsearch' => [
+        'storage' => storage_path(), //place where the index files will be stored
+        'fuzziness' => env('TNTSEARCH_FUZZINESS', false),
+        'fuzzy' => [
+            'prefix_length' => 2,
+            'max_expansions' => 50,
+            'distance' => 2,
+            'no_limit' => true,
         ],
-        "asYouType" => false,
-        "searchBoolean" => env("TNTSEARCH_BOOLEAN", false),
-        "maxDocs" => env("TNTSEARCH_MAX_DOCS", 500),
+        'asYouType' => false,
+        'searchBoolean' => env('TNTSEARCH_BOOLEAN', false),
+        'maxDocs' => env('TNTSEARCH_MAX_DOCS', 500),
     ],
 ];

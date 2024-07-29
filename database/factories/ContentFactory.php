@@ -16,40 +16,40 @@ class ContentFactory extends Factory
     public function definition()
     {
         return [
-            "title" => $this->faker->word(),
-            "metadata" => Metadata::fromFaker($this->faker),
-            "body" => json_encode(["blocks" => []]),
-            "user_id" => User::factory(),
-            "published" => $this->faker->boolean(),
-            "type" => $this->faker->randomElement(["post", "collection"]),
+            'title' => $this->faker->word(),
+            'metadata' => Metadata::fromFaker($this->faker),
+            'body' => json_encode(['blocks' => []]),
+            'user_id' => User::factory(),
+            'published' => $this->faker->boolean(),
+            'type' => $this->faker->randomElement(['post', 'collection']),
         ];
     }
 
     public function draft()
     {
         return $this->state([
-            "published" => false,
+            'published' => false,
         ]);
     }
 
     public function published()
     {
         return $this->state([
-            "published" => true,
+            'published' => true,
         ]);
     }
 
     public function post()
     {
         return $this->state([
-            "type" => "post",
+            'type' => 'post',
         ]);
     }
 
     public function collection()
     {
         return $this->state([
-            "type" => "collection",
+            'type' => 'collection',
         ]);
     }
 }

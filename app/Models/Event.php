@@ -38,37 +38,37 @@ use Illuminate\Support\Str;
  */
 class Event extends Model
 {
-    use HasFactory, SoftDeletes, HasMetadata, HasRichText;
+    use HasFactory, HasMetadata, HasRichText, SoftDeletes;
 
     protected $fillable = [
-        "title",
-        "location",
-        "description",
-        "user_id",
-        "start_date",
-        "end_date",
-        "start_time",
-        "end_time",
-        "is_all_day",
-        "display_picture",
-        "metadata",
+        'title',
+        'location',
+        'description',
+        'user_id',
+        'start_date',
+        'end_date',
+        'start_time',
+        'end_time',
+        'is_all_day',
+        'display_picture',
+        'metadata',
     ];
 
     protected $casts = [
-        "description" => "array",
-        "location" => "string",
-        "start_date" => "date",
-        "end_date" => "date",
-        "start_time" => "timestamp",
-        "end_time" => "timestamp",
-        "is_all_day" => "boolean",
+        'description' => 'array',
+        'location' => 'string',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'start_time' => 'timestamp',
+        'end_time' => 'timestamp',
+        'is_all_day' => 'boolean',
     ];
 
     protected $attributes = [
-        "metadata" => '{"category": "material", "audience": "Teachers"}',
+        'metadata' => '{"category": "material", "audience": "Teachers"}',
     ];
 
-    protected $rich_text_attributes = ["description"];
+    protected $rich_text_attributes = ['description'];
 
     protected static function booted()
     {
@@ -78,12 +78,13 @@ class Event extends Model
     /* ===== Overrides ===== */
     public function getRouteKey()
     {
-        return Str::slug($this->title) . "--" . $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title).'--'.$this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveSoftDeletableRouteBinding($value, $field = null)
     {
-        $id = last(explode("--", $value));
+        $id = last(explode('--', $value));
+
         return parent::resolveSoftDeletableRouteBinding($id, $field);
     }
 
@@ -91,6 +92,7 @@ class Event extends Model
 
     /**
      * Get the user who created the event.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()
@@ -106,7 +108,7 @@ class Event extends Model
     public function getAttendeeFor(User $user)
     {
         return $this->attendees()
-            ->where("user_id", $user->id)
+            ->where('user_id', $user->id)
             ->first();
     }
 
@@ -120,6 +122,7 @@ class Event extends Model
         if (Storage::exists($value)) {
             return Storage::url($value);
         }
+
         return false;
     }
 
@@ -128,7 +131,7 @@ class Event extends Model
      */
     public function setDisplayPictureAttribute(UploadedFile $value)
     {
-        $this->attributes["display_picture"] = $value->store("events", "public");
+        $this->attributes['display_picture'] = $value->store('events', 'public');
     }
 
     public function getEndDateAttribute($value)
@@ -141,16 +144,16 @@ class Event extends Model
     public function toFullCalendar($user)
     {
         $event = [
-            "title" => $this->title,
-            "description" => $this->description,
-            "start" => $this->start_date->toDateString(),
-            "was_created_by_user" => $this->user()->is($user),
-            "user_id" => $this->user_id,
-            "id" => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'start' => $this->start_date->toDateString(),
+            'was_created_by_user' => $this->user()->is($user),
+            'user_id' => $this->user_id,
+            'id' => $this->id,
         ];
 
         if ($this->end_date) {
-            $event["end"] = $this->end_date->addDay()->toDateString();
+            $event['end'] = $this->end_date->addDay()->toDateString();
         }
         // need to add for start and end times too
 

@@ -5,7 +5,6 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-
 class UserFactory extends Factory
 {
     /**
@@ -16,13 +15,13 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            "id" => null,
-            "first_name" => $this->faker->firstName(),
-            "last_name" => $this->faker->lastName(),
-            "email" => $this->faker->unique()->safeEmail(),
-            "email_verified_at" => now(),
-            "remember_token" => Str::random(10),
-            "avatar" => $this->faker->imageUrl(),
+            'id' => null,
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
+            'avatar' => $this->faker->imageUrl(),
         ];
     }
 
@@ -35,7 +34,7 @@ class UserFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                "email_verified_at" => null,
+                'email_verified_at' => null,
             ];
         });
     }
@@ -47,7 +46,7 @@ class UserFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                "consented" => true,
+                'consented' => true,
             ];
         });
     }

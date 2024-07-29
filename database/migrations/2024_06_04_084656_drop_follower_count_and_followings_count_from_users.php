@@ -13,9 +13,9 @@ class DropFollowerCountAndFollowingsCountFromUsers extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("followers_count");
-            $table->dropColumn("following_count");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('followers_count');
+            $table->dropColumn('following_count');
         });
     }
 
@@ -26,9 +26,9 @@ class DropFollowerCountAndFollowingsCountFromUsers extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->integer("followers_count")->default(0);
-            $table->integer("following_count")->default(0);
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer('followers_count')->default(0);
+            $table->integer('following_count')->default(0);
         });
     }
 }

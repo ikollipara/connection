@@ -13,9 +13,9 @@ class AddSentSurveyToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->boolean("sent_week_one_survey")->default(false);
-            $table->date("yearly_survey_sent_at")->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('sent_week_one_survey')->default(false);
+            $table->date('yearly_survey_sent_at')->nullable();
         });
     }
 
@@ -26,9 +26,9 @@ class AddSentSurveyToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("sent_week_one_survey");
-            $table->dropColumn("yearly_survey_sent_at");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('sent_week_one_survey');
+            $table->dropColumn('yearly_survey_sent_at');
         });
     }
 }

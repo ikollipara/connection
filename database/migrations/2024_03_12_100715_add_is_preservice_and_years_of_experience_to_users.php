@@ -13,11 +13,11 @@ class AddIsPreserviceAndYearsOfExperienceToUsers extends Migration
      */
     public function up()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->unsignedTinyInteger("years_of_experience")->default(0);
-            $table->boolean("is_preservice")->default(false);
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedTinyInteger('years_of_experience')->default(0);
+            $table->boolean('is_preservice')->default(false);
 
-            $table->index("is_preservice");
+            $table->index('is_preservice');
         });
     }
 
@@ -28,10 +28,10 @@ class AddIsPreserviceAndYearsOfExperienceToUsers extends Migration
      */
     public function down()
     {
-        Schema::table("users", function (Blueprint $table) {
-            $table->dropColumn("years_of_experience");
-            $table->dropColumn("is_preservice");
-            $table->dropIndex("users_is_preservice_index");
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('years_of_experience');
+            $table->dropColumn('is_preservice');
+            $table->dropIndex('users_is_preservice_index');
         });
     }
 }

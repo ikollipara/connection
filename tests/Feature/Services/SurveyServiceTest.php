@@ -6,8 +6,6 @@ use App\Mail\Survey;
 use App\Models\User;
 use App\Services\SurveyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -32,7 +30,7 @@ class SurveyServiceTest extends TestCase
     {
         Mail::fake();
         $user = User::factory()->create([
-            "created_at" => now()->subYears(2),
+            'created_at' => now()->subYears(2),
         ]);
         $surveyService = new SurveyService($user);
         $surveyService->sendSurvey(
@@ -64,7 +62,7 @@ class SurveyServiceTest extends TestCase
     {
         Mail::fake();
         $user = User::factory()->create([
-            "created_at" => now()->subYears(2),
+            'created_at' => now()->subYears(2),
         ]);
         $surveyService = new SurveyService($user);
         $surveyService->sendSurvey(
@@ -99,7 +97,7 @@ class SurveyServiceTest extends TestCase
 
     public function test_send_survey_invalid_frequency()
     {
-        $this->expectExceptionMessage("Invalid frequency");
+        $this->expectExceptionMessage('Invalid frequency');
         $user = User::factory()->create();
         $surveyService = new SurveyService($user);
         $surveyService->sendSurvey([SurveyService::CT_CAST], 3);
@@ -107,9 +105,9 @@ class SurveyServiceTest extends TestCase
 
     public function test_send_survey_invalid_survey_type()
     {
-        $this->expectExceptionMessage("Invalid survey type");
+        $this->expectExceptionMessage('Invalid survey type');
         $user = User::factory()->create();
         $surveyService = new SurveyService($user);
-        $surveyService->sendSurvey(["invalid"], SurveyService::ONCE);
+        $surveyService->sendSurvey(['invalid'], SurveyService::ONCE);
     }
 }

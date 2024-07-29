@@ -5,7 +5,6 @@ namespace Tests\Feature\Models;
 use App\Models\FrequentlyAskedQuestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -16,7 +15,7 @@ class FrequentlyAskedQuestionTest extends TestCase
     public function test_FAQ_can_be_created()
     {
         $frequentlyAskedQuestion = FrequentlyAskedQuestion::factory()->create();
-        $this->assertDatabaseCount("frequently_asked_questions", 1);
+        $this->assertDatabaseCount('frequently_asked_questions', 1);
         $this->assertTrue($frequentlyAskedQuestion->is(FrequentlyAskedQuestion::sole()));
     }
 
@@ -107,7 +106,7 @@ class FrequentlyAskedQuestionTest extends TestCase
     public function test_FAQ_has_route_key()
     {
         $faq = FrequentlyAskedQuestion::factory()->create();
-        $expected = str($faq->title)->slug() . "-" . $faq->id;
+        $expected = str($faq->title)->slug().'-'.$faq->id;
         $this->assertEquals($expected, $faq->getRouteKey());
     }
 

@@ -13,8 +13,8 @@ class AddFullTextIndexToPostCollectionTitles extends Migration
      */
     public function up()
     {
-        Schema::table("post_collections", function (Blueprint $table) {
-            $table->fullText("title");
+        Schema::table('post_collections', function (Blueprint $table) {
+            $table->fullText('title');
         });
     }
 
@@ -25,8 +25,8 @@ class AddFullTextIndexToPostCollectionTitles extends Migration
      */
     public function down()
     {
-        Schema::table("post_collections", function (Blueprint $table) {
-            $table->dropFullText("title");
+        Schema::table('post_collections', function (Blueprint $table) {
+            $table->dropFullText('title');
         });
     }
 }

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\FrequentlyAskedQuestion;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -22,7 +21,7 @@ class QuestionAnswered extends Notification
     public function __construct(FrequentlyAskedQuestion $question)
     {
         $this->question = $question;
-        $question->load("user");
+        $question->load('user');
     }
 
     /**
@@ -33,7 +32,7 @@ class QuestionAnswered extends Notification
      */
     public function via($notifiable)
     {
-        return ["mail"];
+        return ['mail'];
     }
 
     /**
@@ -44,15 +43,15 @@ class QuestionAnswered extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
-            ->greeting("Hello " . $notifiable->full_name)
-            ->line("Your question has been answered.")
+        return (new MailMessage)
+            ->greeting('Hello '.$notifiable->full_name)
+            ->line('Your question has been answered.')
             ->lines([
-                "Question: " . $this->question->title,
-                "Answer: " . $this->question->answer,
+                'Question: '.$this->question->title,
+                'Answer: '.$this->question->answer,
             ])
             ->salutation(
-                "We hope this helps! If you have any more questions, feel free to ask.",
+                'We hope this helps! If you have any more questions, feel free to ask.',
             );
     }
 
@@ -65,7 +64,7 @@ class QuestionAnswered extends Notification
     public function toArray($notifiable)
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }

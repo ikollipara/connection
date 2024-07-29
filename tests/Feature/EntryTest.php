@@ -4,16 +4,16 @@ namespace Tests\Feature;
 
 use App\Models\Entry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class EntryTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_entry_can_be_created()
     {
         $entry = Entry::factory()->create();
-        $this->assertDatabaseCount("entries", 1);
+        $this->assertDatabaseCount('entries', 1);
         $this->assertTrue($entry->is(Entry::sole()));
     }
 

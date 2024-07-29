@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * \App\Models\UserSettings
+ *
  * @property int $id
  * @property string $user_id
  * @property bool $receive_weekly_digest
@@ -22,18 +23,21 @@ class UserSettings extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $with = ["user"];
+
+    protected $with = ['user'];
+
     protected $casts = [
-        "receive_weekly_digest" => "boolean",
-        "receive_comment_notifications" => "boolean",
-        "receive_new_follower_notifications" => "boolean",
-        "receive_follower_notifications" => "boolean",
+        'receive_weekly_digest' => 'boolean',
+        'receive_comment_notifications' => 'boolean',
+        'receive_new_follower_notifications' => 'boolean',
+        'receive_follower_notifications' => 'boolean',
     ];
 
     // Relationships
 
     /**
      * Get the user that owns the settings.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()

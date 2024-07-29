@@ -21,6 +21,6 @@ class Editor implements Htmlable
 
     private function extractParagraph(array $block)
     {
-        return new HtmlString("<p>{$block["data"]["text"]}</p>");
+        return new HtmlString("<p>{$block['data']['text']}</p>");
     }
 }

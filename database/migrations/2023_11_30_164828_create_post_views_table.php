@@ -13,17 +13,17 @@ class CreatePostViewsTable extends Migration
      */
     public function up()
     {
-        Schema::create("post_views", function (Blueprint $table) {
+        Schema::create('post_views', function (Blueprint $table) {
             $table
-                ->foreignUuid("user_id")
+                ->foreignUuid('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table
-                ->foreignUuid("post_id")
+                ->foreignUuid('post_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->timestamps();
-            $table->primary(["user_id", "post_id"]);
+            $table->primary(['user_id', 'post_id']);
         });
     }
 
@@ -34,6 +34,6 @@ class CreatePostViewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("post_views");
+        Schema::dropIfExists('post_views');
     }
 }

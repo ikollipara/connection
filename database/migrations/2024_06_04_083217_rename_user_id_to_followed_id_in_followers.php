@@ -13,8 +13,8 @@ class RenameUserIdToFollowedIdInFollowers extends Migration
      */
     public function up()
     {
-        Schema::table("followers", function (Blueprint $table) {
-            $table->renameColumn("user_id", "followed_id");
+        Schema::table('followers', function (Blueprint $table) {
+            $table->renameColumn('user_id', 'followed_id');
         });
     }
 
@@ -25,8 +25,8 @@ class RenameUserIdToFollowedIdInFollowers extends Migration
      */
     public function down()
     {
-        Schema::table("followers", function (Blueprint $table) {
-            $table->renameColumn("followed_id", "user_id");
+        Schema::table('followers', function (Blueprint $table) {
+            $table->renameColumn('followed_id', 'user_id');
         });
     }
 }

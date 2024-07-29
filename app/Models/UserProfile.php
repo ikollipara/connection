@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * \App\Models\UserProfile
+ *
  * @property int $id
  * @property string $user_id
  * @property array $bio
@@ -29,16 +30,20 @@ class UserProfile extends Model
     use HasFactory, HasRichText;
 
     protected $guarded = [];
-    protected $with = ["user"];
-    protected $rich_text_attributes = ["bio"];
+
+    protected $with = ['user'];
+
+    protected $rich_text_attributes = ['bio'];
+
     protected $casts = [
-        "bio" => "array",
-        "grades" => Grade::class . ":collection",
-        "is_preservice" => "boolean",
+        'bio' => 'array',
+        'grades' => Grade::class.':collection',
+        'is_preservice' => 'boolean',
     ];
+
     protected $attributes = [
-        "bio" => '{"blocks": []}',
-        "grades" => "[]",
+        'bio' => '{"blocks": []}',
+        'grades' => '[]',
     ];
 
     // Accessors and Mutators
@@ -47,9 +52,10 @@ class UserProfile extends Model
     {
         $year_str =
             $this->years_of_experience < 2
-                ? "(First Year)"
+                ? '(First Year)'
                 : "({$this->years_of_experience} Years)";
-        $suffix = $this->is_preservice ? "Pre-Service Teacher" : "Teacher";
+        $suffix = $this->is_preservice ? 'Pre-Service Teacher' : 'Teacher';
+
         return "{$this->subject} {$suffix} {$year_str}";
     }
 
@@ -57,6 +63,7 @@ class UserProfile extends Model
 
     /**
      * Get the user that owns the profile.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()

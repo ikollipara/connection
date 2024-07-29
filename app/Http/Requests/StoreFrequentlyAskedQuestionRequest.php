@@ -14,8 +14,8 @@ class StoreFrequentlyAskedQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            "title" => "string|required|max:255",
-            "content" => "string|nullable",
+            'title' => 'string|required|max:255',
+            'content' => 'string|nullable',
         ];
     }
 }
