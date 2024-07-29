@@ -184,7 +184,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function attending()
     {
-        return $this->belongsToMany(self::class, 'user_id', 'event_id')->using(Attendee::class);
+        return $this->belongsToMany(self::class, "user_id", "event_id")->using(Attendee::class);
     }
 
     /**
