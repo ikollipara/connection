@@ -16,6 +16,8 @@
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.12",
         "mallardduck/blade-lucide-icons": "^1.8",
+        "spatie/calendar-links": "^1.8",
+        "spatie/icalendar-generator": "*",
         "spatie/image": "^1.10",
         "spatie/laravel-enum": "^3.0",
         "tightenco/parental": "^1.0",

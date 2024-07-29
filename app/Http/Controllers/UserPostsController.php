@@ -66,7 +66,7 @@ class UserPostsController extends Controller
     {
         $this->authorize("create", [Post::class, $user]);
         return view("users.posts.create", compact("user"));
-    }   
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -114,7 +114,7 @@ class UserPostsController extends Controller
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $post->{$should_archive ? "delete" : "restore"}();
-            return back(303)->with(
+            return back()->with(
                 "success",
                 __(
                     "Post successfully " .

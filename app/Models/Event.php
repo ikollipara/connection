@@ -11,6 +11,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\IcalendarGenerator\Components\Calendar;
+use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
 
 /**
  * Event
@@ -155,5 +157,31 @@ class Event extends Model
         // need to add for start and end times too
 
         return $event;
+    }
+
+    public static function getICalFor(User $user): Calendar
+    {
+        $events = Event::query()
+            ->where("user_id", $user->id)
+            ->orWhereHas("attendees", function ($query) use ($user) {
+                $query->where("user_id", $user->id);
+            })
+            ->lazy();
+
+        $calendar = Calendar::create("$user->name's conneCTION Calendar");
+
+        $events->each(function (Event $event) use ($calendar) {
+            $calendar->event(
+                ICalEvent::create($event->title)
+                    ->organizer($event->user->email, $event->user->name)
+                    ->description($event->asPlainText("description"))
+                    ->startsAt($event->start_date)
+                    ->endsAt($event->end_date)
+                    ->alertMinutesBefore(30)
+                    ->address($event->location),
+            );
+        });
+
+        return $calendar;
     }
 }

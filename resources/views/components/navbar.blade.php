@@ -76,7 +76,8 @@
           </x-nav.item>
         </x-nav.dropdown>
         <x-nav.dropdown title="My Events">
-          <x-nav.item route="{{ route('users.events.index') }}">My Calendar</x-nav.item>
+          <x-nav.item route="{{ route('events.index') }}">conneCTION Calendar</x-nav.item>
+          <x-nav.item route="{{ route('users.events.index', 'me') }}">My Events</x-nav.item>
           <x-nav.divider />
           <x-nav.item route="{{ route('users.events.create', ['me']) }}">Create an Event</x-nav.item>
         </x-nav.dropdown>

@@ -13,11 +13,8 @@ class UserEventController extends Controller
 {
     public function index(Request $request, User $user)
     {
-        $upcoming = $request->query("upcoming", false);
-        $events = Event::query()
-            ->with("user")
-            ->get();
-        return view("users.events.index", compact("events", "upcoming"));
+        $events = $user->events()->get();
+        return view("users.events.index", compact("events", "user"));
     }
 
     public function create(User $user)
@@ -29,15 +26,12 @@ class UserEventController extends Controller
     public function store(StoreEventRequest $request, User $user)
     {
         $validated = $request->validated();
-        $validated["published"] = $validated["published"] == "1";
         $validated["is_all_day"] = isset($validated["is_all_day"]);
         $validated["metadata"] = new Metadata($validated["metadata"]);
 
         $event = $user->events()->create($validated);
 
-        return redirect()
-            ->route("users.events.edit", [$user, $event])
-            ->with("success", __("Event successfully created"));
+        return back()->with("success", __("Event successfully created"));
     }
     public function edit(User $user, Event $event)
     {
@@ -52,11 +46,11 @@ class UserEventController extends Controller
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $event->{$should_archive ? "delete" : "restore"}();
-            return back(303)->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
+            return back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
         }
-        $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
-        return back(303)->with("success", __("Event successfully updated"));
+        $event->update($validated);
+        return back()->with("success", __("Event successfully updated"));
     }
     public function destroy(User $user, Event $event)
     {

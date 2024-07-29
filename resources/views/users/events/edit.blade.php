@@ -125,17 +125,6 @@
               </button>
             </x-slot>
           </x-modal>
-          <input id="event-publish"
-                 name="published"
-                 form="edit-event-form"
-                 type="hidden"
-                 value="{{ $event->published ? '1' : '0' }}">
-          @unless ($event->published)
-            <button class="button is-link"
-                    form="edit-event-form"
-                    type="submit"
-                    x-on:click="document.getElementById('event-publish').value = '1'">Publish</button>
-          @endunless
           <button class="button is-dark"
                   form="edit-event-form"
                   type="submit">Save</button>

@@ -26,6 +26,6 @@ class CollectionsEntryHandler extends Controller
         /** @var Content */
         $content = Content::findOrFail($validated["content_id"]);
         $content->collections()->sync($validated["collections"]);
-        return back(303)->with("success", __("Entries successfully updated."));
+        return back()->with("success", __("Entries successfully updated."));
     }
 }

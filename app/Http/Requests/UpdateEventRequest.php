@@ -39,7 +39,6 @@ class UpdateEventRequest extends FormRequest
             "end_date" => "nullable|after_or_equal:start_date",
             "start_time" => "required_without:is_all_day|after_or_equal:today",
             "end_time" => "required_without:is_all_day|after:start_time",
-            "published" => "required_without:archive|boolean",
             "location" => "nullable|string",
             "metadata" => "array",
             "metadata.audience" => "enum:" . Audience::class,
