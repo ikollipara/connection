@@ -11,7 +11,11 @@ description: The form textarea component. Based off of Bulma.
   $label = $label ?? ucwords($name);
 @endphp
 
-<x-forms.field name="{{ $name }}" label="{{ $label }}">
-  <textarea {{ $attributes->class(['textarea']) }} name="{{ $name }}" id="{{ $name }}" class="textarea"
-    rows="5"></textarea>
+<x-forms.field name="{{ $name }}"
+               label="{{ $label }}">
+  <textarea class="textarea"
+            id="{{ $name }}"
+            name="{{ $name }}"
+            {{ $attributes->class(['textarea']) }}
+            rows="5"></textarea>
 </x-forms.field>

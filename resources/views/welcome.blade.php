@@ -1,3 +1,3 @@
 <x-layout :title="conneCTION">
-    Hello World
+  Hello World
 </x-layout>

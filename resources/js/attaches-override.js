@@ -1,5 +1,4 @@
-
-import  AttachesTool from '@editorjs/attaches';
+import AttachesTool from "@editorjs/attaches";
 
 export default class AttachesOverride extends AttachesTool {
     constructor({ data, api, config, readOnly }) {

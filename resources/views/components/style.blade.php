@@ -7,7 +7,11 @@ description: This file contains a component for lazy loading stylesheets.
 
 @props(['href'])
 
-<link rel="preload" href="{{ $href }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="{{ $href }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
-  <link rel="stylesheet" href="{{ $href }}">
+  <link href="{{ $href }}"
+        rel="stylesheet">
 </noscript>

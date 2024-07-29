@@ -5,10 +5,14 @@
 @endphp
 
 <span wire:ignore>
-  <select x-data="slimSelect('Grades...')" {{ $attributes }} name="grades" id="grades">
+  <select id="grades"
+          name="grades"
+          x-data="slimSelect('Grades...')"
+          {{ $attributes }}>
     @foreach (Grade::cases() as $grade)
-      <option wire:key="{{ $grade->value }}" value="{{ $grade->value }}"
-        @if (in_array($grade, $selected)) selected @endif>
+      <option value="{{ $grade->value }}"
+              wire:key="{{ $grade->value }}"
+              @if (in_array($grade, $selected)) selected @endif>
         {{ $grade->label }}</option>
     @endforeach
   </select>

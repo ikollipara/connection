@@ -1,20 +1,26 @@
 <div>
   @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="Pagination Navigation" class="pagination">
+    <nav class="pagination"
+         role="navigation"
+         aria-label="Pagination Navigation">
       {{-- Previous Page Link --}}
       @if ($paginator->onFirstPage())
         <a class="pagination-previous is-disabled">
           {!! __('pagination.previous') !!}
         </a>
       @else
-        <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="pagination-previous">
+        <a class="pagination-previous"
+           href="{{ $paginator->previousPageUrl() }}"
+           rel="prev">
           {!! __('pagination.previous') !!}
         </a>
       @endif
 
       {{-- Next Page Link --}}
       @if ($paginator->hasMorePages())
-        <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="pagination-next">
+        <a class="pagination-next"
+           href="{{ $paginator->nextPageUrl() }}"
+           rel="next">
           {!! __('pagination.next') !!}
         </a>
       @else

@@ -9,17 +9,23 @@ description: This file contains the HTML for displaying a user's followers.
   $title = 'conneCTION - ' . $user->full_name . '\'s Followers';
 @endphp
 
-<x-layout :title="$title" no-livewire>
+<x-layout :title="$title"
+          no-livewire>
   <x-hero class="is-primary">
-    <a href="{{ route('users.show', $user) }}" class="icon-text is-link mt-3 mb-3">
+    <a class="icon-text is-link mt-3 mb-3"
+       href="{{ route('users.show', $user) }}">
       <span class="icon">
-        <x-lucide-arrow-left class="icon" width="30" height="30" fill="none" />
+        <x-lucide-arrow-left class="icon"
+                             width="30"
+                             height="30"
+                             fill="none" />
       </span>
       <span>Back to Profile</span>
     </a>
     <x-users.profile :user="$user" />
   </x-hero>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <table class="table is-fullwidth">
       <tbody>
         @forelse ($followers as $follower)
