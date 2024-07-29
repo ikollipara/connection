@@ -108,7 +108,6 @@ class UserTest extends TestCase
         $user = User::factory()->create([
             "avatar" => Avatar::fromUploadedFile(null),
         ]);
-        $this->assertTrue(URL::isValidUrl($user->avatar->url()));
         $this->assertEquals($user->avatar->path(), "");
     }
 

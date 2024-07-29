@@ -18,25 +18,17 @@ class AddIdToViews extends Migration
             $table->renameColumn("post_id", "content_id");
         });
         Schema::disableForeignKeyConstraints();
-        DB::statement(
-            "ALTER TABLE views DROP CONSTRAINT post_views_user_id_foreign",
-        );
-        DB::statement(
-            "ALTER TABLE views DROP CONSTRAINT post_views_post_id_foreign",
-        );
+        DB::statement("ALTER TABLE views DROP CONSTRAINT post_views_user_id_foreign");
+        DB::statement("ALTER TABLE views DROP CONSTRAINT post_views_post_id_foreign");
         DB::statement("ALTER TABLE views DROP PRIMARY KEY");
-        DB::statement(
-            "ALTER TABLE views ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
-        );
+        DB::statement("ALTER TABLE views ADD id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY");
         DB::statement(
             "ALTER TABLE views ADD CONSTRAINT views_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
         );
         DB::statement(
             "ALTER TABLE views ADD CONSTRAINT views_content_id_foreign FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE",
         );
-        DB::statement(
-            "ALTER TABLE views ADD CONSTRAINT views_user_id_content_id_unique UNIQUE (user_id, content_id)",
-        );
+        DB::statement("ALTER TABLE views ADD CONSTRAINT views_user_id_content_id_unique UNIQUE (user_id, content_id)");
         Schema::enableForeignKeyConstraints();
     }
 
@@ -51,17 +43,11 @@ class AddIdToViews extends Migration
             $table->renameColumn("content_id", "post_id");
         });
         Schema::disableForeignKeyConstraints();
-        DB::statement(
-            "ALTER TABLE views DROP CONSTRAINT views_user_id_foreign",
-        );
-        DB::statement(
-            "ALTER TABLE views DROP CONSTRAINT views_content_id_foreign",
-        );
+        DB::statement("ALTER TABLE views DROP CONSTRAINT views_user_id_foreign");
+        DB::statement("ALTER TABLE views DROP CONSTRAINT views_content_id_foreign");
         DB::statement("ALTER TABLE views DROP PRIMARY KEY");
         DB::statement("ALTER TABLE views DROP COLUMN id");
-        DB::statement(
-            "ALTER TABLE views DROP CONSTRAINT views_user_id_content_id_unique",
-        );
+        DB::statement("ALTER TABLE views DROP CONSTRAINT views_user_id_content_id_unique");
         DB::statement(
             "ALTER TABLE views ADD CONSTRAINT post_views_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id)",
         );
