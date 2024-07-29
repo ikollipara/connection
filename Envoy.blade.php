@@ -1,4 +1,4 @@
-@servers(['local' => '127.0.0.1', 'csce' => 'connection@csce.unl.edu'])
+@servers(['local' => '127.0.0.1', 'csce' => 'connection@csce.unl.edu', 'cse' => 'connection@cse-linux-01.unl.edu'])
 
 @story('deploy')
   maintenance-on
@@ -8,6 +8,44 @@
   cache
   maintenance-off
 @endstory
+
+@story('staging')
+  update-repo-staging
+  build-frontend-staging
+  run-migrations-staging
+  cache-staging
+@endstory
+
+@task('update-repo-staging', ['on' => 'cse'])
+  cd public_html/connection-main
+  git pull
+  composer install --optimize-autoloader --no-dev
+@endtask
+
+@task('build-frontend-staging', ['on' => 'cse'])
+  npm ci
+  npm run build
+  tar -czf public.tar.gz public
+  scp public.tar.gz connection@cse-linux-01.unl.edu:public_html/connection-main
+  rm public.tar.gz
+  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
+  public.tar.gz'
+@endtask
+
+@task('run-migrations-staging', ['on' => 'cse'])
+  cd public_html/connection-main
+  php artisan migrate --force
+  php artisan scout:import "App\Models\Post"
+  php artisan scout:import "App\Models\PostCollection"
+@endtask
+
+@task('cache-staging', ['on' => 'cse'])
+  cd public_html/connection-main
+  php artisan config:cache
+  php artisan route:cache
+  php artisan view:cache
+  php artisan storage:link
+@endtask
 
 @task('maintenance-on', ['on' => 'csce'])
   cd public_html/connection-main
@@ -21,7 +59,7 @@
 
 @task('build-frontend', ['on' => 'local'])
   npm ci
-  npm run prod
+  npm run build
   tar -czf public.tar.gz public
   scp public.tar.gz connection@csce.unl.edu:public_html/connection-main
   rm public.tar.gz

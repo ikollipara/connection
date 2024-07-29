@@ -9,7 +9,7 @@ use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\HasRichText;
-use App\Models\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

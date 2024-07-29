@@ -5,12 +5,12 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Enums\Grade;
-use App\Models\Concerns\HasUuids;
 use App\Services\SurveyService;
 use App\ValueObjects\Avatar;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
