@@ -22,14 +22,13 @@
   composer install --optimize-autoloader --no-dev
 @endtask
 
-@task('build-frontend-staging', ['on' => 'cse'])
+@task('build-frontend-staging', ['on' => 'local'])
   npm ci
   npm run build
   tar -czf public.tar.gz public
   scp public.tar.gz connection@cse-linux-01.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
-  public.tar.gz'
+  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
 @endtask
 
 @task('run-migrations-staging', ['on' => 'cse'])
