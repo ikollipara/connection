@@ -28,7 +28,6 @@ mix
   .css("resources/css/animate.css", "public/css/animate.css")
   .sass("resources/scss/app.scss", "public/css/app.css", {}, [
     autoprefixer,
-    tailwindcss,
     purgeCssLaravel({
       safelist: [/ss-*/],
     }),
@@ -43,6 +42,7 @@ mix
     }),
     pruneVar(),
     varCompress(),
+    tailwindcss("./tailwind.config.js"),
   ])
   .webpackConfig((webpack) => {
     return {

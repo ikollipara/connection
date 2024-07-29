@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
+
 use App\Enums\Audience;
 use App\Enums\Category;
 use App\Enums\Grade;
@@ -31,7 +32,7 @@ class StoreEventRequest extends FormRequest
         return [
             "title" => "required|string",
             "description" => "required|json",
-            "location" => "required|string",
+            "location" => "nullable|string",
             "is_all_day" => "required|accepted|sometimes",
             "start_date" => "required|date|after_or_equal:today",
             "end_date" => "sometimes|after_or_equal:start_date",
