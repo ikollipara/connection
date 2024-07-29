@@ -18,15 +18,10 @@ class EventAttendeeController extends Controller
     {
         $validated = $request->validated();
         $successful = Attendee::create($validated);
-        if(!$successful) {
+        if (!$successful) {
             return back(303)->with("error", __("Failed to attend."));
         }
-        return back(303)->with("success",__("You are now attending"));
-        // $event->attendees->attach($validated['user_id']);
-        // dd($event);
-        // // $user->followers()->attach($validated["user_id"]);
-        // return redirect()
-        //     ->route('events.show',[$event]);
+        return back(303)->with("success", __("You are now attending"));
     }
     /**
      * Remove the specified resource from storage.
@@ -37,9 +32,9 @@ class EventAttendeeController extends Controller
     public function destroy(Attendee $attendee)
     {
         $successful = $attendee->delete();
-        if(!$successful) {
+        if (!$successful) {
             return back(303)->with("error", __("Failed to remove."));
         }
-        return back(303)->with("success",__("You are no longer attending."));
+        return back(303)->with("success", __("You are no longer attending."));
     }
 }

@@ -35,7 +35,7 @@ class StoreEventRequest extends FormRequest
             "location" => "nullable|string",
             "is_all_day" => "required|accepted|sometimes",
             "start_date" => "required|date|after_or_equal:today",
-            "end_date" => "sometimes|after_or_equal:start_date",
+            "end_date" => "nullable|after_or_equal:start_date",
             "start_time" => "required_without:is_all_day|after_or_equal:today",
             "end_time" => "required_without:is_all_day|after:start_time",
             "published" => "required|boolean",

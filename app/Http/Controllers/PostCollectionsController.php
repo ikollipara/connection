@@ -14,12 +14,12 @@ class PostCollectionsController extends Controller
      * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\View\View
      */
-    public function show(PostCollection $postCollection)
+    public function show(Request $request, PostCollection $postCollection)
     {
         $this->authorize("view", $postCollection);
 
         /** @var \App\Models\User */
-        $user = $this->current_user();
+        $user = $request->user();
 
         $postCollection
             ->views()

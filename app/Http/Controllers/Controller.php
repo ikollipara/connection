@@ -11,12 +11,4 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    /**
-     * Get the current user from the session.
-     */
-    protected function current_user(): ?User
-    {
-        return auth()->user();
-    }
 }
