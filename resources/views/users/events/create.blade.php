@@ -100,15 +100,6 @@
               </button>
             </x-slot>
           </x-modal>
-          <input id="event-publish"
-                 name="published"
-                 form="create-event-form"
-                 type="hidden"
-                 value="0">
-          <button class="button is-link"
-                  form="create-event-form"
-                  type="submit"
-                  x-on:click="document.getElementById('event-publish').value = '1'">Publish</button>
           <button class="button is-dark"
                   form="create-event-form"
                   type="submit">Save</button>

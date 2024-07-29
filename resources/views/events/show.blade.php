@@ -69,6 +69,7 @@
       <x-metadata.table :metadata="$event->metadata" />
     </details>
     <x-editor name="editor"
-              value="{!! $event->description !!}" />
+              value="{!! $event->description !!}"
+              read-only />
   </x-container>
 </x-layout>

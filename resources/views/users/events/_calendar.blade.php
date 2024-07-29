@@ -24,10 +24,19 @@
       });
     </script>
   @endpush
-  <x-hero class="is-primary">
-    <h1 class="title">My Calendar</h1>
-  </x-hero>
-
-  <div class="container"
-       id="calendar"
-       style='margin-top: 20px'></div>
+  <main class="tw-grid tw-grid-cols-[1fr_0.25fr] tw-gap-2 tw-mx-3 tw-mt-2 tw-max-h-[50vh]">
+    <div id="calendar"></div>
+    <div class="tw-border-gray-300 tw-border tw-border-solid tw-rounded tw-p-3">
+      <p class="content">
+        @isset($user)
+          This is your calendar for conneCTION. Click on an event to edit the event. Use the button below to download your
+          calendar and import into your calendar app.
+        @else
+          This is the calendar for conneCTION. If you are interested in an event, click on it and
+          choose to attend. Use one of the action buttons below to subscribe to the calendar.
+        @endisset
+      </p>
+      <a class="button is-dark"
+         href="{{ route('events.ical', 'me') }}">Download Calendar</a>
+    </div>
+  </main>

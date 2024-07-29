@@ -25,7 +25,9 @@ use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use App\Http\Handlers\CollectionsEntryHandler;
 use App\Http\Handlers\ContentSearchHandler;
 use App\Http\Handlers\DashboardHandler;
-use App\Http\Handlers\UpdateUserConsentHandler;
+use App\Http\Controllers\EventController;
+use App\Http\Handlers\ICalHandler;
+use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,8 +88,10 @@ Route::delete('/weekly-digest/subscription/{user}', [
 Route::middleware('auth')->group(function () {
     // Event Routes
     //Index (calendar)
-    Route::get('/events', [UserEventController::class, 'index'])
-        ->name('users.events.index');
+    Route::get('/events', [EventController::class, 'index'])
+        ->name('events.index');
+    Route::get("users/{user}/events", [UserEventController::class, "index"])
+        ->name("users.events.index");
     // Create
     Route::get('/users/{user}/events/create', [UserEventController::class, 'create'])
         ->name('users.events.create');
@@ -121,7 +125,9 @@ Route::middleware('auth')->group(function () {
     ])
         ->name('users.events.destroy')
         ->withTrashed()
-        ->middleware('verified');
+        ->middleware("verified");
+    Route::get('/user/{user}/events/ical', ICalHandler::class)
+        ->name('events.ical');
     // Attendees
     Route::post('/events/{event}/attendee', [EventAttendeeController::class, 'store'])
         ->name('events.attendee.store')
@@ -132,10 +138,11 @@ Route::middleware('auth')->group(function () {
     // })
     //     ->name('events.attendee.store');
 
-    Route::delete('/attendee/{attendee}', [EventAttendeeController::class, 'destroy'])
-        ->name('events.attendee.destroy');
 
-    Route::post('/content/{content}/likes', [
+    Route::delete("/attendee/{attendee}", [EventAttendeeController::class,"destroy"])
+        ->name("events.attendee.destroy");
+
+    Route::post("/content/{content}/likes", [
         ContentLikesController::class,
         'store',
     ])
