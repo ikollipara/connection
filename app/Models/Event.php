@@ -129,7 +129,9 @@ class Event extends Model
     {
         // This is because of an issue with saving the JSON blob.
         $parsedValue = json_decode($value, true);
-        if(is_string($parsedValue)) $value = $parsedValue;
+        if(is_string($parsedValue)) {
+            $value = $parsedValue;
+        }
         return Editor::fromJson($value);
     }
 
