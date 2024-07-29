@@ -116,6 +116,7 @@ class Event extends Model
         if (Storage::exists($value)) {
             return Storage::url($value);
         }
+
         return false;
     }
 

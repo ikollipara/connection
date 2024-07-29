@@ -25,9 +25,7 @@ use App\Http\Controllers\WeeklyDigestSubscriptionController;
 use App\Http\Handlers\CollectionsEntryHandler;
 use App\Http\Handlers\ContentSearchHandler;
 use App\Http\Handlers\DashboardHandler;
-use App\Http\Controllers\EventController;
 use App\Http\Handlers\ICalHandler;
-use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
 
 /*
