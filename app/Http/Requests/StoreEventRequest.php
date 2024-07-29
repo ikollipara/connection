@@ -29,15 +29,14 @@ class StoreEventRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string',
-            'description' => 'required|json',
-            // 'location'=>'required|string',
-            'is_all_day' => 'required|accepted|sometimes',
-            // 'has_end_date' => 'required_with:end_date|accepted|sometimes',
-            'start_date' => 'required|date|after_or_equal:today',
-            // 'end_date' => 'required_with:has_end_date|after_or_equal:start_date',
-            'start_time' => 'required_without:is_all_day|after_or_equal:today',
-            'end_time' => 'required_without:is_all_day|after:start_time',
+            "title" => "required|string",
+            "description" => "required|json",
+            "location" => "required|string",
+            "is_all_day" => "required|accepted|sometimes",
+            "start_date" => "required|date|after_or_equal:today",
+            "end_date" => "sometimes|after_or_equal:start_date",
+            "start_time" => "required_without:is_all_day|after_or_equal:today",
+            "end_time" => "required_without:is_all_day|after:start_time",
             "published" => "required|boolean",
             "metadata" => "array",
             "metadata.audience" => "enum:" . Audience::class,

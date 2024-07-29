@@ -6,14 +6,12 @@
       <x-nav.item data-turbo-preload
                   aria-label="Visit the Home Page of conneCTION"
                   route="{{ route('home') }}">
-        <x-logo :width="100"
-                :height="55" />
+        <x-logo class="tw-w-fit" />
       </x-nav.item>
     @else
       <x-nav.item aria-label="Visit your Account's Dashboard"
                   route="{{ route('index') }}">
-        <x-logo :width="100"
-                :height="55" />
+        <x-logo class="tw-w-fit" />
       </x-nav.item>
     @endauth
     <a class="navbar-burger"

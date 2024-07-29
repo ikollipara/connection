@@ -9,17 +9,21 @@ description: The HTML for the dashboard page
   $title = 'conneCTION - ' . auth()->user()->full_name . '\'s Dashboard';
 @endphp
 
-<x-layout :title="$title" no-livewire>
+<x-layout :title="$title"
+          no-livewire>
   <x-hero class="is-primary">
     <h1 class="title">conneCTION Dashboard</h1>
   </x-hero>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <x-tabs tab-titles="Top Content Last Month, Your Follower Feed">
       <x-tabs.tab title="Top Content Last Month">
-        <x-table :items="$top_content" row-component="dashboard.row" />
+        <x-table :items="$top_content"
+                 row-component="dashboard.row" />
       </x-tabs.tab>
       <x-tabs.tab title="Your Follower Feed">
-        <x-table :items="$new_follower_content" row-component="dashboard.row">
+        <x-table :items="$new_follower_content"
+                 row-component="dashboard.row">
           <x-slot name="empty">
             <tr>
               <td colspan="5">

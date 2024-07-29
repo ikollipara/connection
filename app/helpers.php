@@ -17,7 +17,7 @@ if (!function_exists("str")) {
      * @param string $value The value to stringify, defaults to an empty string
      * @return \Illuminate\Support\Stringable
      */
-    function str($value = ""): \Illuminate\Support\Stringable
+    function str($value = "")
     {
         return \Illuminate\Support\Str::of($value);
     }

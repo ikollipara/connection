@@ -85,6 +85,7 @@
 }
 
 .drawer-content {
+    display: hidden;
     position: relative;
     height: 100%;
     width: 100%;
@@ -93,9 +94,13 @@
     transition: 0.5s;
 }
 
+.drawer.open > .drawer-content {
+    display: block;
+}
+
 
 .drawer.open {
-    width: min(350px, 80%);
+    width: min(550px, 80%);
 }
 
 @tailwind base;

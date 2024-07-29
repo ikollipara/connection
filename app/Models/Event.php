@@ -56,11 +56,11 @@ class Event extends Model
 
     protected $casts = [
         "description" => "array",
-        "location"=>"string",
+        "location" => "string",
         "start_date" => "date",
         "end_date" => "date",
-        // "start_time" => "time",
-        // "end_time" => "time",
+        "start_time" => "timestamp",
+        "end_time" => "timestamp",
         "is_all_day" => "boolean",
     ];
 
@@ -78,9 +78,7 @@ class Event extends Model
     /* ===== Overrides ===== */
     public function getRouteKey()
     {
-        return Str::slug($this->title) .
-            "--" .
-            $this->getAttribute($this->getRouteKeyName());
+        return Str::slug($this->title) . "--" . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveSoftDeletableRouteBinding($value, $field = null)
@@ -107,7 +105,9 @@ class Event extends Model
 
     public function getAttendeeFor(User $user)
     {
-        return $this->attendees()->where('user_id', $user->id)->first();
+        return $this->attendees()
+            ->where("user_id", $user->id)
+            ->first();
     }
 
     /* ===== Accessors and Mutators ===== */
@@ -128,18 +128,12 @@ class Event extends Model
      */
     public function setDisplayPictureAttribute(UploadedFile $value)
     {
-        $this->attributes["display_picture"] = $value->store(
-            "events",
-            "public",
-        );
+        $this->attributes["display_picture"] = $value->store("events", "public");
     }
 
     public function getEndDateAttribute($value)
     {
-        if($this->is_all_day) {
-            return $this->start_date;
-        }
-        return $value;
+        return new Carbon($value) ?? $this->start_date;
     }
 
     // Methods
@@ -148,16 +142,16 @@ class Event extends Model
     {
         $event = [
             "title" => $this->title,
-            "description"=> $this->description,
+            "description" => $this->description,
             "start" => $this->start_date->toDateString(),
-            'was_created_by_user' => $this->user()->is($user),
-            'user_id' => $this->user_id,
+            "was_created_by_user" => $this->user()->is($user),
+            "user_id" => $this->user_id,
             "id" => $this->id,
         ];
 
-        if($this->end_date) {
+        if ($this->end_date) {
             $event["end"] = $this->end_date->addDay()->toDateString();
-        };
+        }
         // need to add for start and end times too
 
         return $event;
