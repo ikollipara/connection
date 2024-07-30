@@ -29,6 +29,12 @@ class UserEventController extends Controller
         $validated = $request->validated();
         $validated["is_all_day"] = isset($validated["is_all_day"]);
         $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["location"] = $validated["location"] ?? "";
+        $validated["start_time"] =  data_get($validated, "start_time");
+        $validated["end_time"] =  data_get($validated, "end_time");
+        $validated["start"] = Event::combineDateAndTime($validated["start_date"], $validated["start_time"]);
+        $validated["end"] = is_null($validated['end_date']) ? null : Event::combineDateAndTime($validated["end_date"], $validated["end_time"]);
+        unset($validated["start_date"], $validated["end_date"], $validated["start_time"], $validated["end_time"]);
 
         $event = $user->events()->create($validated);
 
@@ -43,20 +49,15 @@ class UserEventController extends Controller
     public function update(UpdateEventRequest $request, User $user, Event $event)
     {
         $validated = $request->validated();
+        $validated["metadata"] = new Metadata($validated["metadata"]);
         $validated["location"] = $validated["location"] ?? "";
         $validated["is_all_day"] = isset($validated["is_all_day"]);
-        if (isset($validated["archive"])) {
-            $should_archive = $validated["archive"] == "1";
-            $event->{$should_archive ? "delete" : "restore"}();
-            return session_back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
-        }
-        if(isset($validated["start_time"])) {
-            $validated["start_time"] = Carbon::createFromFormat("H:i:s", $validated["start_time"], 'America/Chicago')->toImmutable()->setDateFrom($event->start_date);
-        }
-        if(isset($validated["end_time"])) {
-            $validated["end_time"] = Carbon::createFromFormat("H:i:s", $validated["end_time"], 'America/Chicago')->toImmutable()->setDateFrom($event->end_date);
-        }
-        $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["start_time"] =  data_get($validated, "start_time");
+        $validated["end_time"] =  data_get($validated, "end_time");
+        $validated["start"] = Event::combineDateAndTime($validated["start_date"], $validated["start_time"]);
+        $validated["end"] = is_null($validated['end_date']) ? null : Event::combineDateAndTime($validated["end_date"], $validated["end_time"]);
+        unset($validated["start_date"], $validated["end_date"], $validated["start_time"], $validated["end_time"]);
+
         $event->update($validated);
         return session_back()->with("success", __("Event successfully updated"));
     }

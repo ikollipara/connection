@@ -75,19 +75,19 @@
       <div class="drawer-background"
            x-on:click="$root.classList.remove('open')"></div>
       <div class="drawer-content"
-           x-data="{ start_date: '{{ $event->start_date->toDateString() }}', is_all_day: {{ Js::from(old('is_all_day', $event->is_all_day)) }} }">
+           x-data="{ start_date: '{{ $event->start->toDateString() }}', is_all_day: {{ Js::from(old('is_all_day', $event->is_all_day)) }} }">
         <h2 class="subtitle is-3">Details</h2>
         <x-forms.input name="start_date"
                        form="edit-event-form"
                        type="date"
                        x-model="start_date"
                        label="Start Date"
-                       min="{{ $event->start_date->toDateString() }}"
+                       min="{{ $event->start->toDateString() }}"
                        required />
         <x-forms.input name="end_date"
                        form="edit-event-form"
                        type="date"
-                       value="{{ $event->end_date ? $event->end_date->toDateString() : '' }}"
+                       value="{{ $event->end ? $event->end->toDateString() : '' }}"
                        label="End Date (optional)"
                        x-bind:min="start_date" />
         <x-forms.input name="location"
@@ -107,12 +107,12 @@
             <x-forms.input name="start_time"
                            form="edit-event-form"
                            type="time"
-                           value="{{ $event->start_time->toTimeString() }}"
+                           value="{{ $event->start->toTimeString() }}"
                            label="Start Time" />
             <x-forms.input name="end_time"
                            form="edit-event-form"
                            type="time"
-                           value="{{ $event->end_time->toTimeString() }}"
+                           value="{{ $event->end->toTimeString() }}"
                            label="End Time" />
           </span>
         </template>
