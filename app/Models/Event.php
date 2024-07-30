@@ -174,6 +174,8 @@ class Event extends Model
         $calendar = Calendar::create("$user->name's conneCTION Calendar");
 
         $events->each(function (Event $event) use ($calendar) {
+            $start = $event->start_time ? $event->start_date->toImmutable()->setTimeFromTimeString($event->start_time) : $event->start_date;
+            $end = $event->end_time ? $event->end_date->toImmutable()->setTimeFromTimeString($event->end_time) : $event->end_date;
             $calendar->event(
                 ICalEvent::create($event->title)
                     ->organizer($event->user->email, $event->user->name)
