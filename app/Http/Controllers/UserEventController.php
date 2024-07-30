@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\ValueObjects\Metadata;
 use App\Models\Event;
+use Illuminate\Support\Carbon;
 
 class UserEventController extends Controller
 {
@@ -43,10 +44,17 @@ class UserEventController extends Controller
     {
         $validated = $request->validated();
         $validated["location"] = $validated["location"] ?? "";
+        $validated["is_all_day"] = isset($validated["is_all_day"]);
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $event->{$should_archive ? "delete" : "restore"}();
             return session_back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
+        }
+        if(isset($validated["start_time"])) {
+            $validated["start_time"] = Carbon::createFromFormat("H:i:s", $validated["start_time"], 'America/Chicago')->toImmutable()->setDateFrom($event->start_date);
+        }
+        if(isset($validated["end_time"])) {
+            $validated["end_time"] = Carbon::createFromFormat("H:i:s", $validated["end_time"], 'America/Chicago')->toImmutable()->setDateFrom($event->end_date);
         }
         $validated["metadata"] = new Metadata($validated["metadata"]);
         $event->update($validated);

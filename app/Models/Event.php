@@ -61,8 +61,8 @@ class Event extends Model
         "location" => "string",
         "start_date" => "date",
         "end_date" => "date",
-        "start_time" => "timestamp",
-        "end_time" => "timestamp",
+        "start_time" => "datetime",
+        "end_time" => "datetime",
         "is_all_day" => "boolean",
     ];
 
@@ -138,6 +138,16 @@ class Event extends Model
         return new Carbon($value) ?? $this->start_date;
     }
 
+    protected function getStartAttribute()
+    {
+        return $this->start_date->format("Y-m-d") . "T" . ($this->start_time ? $this->start_time->format("H:i:s") : "00:00:00");
+    }
+
+    protected function getEndAttribute()
+    {
+        return $this->end_date->format("Y-m-d") . "T" . ($this->end_time ? $this->end_time->format("H:i:s") : "23:59:59");
+    }
+
     // Methods
 
     public function toFullCalendar($user)
@@ -145,14 +155,15 @@ class Event extends Model
         $event = [
             "title" => $this->title,
             "description" => $this->description,
-            "start" => $this->start_date->toDateString(),
+            "start" => $this->start,
             "was_created_by_user" => $this->user()->is($user),
             "user_id" => $this->user_id,
             "id" => $this->id,
+            "allDay" => $this->is_all_day,
         ];
 
         if ($this->end_date) {
-            $event["end"] = $this->end_date->addDay()->toDateString();
+            $event["end"] = $this->end;
         }
         // need to add for start and end times too
 
@@ -171,12 +182,14 @@ class Event extends Model
         $calendar = Calendar::create("$user->name's conneCTION Calendar");
 
         $events->each(function (Event $event) use ($calendar) {
+            $start = $event->start_time ? $event->start_date->toImmutable()->setTimeFromTimeString($event->start_time) : $event->start_date;
+            $end = $event->end_time ? $event->end_date->toImmutable()->setTimeFromTimeString($event->end_time) : $event->end_date;
             $calendar->event(
                 ICalEvent::create($event->title)
                     ->organizer($event->user->email, $event->user->name)
                     ->description($event->asPlainText("description"))
-                    ->startsAt($event->start_date)
-                    ->endsAt($event->end_date)
+                    ->startsAt($start)
+                    ->endsAt($end)
                     ->alertMinutesBefore(30)
                     ->address($event->location),
             );
