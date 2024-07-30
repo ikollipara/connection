@@ -34,7 +34,9 @@
       <div class="control">
         <button class="button"
                 form="edit-event-form"
-                type="submit">Save</button>
+                type="submit"
+                x-data
+                x-on:click="if(!document.querySelector('[name=start_date]').value) { document.querySelector('.drawer').classList.add('open') }">Save</button>
       </div>
       <div class="control">
         <x-modal title="Cancel Event"
@@ -105,12 +107,12 @@
             <x-forms.input name="start_time"
                            form="edit-event-form"
                            type="time"
-                           value="{{ $event->start_time }}"
+                           value="{{ $event->start_time->toTimeString() }}"
                            label="Start Time" />
             <x-forms.input name="end_time"
                            form="edit-event-form"
                            type="time"
-                           value="{{ $event->end_time }}"
+                           value="{{ $event->end_time->toTimeString() }}"
                            label="End Time" />
           </span>
         </template>

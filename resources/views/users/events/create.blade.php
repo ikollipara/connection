@@ -66,11 +66,6 @@
                        form="create-event-form"
                        type="string"
                        label="Location (optional)" />
-        <input name="is_all_day"
-               form="create-event-form"
-               type="checkbox"
-               hidden
-               checked>
         <label class="checkbox">
           <input name="is_all_day"
                  form="create-event-form"
