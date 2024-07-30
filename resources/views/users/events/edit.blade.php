@@ -32,7 +32,7 @@
                 x-on:click="document.querySelector('.drawer').classList.add('open')">Edit Details</button>
       </div>
       <div class="control">
-        <button class="button is-dark"
+        <button class="button"
                 form="edit-event-form"
                 type="submit">Save</button>
       </div>
