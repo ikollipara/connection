@@ -26,6 +26,7 @@ use App\Http\Handlers\CollectionsEntryHandler;
 use App\Http\Handlers\ContentSearchHandler;
 use App\Http\Handlers\DashboardHandler;
 use App\Http\Handlers\ICalHandler;
+use App\Http\Handlers\UpdateUserConsentHandler;
 use Illuminate\Support\Facades\Route;
 
 /*
