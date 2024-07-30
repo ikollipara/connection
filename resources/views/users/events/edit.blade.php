@@ -32,6 +32,11 @@
                 x-on:click="document.querySelector('.drawer').classList.add('open')">Edit Details</button>
       </div>
       <div class="control">
+        <button class="button is-dark"
+                form="edit-event-form"
+                type="submit">Save</button>
+      </div>
+      <div class="control">
         <x-modal title="Cancel Event"
                  btn-class="is-danger has-text-white"
                  btn="{{ $event->trashed() ? 'Restore' : 'Cancel' }}">

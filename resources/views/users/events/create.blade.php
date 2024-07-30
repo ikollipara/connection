@@ -27,6 +27,11 @@
                 type="button"
                 x-on:click="document.querySelector('.drawer').classList.add('open')">Edit Details</button>
       </div>
+      <div class="control">
+        <button class="button is-dark"
+                form="create-event-form"
+                type="submit">Save</button>
+      </div>
     </x-forms.input>
   </x-hero>
   <x-container class="mt-5 columns mx-5"
