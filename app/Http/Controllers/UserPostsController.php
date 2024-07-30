@@ -101,12 +101,11 @@ class UserPostsController extends Controller
     public function update(UpdatePostRequest $request, User $user, Post $post)
     {
         $validated = $request->validated();
-        if (isset($validated['archive'])) {
-            $should_archive = $validated['archive'] == '1';
-            $post->{$should_archive ? 'delete' : 'restore'}();
-
-            return back(303)->with(
-                'success',
+        if (isset($validated["archive"])) {
+            $should_archive = $validated["archive"] == "1";
+            $post->{$should_archive ? "delete" : "restore"}();
+            return session_back()->with(
+                "success",
                 __(
                     'Post successfully '.
                         ($should_archive ? 'archived' : 'restored'),

@@ -21,13 +21,13 @@ class UpdateUserConsentHandler extends Controller
         $request->user()->consented = isset($validated['consented']);
         $successful = $request->user()->save();
 
-        if (! $successful) {
-            return back()->with(
-                'error',
-                __('An error occurred while updating your consent.'),
+        if (!$successful) {
+            return session_back()->with(
+                "error",
+                __("An error occurred while updating your consent."),
             );
         }
 
-        return back()->with('success', __('Your consent has been updated.'));
+        return session_back()->with("success", __("Your consent has been updated."));
     }
 }

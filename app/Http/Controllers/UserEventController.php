@@ -37,9 +37,7 @@ class UserEventController extends Controller
 
         $event = $user->events()->create($validated);
 
-        return redirect()
-            ->route('users.events.edit', [$user, $event])
-            ->with('success', __('Event successfully created'));
+        return redirect(route('users.events.edit', [$user, $event]))->with("success", __("Event successfully created"));
     }
 
     public function edit(User $user, Event $event)
@@ -52,17 +50,15 @@ class UserEventController extends Controller
     public function update(UpdateEventRequest $request, User $user, Event $event)
     {
         $validated = $request->validated();
-        $validated['location'] = $validated['location'] ?? '';
-        if (isset($validated['archive'])) {
-            $should_archive = $validated['archive'] == '1';
-            $event->{$should_archive ? 'delete' : 'restore'}();
-
-            return back(303)->with('success', __('Event successfully '.($should_archive ? 'archived' : 'restored')));
+        $validated["location"] = $validated["location"] ?? "";
+        if (isset($validated["archive"])) {
+            $should_archive = $validated["archive"] == "1";
+            $event->{$should_archive ? "delete" : "restore"}();
+            return session_back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
         }
-        $validated['published'] = $validated['published'] == '1';
-        $validated['metadata'] = new Metadata($validated['metadata']);
-
-        return back(303)->with('success', __('Event successfully updated'));
+        $validated["metadata"] = new Metadata($validated["metadata"]);
+        $event->update($validated);
+        return session_back()->with("success", __("Event successfully updated"));
     }
 
     public function destroy(User $user, Event $event)
