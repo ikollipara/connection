@@ -30,7 +30,9 @@
       <div class="control">
         <button class="button"
                 form="create-event-form"
-                type="submit">Save</button>
+                type="submit"
+                x-data
+                x-on:click="if(!document.querySelector('[name=start_date]').value) { document.querySelector('.drawer').classList.add('open') }">Save</button>
       </div>
     </x-forms.input>
   </x-hero>
