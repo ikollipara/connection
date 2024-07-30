@@ -25,10 +25,8 @@ use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
  * @property string $location where the event is happening
  * @property array $description The description of the event.
  * @property string $user_id The unique identifier of the user who created the event.
- * @property Carbon $start_date The date when the event starts.
- * @property Carbon $end_date The date when the event ends.
- * @property Carbon $start_time The time when the event starts.
- * @property Carbon $end_time The time when the event ends.
+ * @property Carbon $start The date when the event starts.
+ * @property Carbon $end The date when the event ends.
  * @property bool $is_all_day Indicates if the event is an all-day event.
  * @property string $display_picture The display picture of the event.
  * @property Carbon $created_at The date and time when the event was created.
@@ -47,10 +45,8 @@ class Event extends Model
         "location",
         "description",
         "user_id",
-        "start_date",
-        "end_date",
-        "start_time",
-        "end_time",
+        "start",
+        "end",
         "is_all_day",
         "display_picture",
         "metadata",
@@ -59,10 +55,8 @@ class Event extends Model
     protected $casts = [
         "description" => "array",
         "location" => "string",
-        "start_date" => "date",
-        "end_date" => "date",
-        "start_time" => "datetime",
-        "end_time" => "datetime",
+        "start" => "datetime",
+        "end" => "datetime",
         "is_all_day" => "boolean",
     ];
 
@@ -125,28 +119,11 @@ class Event extends Model
         return false;
     }
 
-    /**
-     * Set the display picture of the event.
-     */
-    public function setDisplayPictureAttribute(UploadedFile $value)
+    protected function getEndAttribute($value)
     {
-        $this->attributes["display_picture"] = $value->store("events", "public");
+        return Carbon::parse($value) ?? $this->start;
     }
 
-    public function getEndDateAttribute($value)
-    {
-        return new Carbon($value) ?? $this->start_date;
-    }
-
-    protected function getStartAttribute()
-    {
-        return $this->start_date->format("Y-m-d") . "T" . ($this->start_time ? $this->start_time->format("H:i:s") : "00:00:00");
-    }
-
-    protected function getEndAttribute()
-    {
-        return $this->end_date->format("Y-m-d") . "T" . ($this->end_time ? $this->end_time->format("H:i:s") : "23:59:59");
-    }
 
     // Methods
 
@@ -155,15 +132,15 @@ class Event extends Model
         $event = [
             "title" => $this->title,
             "description" => $this->description,
-            "start" => $this->start,
+            "start" => $this->start->format('Y-m-d\TH:i:s'),
             "was_created_by_user" => $this->user()->is($user),
             "user_id" => $this->user_id,
             "id" => $this->id,
             "allDay" => $this->is_all_day,
         ];
 
-        if ($this->end_date) {
-            $event["end"] = $this->end;
+        if ($this->end) {
+            $event["end"] = $this->end->format('Y-m-d\TH:i:s');
         }
         // need to add for start and end times too
 
@@ -182,19 +159,28 @@ class Event extends Model
         $calendar = Calendar::create("$user->name's conneCTION Calendar");
 
         $events->each(function (Event $event) use ($calendar) {
-            $start = $event->start_time ? $event->start_date->toImmutable()->setTimeFromTimeString($event->start_time) : $event->start_date;
-            $end = $event->end_time ? $event->end_date->toImmutable()->setTimeFromTimeString($event->end_time) : $event->end_date;
             $calendar->event(
                 ICalEvent::create($event->title)
                     ->organizer($event->user->email, $event->user->name)
                     ->description($event->asPlainText("description"))
-                    ->startsAt($start)
-                    ->endsAt($end)
+                    ->startsAt($event->start)
+                    ->endsAt($event->end)
                     ->alertMinutesBefore(30)
                     ->address($event->location),
             );
         });
 
         return $calendar;
+    }
+
+    public static function combineDateAndTime($date, $time = null)
+    {
+        $instance = Carbon::parse($date);
+        if($time) {
+            $time = Carbon::parse($time);
+            $instance->setTimeFrom($time);
+        }
+
+        return $instance;
     }
 }

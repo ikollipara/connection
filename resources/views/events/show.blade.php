@@ -24,9 +24,9 @@
     <div class="level bordered">
       <div class="level-left">
         <p class="level-item is-primary ml-5">
-          When: {{ $event->start_date->formatLocalized('%B %d') }}
+          When: {{ $event->start->formatLocalized('%B %d, %H:%m %p') }}
           @if (!is_null($event->end_date))
-            to {{ $event->end_date->formatLocalized('%B %d') }}
+            to {{ $event->end->formatLocalized('%B %d, %H:%m %p') }}
           @endif
         </p>
         <p class="level-item ml-5">
