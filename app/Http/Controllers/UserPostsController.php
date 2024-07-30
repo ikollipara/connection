@@ -114,7 +114,7 @@ class UserPostsController extends Controller
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $post->{$should_archive ? "delete" : "restore"}();
-            return back()->with(
+            return session_back()->with(
                 "success",
                 __(
                     "Post successfully " .

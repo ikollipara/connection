@@ -130,7 +130,7 @@ class UserPostCollectionsController extends Controller
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $postCollection->{$should_archive ? "delete" : "restore"}();
-            return back()->with(
+            return session_back()->with(
                 "success",
                 __(
                     "Collection successfully " .

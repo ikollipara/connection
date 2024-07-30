@@ -31,7 +31,7 @@ class UserEventController extends Controller
 
         $event = $user->events()->create($validated);
 
-        return back()->with("success", __("Event successfully created"));
+        return redirect(route('users.events.edit', [$user, $event]))->with("success", __("Event successfully created"));
     }
     public function edit(User $user, Event $event)
     {
@@ -46,11 +46,11 @@ class UserEventController extends Controller
         if (isset($validated["archive"])) {
             $should_archive = $validated["archive"] == "1";
             $event->{$should_archive ? "delete" : "restore"}();
-            return back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
+            return session_back()->with("success", __("Event successfully " . ($should_archive ? "archived" : "restored")));
         }
         $validated["metadata"] = new Metadata($validated["metadata"]);
         $event->update($validated);
-        return back()->with("success", __("Event successfully updated"));
+        return session_back()->with("success", __("Event successfully updated"));
     }
     public function destroy(User $user, Event $event)
     {

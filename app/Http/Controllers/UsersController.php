@@ -74,7 +74,7 @@ class UsersController extends Controller
             session()->regenerate();
             return redirect(route("users.create"), 303)->with("success", __("Your account has been deleted."));
         } else {
-            return back()->with("error", __("Failed to delete your account."));
+            return session_back()->with("error", __("Failed to delete your account."));
         }
     }
 }

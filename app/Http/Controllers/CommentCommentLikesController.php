@@ -24,7 +24,7 @@ class CommentCommentLikesController extends Controller
             ->where("user_id", $validated["user_id"])
             ->updateOrCreate($validated)
             ->touch();
-        return back()->with("success", __("Comment liked."));
+        return session_back()->with("success", __("Comment liked."));
     }
 
     /**
@@ -37,6 +37,6 @@ class CommentCommentLikesController extends Controller
     public function destroy(Comment $comment, CommentLike $commentLike)
     {
         $commentLike->delete();
-        return back()->with("success", __("Comment like removed."));
+        return session_back()->with("success", __("Comment like removed."));
     }
 }

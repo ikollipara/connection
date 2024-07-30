@@ -52,7 +52,7 @@ class PostCollectionsCommentsController extends Controller
     ) {
         $validated = $request->validated();
         $comment = $postCollection->comments()->create($validated);
-        return back()->with("success", __("Comment successfully created."));
+        return session_back()->with("success", __("Comment successfully created."));
     }
 
     /**
