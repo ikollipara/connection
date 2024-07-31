@@ -18,6 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Collection;
 use App\ValueObjects\Avatar;
+use App\ValueObjects\Editor;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -259,7 +260,7 @@ class User extends Authenticatable implements MustVerifyEmail
             "is_preservice" => isset($data["is_preservice"]),
             "years_of_experience" => data_get($data, "years_of_experience", 0),
             "subject" => $data["subject"],
-            "bio" => json_decode($data["bio"], true),
+            "bio" =>  Editor::fromJson($data["bio"]),
             "grades" => collect($data["grades"])
                 ->map(fn($grade) => Grade::from($grade))
                 ->toArray(),

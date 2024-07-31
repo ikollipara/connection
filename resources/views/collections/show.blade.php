@@ -69,10 +69,8 @@ description: The view for showing a collection
           <summary>Metadata</summary>
           <x-metadata.table :metadata="$collection->metadata" />
         </details>
-        <section>
-          <x-editor name="editor"
-                    value="{{ Js::from($collection->body) }}"
-                    read-only />
+        <section class="container content">
+          {{ $collection->body }}
         </section>
       </x-tabs.tab>
       <x-tabs.tab title="Entries">

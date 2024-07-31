@@ -8,9 +8,8 @@ use App\Enums\Standard;
 use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
-use App\Models\Concerns\HasRichText;
 use App\Models\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Builder;
+use App\ValueObjects\Editor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,7 +22,7 @@ use Parental\HasChildren;
  * \App\Models\Content
  * @property string $id
  * @property string $title
- * @property array<string, string> $body
+ * @property Editor $body
  * @property-read Status $status
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -35,7 +34,7 @@ use Parental\HasChildren;
  */
 class Content extends Model implements Commentable, IsSearchable
 {
-    use HasFactory, HasChildren, HasUuids, HasRichText, HasMetadata, SoftDeletes, Searchable;
+    use HasFactory, HasChildren, HasUuids, HasMetadata, SoftDeletes, Searchable;
 
     protected $table = "content";
 
@@ -82,12 +81,6 @@ class Content extends Model implements Commentable, IsSearchable
         "body" => '{"blocks": []}',
         "title" => "",
     ];
-
-    /**
-     * Attributes that should be parsed from rich text.
-     * @var array<string>
-     */
-    protected $rich_text_attributes = ["body"];
 
     // Laravel Scout configuration
     public function toSearchableArray()
@@ -138,6 +131,16 @@ class Content extends Model implements Commentable, IsSearchable
             return Status::published();
         }
         return Status::draft();
+    }
+
+    protected function getBodyAttribute($value)
+    {
+        return Editor::fromJson($value);
+    }
+
+    protected function setBodyAttribute(Editor $value)
+    {
+        $this->attributes["body"] = $value->toJson();
     }
 
     // Relationships

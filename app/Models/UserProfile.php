@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Grade;
-use App\Models\Concerns\HasRichText;
+use App\ValueObjects\Editor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * \App\Models\UserProfile
  * @property int $id
  * @property string $user_id
- * @property array $bio
+ * @property Editor $bio
  * @property bool $is_preservice
  * @property string $school
  * @property string $subject
@@ -26,11 +26,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserProfile extends Model
 {
-    use HasFactory, HasRichText;
+    use HasFactory;
 
     protected $guarded = [];
     protected $with = ["user"];
-    protected $rich_text_attributes = ["bio"];
     protected $casts = [
         "bio" => "array",
         "grades" => Grade::class . ":collection",
@@ -51,6 +50,16 @@ class UserProfile extends Model
                 : "({$this->years_of_experience} Years)";
         $suffix = $this->is_preservice ? "Pre-Service Teacher" : "Teacher";
         return "{$this->subject} {$suffix} {$year_str}";
+    }
+
+    protected function getBioAttribute($value): Editor
+    {
+        return Editor::fromJson($value);
+    }
+
+    protected function setBioAttribute(Editor $editor): string
+    {
+        return $this->attributes["bio"] = $editor->toJson();
     }
 
     // Relationships

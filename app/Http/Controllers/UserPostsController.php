@@ -9,6 +9,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use App\ValueObjects\Metadata;
 use Illuminate\Http\Request;
 
@@ -80,6 +81,7 @@ class UserPostsController extends Controller
         $validated = $request->validated();
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["body"] = Editor::fromJson($validated["body"]);
         $post = $user->posts()->create($validated);
 
         return redirect()
@@ -124,6 +126,7 @@ class UserPostsController extends Controller
         }
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["body"] = Editor::fromJson($validated["body"]);
         $post->update($validated);
         return redirect(route("users.posts.edit", [$user, $post]), 303)->with(
             "success",

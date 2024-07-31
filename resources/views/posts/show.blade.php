@@ -61,14 +61,14 @@ description: Show view for a post
       </div>
     </div>
   </x-hero>
-  <x-container class="mt-5"
+  <x-container class="my-5"
                is-fluid>
     <details class="is-clickable">
       <summary>Metadata</summary>
       <x-metadata.table :metadata="$post->metadata" />
     </details>
-    <x-editor name="editor"
-              value="{{ Js::from($post->body) }}"
-              read-only />
+    <div class="container content">
+      {{ $post->body }}
+    </div>
   </x-container>
 </x-layout>

@@ -7,12 +7,15 @@ description: The HTML for the edit post page
 
 @php
   $title = "conneCTION - Edit {$post->title}";
-  $body = old('body') ?? $post->body;
+  $body = old('body', $post->body->toArray());
   $body = is_string($body) ? $body : json_encode($body);
 @endphp
 
-<x-layout :title="$title" no-livewire>
-  <x-hero x-data="{}" class="is-primary" hero-body-class="level">
+<x-layout :title="$title"
+          no-livewire>
+  <x-hero class="is-primary"
+          x-data="{}"
+          hero-body-class="level">
     <x-help title="Post Editor">
       <p class="content has-text-black">
         This is the post editor! Here you can write your post and publish it to the world.
@@ -21,48 +24,78 @@ description: The HTML for the edit post page
         there is no autosave, so consider saving frequently.
       </p>
     </x-help>
-    <x-add-to-collection :content="$post" :collections="$user->collections" />
+    <x-add-to-collection :content="$post"
+                         :collections="$user->collections" />
     <x-unsaved-indicator />
-    <input type="hidden" name="_token" value="{{ csrf_token() }}" form="edit-post-form" />
-    <x-forms.input has-addons without-label form="edit-post-form" name="title" placeholder="Post Title..."
-      x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor:unsaved')"
-      value="{{ $post->title }}" field-classes="is-flex-grow-1">
+    <input name="_token"
+           form="edit-post-form"
+           type="hidden"
+           value="{{ csrf_token() }}" />
+    <x-forms.input name="title"
+                   form="edit-post-form"
+                   value="{{ $post->title }}"
+                   has-addons
+                   without-label
+                   placeholder="Post Title..."
+                   x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor:unsaved')"
+                   field-classes="is-flex-grow-1">
       <div class="control">
-        <button type="submit" form="edit-post-form" class="button is-dark">Save</button>
+        <button class="button is-dark"
+                form="edit-post-form"
+                type="submit">Save</button>
       </div>
       <div class="control">
-        <x-modal title="Set Metadata" btn="Metadata">
-          <x-metadata.form id="edit-post-form" method="PATCH" action="{{ route('users.posts.update', ['me', $post]) }}"
-            :metadata="$post->metadata->toArray()" />
+        <x-modal title="Set Metadata"
+                 btn="Metadata">
+          <x-metadata.form id="edit-post-form"
+                           method="PATCH"
+                           action="{{ route('users.posts.update', ['me', $post]) }}"
+                           :metadata="$post->metadata->toArray()" />
           <x-slot name="footer">
-            <button x-on:click="show = false" form="edit-post-form" type="submit"
-              class="button is-primary preserve-rounding">
+            <button class="button is-primary preserve-rounding"
+                    form="edit-post-form"
+                    type="submit"
+                    x-on:click="show = false">
               Update
             </button>
           </x-slot>
         </x-modal>
       </div>
       <div class="control">
-        <input id="post-publish" type="hidden" name="published" form="edit-post-form"
-          value="{{ $post->published ? '1' : '0' }}">
+        <input id="post-publish"
+               name="published"
+               form="edit-post-form"
+               type="hidden"
+               value="{{ $post->published ? '1' : '0' }}">
         @unless ($post->published)
-          <button type="submit" form="edit-post-form" x-on:click="document.getElementById('post-publish').value = '1'"
-            class="button is-link">Publish</button>
+          <button class="button is-link"
+                  form="edit-post-form"
+                  type="submit"
+                  x-on:click="document.getElementById('post-publish').value = '1'">Publish</button>
         @endunless
       </div>
       <div class="control">
-        <form id="archive-post-form" action="{{ route('users.posts.update', ['me', $post]) }}" method="post">
+        <form id="archive-post-form"
+              action="{{ route('users.posts.update', ['me', $post]) }}"
+              method="post">
           @csrf
           @method('PATCH')
-          <input type="hidden" name="archive" value="{{ $post->trashed() ? '0' : '1' }}">
-          <button type="submit" form="archive-post-form" class="button is-danger has-text-white">
+          <input name="archive"
+                 type="hidden"
+                 value="{{ $post->trashed() ? '0' : '1' }}">
+          <button class="button is-danger has-text-white"
+                  form="archive-post-form"
+                  type="submit">
             {{ $post->trashed() ? 'Restore' : 'Archive' }}
           </button>
         </form>
       </div>
     </x-forms.input>
   </x-hero>
-  <x-container is-fluid class="mt-5">
-    <x-editor form="edit-post-form" name="body" value="{!! $body !!}" />
+  <x-container class="mt-5"
+               is-fluid>
+    <x-editor name="body"
+              form="edit-post-form"
+              value="{!! $body !!}" />
   </x-container>
 </x-layout>

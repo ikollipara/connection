@@ -34,14 +34,14 @@ description: |
     'options' => [],
 ])
 
-@aware(['model'])
+@aware(['model', 'formName'])
 
 @php
   $label ??= str($name)
       ->replace('_', ' ')
       ->replace('-', ' ')
       ->title();
-  $id ??= $name;
+  $id ??= "$formName--$name";
   $fieldClass = is_array($fieldClass) ? $fieldClass : explode(' ', $fieldClass);
   $controlClass = is_array($controlClass) ? $controlClass : explode(' ', $controlClass);
   $selected = old($name, data_get($model, $name, $attributes->get('selected')));

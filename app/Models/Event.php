@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasMetadata;
-use App\Models\Concerns\HasRichText;
+use App\ValueObjects\Editor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -38,7 +37,7 @@ use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
  */
 class Event extends Model
 {
-    use HasFactory, SoftDeletes, HasMetadata, HasRichText;
+    use HasFactory, SoftDeletes, HasMetadata;
 
     protected $fillable = [
         "title",
@@ -62,9 +61,8 @@ class Event extends Model
 
     protected $attributes = [
         "metadata" => '{"category": "material", "audience": "Teachers"}',
+        "description" => '{"blocks": []}',
     ];
-
-    protected $rich_text_attributes = ["description"];
 
     protected static function booted()
     {
@@ -124,6 +122,19 @@ class Event extends Model
         return Carbon::parse($value) ?? $this->start;
     }
 
+    protected function getDescriptionAttribute($value)
+    {
+        // This is because of an issue with saving the JSON blob.
+        $parsedValue = json_decode($value, true);
+        if(is_string($parsedValue)) $value = $parsedValue;
+        return Editor::fromJson($value);
+    }
+
+    protected function setDescriptionAttribute(Editor $editor)
+    {
+        return $this->attributes["description"] = $editor->toJson();
+    }
+
 
     // Methods
 
@@ -131,7 +142,6 @@ class Event extends Model
     {
         $event = [
             "title" => $this->title,
-            "description" => $this->description,
             "start" => $this->start->format('Y-m-d\TH:i:s'),
             "was_created_by_user" => $this->user()->is($user),
             "user_id" => $this->user_id,

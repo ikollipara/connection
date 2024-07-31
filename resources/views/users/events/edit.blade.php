@@ -1,6 +1,6 @@
 @php
   $title = "conneCTION - Edit {$event->title}";
-  $description = old('description') ?? $event->description;
+  $description = old('description', $event->description->toArray());
   $description = is_string($description) ? $description : json_encode($description);
 @endphp
 

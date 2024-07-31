@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\ValueObjects\Metadata;
 use App\Models\Event;
+use App\ValueObjects\Editor;
 use Illuminate\Support\Carbon;
 
 class UserEventController extends Controller
@@ -34,6 +35,7 @@ class UserEventController extends Controller
         $validated["end_time"] =  data_get($validated, "end_time");
         $validated["start"] = Event::combineDateAndTime($validated["start_date"], $validated["start_time"]);
         $validated["end"] = is_null($validated['end_date']) ? null : Event::combineDateAndTime($validated["end_date"], $validated["end_time"]);
+        $validated["description"] = Editor::fromJson($validated["description"]);
         unset($validated["start_date"], $validated["end_date"], $validated["start_time"], $validated["end_time"]);
 
         $event = $user->events()->create($validated);
@@ -56,6 +58,7 @@ class UserEventController extends Controller
         $validated["end_time"] =  data_get($validated, "end_time");
         $validated["start"] = Event::combineDateAndTime($validated["start_date"], $validated["start_time"]);
         $validated["end"] = is_null($validated['end_date']) ? null : Event::combineDateAndTime($validated["end_date"], $validated["end_time"]);
+        $validated["description"] = Editor::fromJson($validated["description"]);
         unset($validated["start_date"], $validated["end_date"], $validated["start_time"], $validated["end_time"]);
 
         $event->update($validated);

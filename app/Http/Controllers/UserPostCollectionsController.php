@@ -7,6 +7,7 @@ use App\Http\Requests\StorePostCollectionRequest;
 use App\Http\Requests\UpdatePostCollectionRequest;
 use App\Models\PostCollection;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use App\ValueObjects\Metadata;
 use Illuminate\Http\Request;
 
@@ -77,6 +78,7 @@ class UserPostCollectionsController extends Controller
         $validated = $request->validated();
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["body"] = Editor::fromJson($validated["body"]);
         $collection = $user->collections()->create($validated);
 
         return redirect(
@@ -140,6 +142,7 @@ class UserPostCollectionsController extends Controller
         }
         $validated["published"] = $validated["published"] == "1";
         $validated["metadata"] = new Metadata($validated["metadata"]);
+        $validated["body"] = Editor::fromJson($validated["body"]);
         $postCollection->update($validated);
         return redirect(
             route("users.collections.edit", [$user, $postCollection]),

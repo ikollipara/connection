@@ -1,6 +1,6 @@
 @php
   $title = 'conneCTION - Create Event';
-  $description = old('description') ?? '{"blocks": []}';
+  $description = old('description', '{"blocks": []}');
 @endphp
 
 <x-layout :title="$title"

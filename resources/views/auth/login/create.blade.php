@@ -16,7 +16,8 @@ description: The login form for the user to enter their credentials.
       <x-form.input name="email"
                     type="email"
                     label="Email" />
-      <x-form.submit label="Login" />
+      <x-form.submit class="is-primary"
+                     label="Login" />
     </x-form>
   </x-container>
 </x-layout>

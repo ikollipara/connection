@@ -7,11 +7,14 @@ description: The HTML for the create collection form
 
 @php
   $title = 'conneCTION - Create Collection';
-  $body = old('body') ?? '{"blocks": []}';
+  $body = old('body', '{"blocks": []}');
 @endphp
 
-<x-layout :title="$title" no-livewire>
-  <x-hero x-data="{}" class="is-primary" hero-body-class="level">
+<x-layout :title="$title"
+          no-livewire>
+  <x-hero class="is-primary"
+          x-data="{}"
+          hero-body-class="level">
     <x-help title="Collection Editor">
       <p class="content has-text-black">
         This is the collection editor! Here you can write your collection and publish it to the world.
@@ -22,35 +25,55 @@ description: The HTML for the create collection form
       </p>
     </x-help>
     <x-unsaved-indicator />
-    <input type="hidden" name="_token" value="{{ csrf_token() }}" form="create-collection-form">
-    <x-forms.input has-addons without-label form="create-collection-form" name="title"
-      placeholder="Collection Title..."
-      x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor:unsaved')"
-      field-classes="is-flex-grow-1">
+    <input name="_token"
+           form="create-collection-form"
+           type="hidden"
+           value="{{ csrf_token() }}">
+    <x-forms.input name="title"
+                   form="create-collection-form"
+                   has-addons
+                   without-label
+                   placeholder="Collection Title..."
+                   x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor:unsaved')"
+                   field-classes="is-flex-grow-1">
       <div class="control">
-        <button type="submit" form="create-collection-form" class="button is-dark">Save</button>
+        <button class="button is-dark"
+                form="create-collection-form"
+                type="submit">Save</button>
       </div>
       <div class="control">
-        <x-modal title="Set Metadata" btn="Metadata">
-          <x-metadata.form id="create-collection-form" method="POST"
-            action="{{ route('users.collections.store', 'me') }}" />
+        <x-modal title="Set Metadata"
+                 btn="Metadata">
+          <x-metadata.form id="create-collection-form"
+                           method="POST"
+                           action="{{ route('users.collections.store', 'me') }}" />
           <x-slot name="footer">
-            <button x-on:click="show = false" form="create-collection-form" type="submit"
-              class="button is-primary preserve-rounding">
+            <button class="button is-primary preserve-rounding"
+                    form="create-collection-form"
+                    type="submit"
+                    x-on:click="show = false">
               Update
             </button>
           </x-slot>
         </x-modal>
       </div>
       <div class="control">
-        <input id="collection-publish" type="hidden" name="published" form="create-collection-form" value="0">
-        <button type="submit" form="create-collection-form"
-          x-on:click="document.getElementById('collection-publish').value = '1';"
-          class="button is-link">Publish</button>
+        <input id="collection-publish"
+               name="published"
+               form="create-collection-form"
+               type="hidden"
+               value="0">
+        <button class="button is-link"
+                form="create-collection-form"
+                type="submit"
+                x-on:click="document.getElementById('collection-publish').value = '1';">Publish</button>
       </div>
     </x-forms.input>
   </x-hero>
-  <x-container is-fluid class="mt-5">
-    <x-editor form="create-collection-form" name="body" value="{!! $body !!}" />
+  <x-container class="mt-5"
+               is-fluid>
+    <x-editor name="body"
+              form="create-collection-form"
+              value="{!! $body !!}" />
   </x-container>
 </x-layout>
