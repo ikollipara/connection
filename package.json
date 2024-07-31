@@ -62,6 +62,9 @@
         "@fullcalendar/core": "^6.1.14",
         "@hotwired/turbo": "^8.0.4",
         "alpinejs": "^3.13.3",
+        "filepond": "^4.31.1",
+        "filepond-plugin-file-validate-type": "^1.2.9",
+        "filepond-plugin-image-preview": "^4.6.12",
         "slim-select": "^2.6.0"
     }
 }
