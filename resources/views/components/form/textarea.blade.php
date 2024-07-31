@@ -45,6 +45,9 @@ description: |
         {{ $value }}
         </textarea>
       </noscript>
+      <x-editor :name="$name"
+                :value="$value"
+                :form="$formName" />
     @else
       <textarea id="{{ $id }}"
                 name="{{ $name }}"
