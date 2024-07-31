@@ -4,7 +4,8 @@ author: Ian Kollipara
 date: 2024-07-26
 description: |
     This is the root of the form builder. It is responsible for rendering the form
-    root element and providing details to its children.
+    root element and providing details to its children. It also handles the CSRF
+    token and method spoofing for non-GET requests.
  --}}
 
 @props(['formName', 'action', 'method' => 'post', 'model' => null])

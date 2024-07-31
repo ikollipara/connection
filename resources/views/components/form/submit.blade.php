@@ -11,6 +11,6 @@ description: The HTML for the submit form component
 
 <button form="{{ $formName }}"
         type="submit"
-        {{ $attributes->class(['tw-bg-primary-950 tw-text-cn-white-50 tw-p-2 tw-rounded', 'hover:tw-bg-gray-950', 'focus:tw-scale-95', 'tw-transition-all']) }}>
-  {{ $label }}
+        {{ $attributes->class(['button']) }}>
+  {{ $label ?? $slot }}
 </button>
