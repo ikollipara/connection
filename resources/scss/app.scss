@@ -103,6 +103,15 @@
     width: min(550px, 80%);
 }
 
+.notification-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    margin: 2rem;
+    max-width: 100%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
