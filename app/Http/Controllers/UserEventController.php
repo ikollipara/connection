@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\User;
 use App\ValueObjects\Metadata;
-use App\Models\Event;
 use App\ValueObjects\Editor;
 use Illuminate\Support\Carbon;
 
