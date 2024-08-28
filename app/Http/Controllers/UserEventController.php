@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\ValueObjects\Metadata;
 use App\ValueObjects\Editor;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class UserEventController extends Controller
