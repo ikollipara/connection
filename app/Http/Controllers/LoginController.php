@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Mail\Login;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class LoginController extends Controller
@@ -59,7 +60,7 @@ class LoginController extends Controller
             $user->save();
         }
 
-        auth()->loginUsingId($user->id, true);
+        Auth::loginUsingId($user->id, true);
         session()->regenerate();
 
         return redirect()
@@ -74,7 +75,7 @@ class LoginController extends Controller
      */
     public function destroy(User $user)
     {
-        auth()->logout();
+        Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
 
