@@ -17,7 +17,7 @@ bin/setup-container.sh
 Or if you are using Windows:
 
 ```powershell
-.\bin\setup-container.ps1
+.\bin\setup-container.ps1s
 ```
 
 This will create a container with all the necessary dependencies installed.
