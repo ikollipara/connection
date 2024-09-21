@@ -1,13 +1,18 @@
 <?php
 namespace App\Http\Requests;
+
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\StoreUserRequest;
 use function Pest\Laravel\post;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
-#use factory for users
-Use database\factories\UserFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
+uses(RefreshDatabase::class);
 uses()->group('sample');
+
+
 
 it('login request test with no email', function () {
     $request = new LoginRequest();
@@ -38,36 +43,31 @@ it('login request test with email but not valid', function () {
 it('login with valid email', function () {
     Mail::fake();
 
-    $reponse = post('/login', [
-        'email' => UserFactory::new()->create()->email #should pass once we get a valid email
+    // Use the factory to create a user
+    $user = User::factory()->create();
+    $this->assertDatabaseHas('users', [
+        'email' => $user->email,
+    ]);
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
     ]);
 
-    $reponse->assertRedirect();
-    $reponse->assertSessionHasNoErrors();
+    $response->assertRedirect('/login/create');
+    $response->assertSessionHasNoErrors();
     Mail::assertQueuedCount(1);
 });
 
 it('login with invalid email', function () {
     Mail::fake();
 
-    $reponse = post('/login', [
+    $response = post('/login', [
         'email' => 'sampleemail@sampleemail.com'
     ]);
 
-    $reponse->assertRedirect();
-    $reponse->assertSessionHasErrors();
-    $reponse->assertSessionHasErrors('email');
-    Mail::assertQueuedCount(0);
-});
-
-it('login with valid email but not in the DB', function () {
-    Mail::fake();
-
-    $reponse = post('/login', [
-        'email' => 'sampleemail@sampleemail.com'
-    ]);
-
-    $reponse->assertRedirect();
-    $reponse->assertSessionHasErrors();
+    // $reponse->assertRedirect();
+    $response->assertRedirect();
+    $response->assertSessionHasErrors();
+    $response->assertSessionHasErrors('email');
     Mail::assertQueuedCount(0);
 });
