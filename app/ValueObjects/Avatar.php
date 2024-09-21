@@ -10,15 +10,16 @@ use Illuminate\Support\Facades\Storage;
  *
  * This class represents the Avatar value object. It wraps the avatar property of the user
  * into a rich object that can be used to perform operations on the avatar property.
- *
  */
 class Avatar
 {
     private string $path;
+
     private ?string $default;
+
     private $storage;
 
-    public function __construct(string $path, string $disk = "public")
+    public function __construct(string $path, string $disk = 'public')
     {
         $this->path = $path;
         $this->default = null;
@@ -32,14 +33,16 @@ class Avatar
 
     /**
      * Create an Avatar object from an uploaded file
-     * @param ?UploadedFile $file The uploaded file
+     *
+     * @param  ?UploadedFile  $file  The uploaded file
      */
-    public static function fromUploadedFile($file, $disk = "public"): self
+    public static function fromUploadedFile($file, $disk = 'public'): self
     {
         if ($file === null) {
-            return new static("");
+            return new static('');
         }
-        return new static($file->store("avatars", $disk));
+
+        return new static($file->store('avatars', $disk));
     }
 
     public static function is($value): bool

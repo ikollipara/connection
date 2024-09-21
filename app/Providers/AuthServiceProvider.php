@@ -11,7 +11,6 @@ use App\Policies\PostCollectionsPolicy;
 use App\Policies\PostsPolicy;
 use App\Policies\UsersPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {

@@ -15,8 +15,8 @@ class EntryFactory extends Factory
     public function definition()
     {
         return [
-            "content_id" => Content::factory(),
-            "collection_id" => Content::factory()->collection(),
+            'content_id' => Content::factory(),
+            'collection_id' => Content::factory()->collection(),
         ];
     }
 }

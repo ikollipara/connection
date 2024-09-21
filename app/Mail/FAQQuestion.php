@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -13,6 +12,7 @@ class FAQQuestion extends Mailable
     use Queueable, SerializesModels;
 
     public string $question;
+
     public User $user;
 
     /**
@@ -33,10 +33,10 @@ class FAQQuestion extends Mailable
      */
     public function build()
     {
-        return $this->subject("[ConneCTION] New FAQ Question")
+        return $this->subject('[ConneCTION] New FAQ Question')
             ->from($this->user->email, $this->user->full_name)
             // @phpstan-ignore-next-line
-            ->to(env("MAIL_FROM_ADDRESS"))
-            ->view("mail.faq-question");
+            ->to(env('MAIL_FROM_ADDRESS'))
+            ->view('mail.faq-question');
     }
 }

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -32,7 +31,7 @@ class SurveyReminder extends Notification
      */
     public function via($notifiable)
     {
-        return ["mail"];
+        return ['mail'];
     }
 
     /**
@@ -43,34 +42,34 @@ class SurveyReminder extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
-            ->subject("[conneCTION] Survey Completion Reminder")
-            ->greeting("Hello!")
-            ->line("Thank you for being apart of conneCTION.")
+        return (new MailMessage)
+            ->subject('[conneCTION] Survey Completion Reminder')
+            ->greeting('Hello!')
+            ->line('Thank you for being apart of conneCTION.')
             ->line(
                 'If you didn\'t know, conneCTION is not just a platform for community, but also a platform for CS Education Research.',
             )
             ->line(
-                "Since you consented for the research, we would like to remind you to complete the survey.",
+                'Since you consented for the research, we would like to remind you to complete the survey.',
             )
             ->line(
                 'For every 20 surveys completed, a raffle will be held to determine who gets a $50 Amazon Gift Card.',
             )
-            ->line("please complete the surveys previously sent")
+            ->line('please complete the surveys previously sent')
             ->line(
-                "In case you have lost those emails, you can find the surveys here:",
+                'In case you have lost those emails, you can find the surveys here:',
             )
             ->action(
-                "CT-CAST",
-                env("APP_QUALTRICS_CT_CAST_LINK") .
-                    "?userId=" .
+                'CT-CAST',
+                env('APP_QUALTRICS_CT_CAST_LINK').
+                    '?userId='.
                     $this->user->id,
             )
             ->action(
-                "Interest and Self-Efficacy Scales",
-                env("APP_QUALTRICS_SCALES_LINK") . "?userId=" . $this->user->id,
+                'Interest and Self-Efficacy Scales',
+                env('APP_QUALTRICS_SCALES_LINK').'?userId='.$this->user->id,
             )
-            ->salutation("Thank you for your participation in the research.");
+            ->salutation('Thank you for your participation in the research.');
     }
 
     /**
@@ -82,7 +81,7 @@ class SurveyReminder extends Notification
     public function toArray($notifiable)
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }

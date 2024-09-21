@@ -10,16 +10,19 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Mail\Survey;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class SurveyService
 {
-    public const CT_CAST = "CT_CAST";
-    public const SCALES = "SCALES";
+    public const CT_CAST = 'CT_CAST';
+
+    public const SCALES = 'SCALES';
+
     public const ONCE = 1;
+
     public const YEARLY = 2;
 
     public User $user;
@@ -33,7 +36,7 @@ class SurveyService
     {
         $this->validateArgs($survey_types, $frequency);
         $urls = collect($survey_types)->map(
-            fn($survey_type) => $this->buildUrl($survey_type),
+            fn ($survey_type) => $this->buildUrl($survey_type),
         );
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
@@ -42,6 +45,7 @@ class SurveyService
         if ($frequency === static::YEARLY) {
             $this->handleYearly($urls);
         }
+
         return $this;
     }
 
@@ -50,7 +54,7 @@ class SurveyService
         if ($this->user->sent_week_one_survey) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->sent_week_one_survey = true;
         $this->user->save();
     }
@@ -63,37 +67,37 @@ class SurveyService
         ) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->yearly_survey_sent_at = now();
         $this->user->save();
     }
 
     private function validateArgs(array $survey_types, int $frequency)
     {
-        if (!in_array($frequency, [static::ONCE, static::YEARLY])) {
+        if (! in_array($frequency, [static::ONCE, static::YEARLY])) {
             throw new \InvalidArgumentException(
-                "Invalid frequency, must be one of: SurveyService::ONCE, SurveyService::YEARLY, SurveyService::BIYEARLY",
+                'Invalid frequency, must be one of: SurveyService::ONCE, SurveyService::YEARLY, SurveyService::BIYEARLY',
             );
         }
         if (
-            !collect($survey_types)
+            ! collect($survey_types)
                 ->map(
-                    fn($survey_type) => in_array($survey_type, [
+                    fn ($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
                         static::SCALES,
                     ]),
                 )
-                ->reduce(fn($carry, $item) => $carry && $item, true)
+                ->reduce(fn ($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
-                "Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES",
+                'Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES',
             );
         }
     }
 
     private function buildUrl(string $survey_type): string
     {
-        return env("APP_QUALTRICS_{$survey_type}_LINK") .
+        return env("APP_QUALTRICS_{$survey_type}_LINK").
             "?userId={$this->user->id}";
     }
 }

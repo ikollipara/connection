@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 
 /**
@@ -16,18 +15,19 @@ class PostCollection extends Content
 
     /**
      * Get all the entries for the post collection.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Content>
      */
     public function entries()
     {
         return $this->belongsToMany(
             Content::class,
-            "entries",
-            "collection_id",
-            "content_id",
+            'entries',
+            'collection_id',
+            'content_id',
         )
             ->using(Entry::class)
-            ->withPivot("id")
+            ->withPivot('id')
             ->withTimestamps();
     }
 
@@ -35,14 +35,15 @@ class PostCollection extends Content
 
     /**
      * Check if a content is an entry of the post collection.
+     *
      * @param  \App\Models\Content|string  $content
-     * @return bool
      */
     public function hasEntry($content): bool
     {
         $content = $content instanceof Content ? $content->id : $content;
+
         return $this->entries()
-            ->where("content_id", $content)
+            ->where('content_id', $content)
             ->exists();
     }
 }

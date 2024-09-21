@@ -2,11 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\Audience;
-use App\Enums\Category;
-use App\Enums\Grade;
-use App\Enums\Practice;
-use App\Enums\Standard;
 use App\Models\User;
 use App\ValueObjects\Metadata;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,26 +16,26 @@ class PostCollectionFactory extends Factory
     public function definition()
     {
         return [
-            "title" => $this->faker->word(),
-            "metadata" => Metadata::fromFaker($this->faker),
-            "body" => json_encode(["blocks" => []]),
-            "user_id" => User::factory(),
-            "published" => $this->faker->boolean(),
-            "type" => "collection",
+            'title' => $this->faker->word(),
+            'metadata' => Metadata::fromFaker($this->faker),
+            'body' => json_encode(['blocks' => []]),
+            'user_id' => User::factory(),
+            'published' => $this->faker->boolean(),
+            'type' => 'collection',
         ];
     }
 
     public function draft()
     {
         return $this->state([
-            "published" => false,
+            'published' => false,
         ]);
     }
 
     public function published()
     {
         return $this->state([
-            "published" => true,
+            'published' => true,
         ]);
     }
 }

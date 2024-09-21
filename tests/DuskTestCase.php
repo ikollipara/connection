@@ -15,6 +15,7 @@ abstract class DuskTestCase extends BaseTestCase
      * Prepare for Dusk test execution.
      *
      * @beforeClass
+     *
      * @return void
      */
     public static function prepare()
@@ -43,7 +44,8 @@ abstract class DuskTestCase extends BaseTestCase
         return RemoteWebDriver::create(
             $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515',
             DesiredCapabilities::chrome()->setCapability(
-                ChromeOptions::CAPABILITY, $options
+                ChromeOptions::CAPABILITY,
+                $options
             )
         );
     }
@@ -53,7 +55,7 @@ abstract class DuskTestCase extends BaseTestCase
      *
      * @return bool
      */
-    protected function hasHeadlessDisabled()
+    protected function hasHeadlessDisabled(): bool
     {
         return isset($_SERVER['DUSK_HEADLESS_DISABLED']) ||
                isset($_ENV['DUSK_HEADLESS_DISABLED']);
@@ -64,7 +66,7 @@ abstract class DuskTestCase extends BaseTestCase
      *
      * @return bool
      */
-    protected function shouldStartMaximized()
+    protected function shouldStartMaximized(): bool
     {
         return isset($_SERVER['DUSK_START_MAXIMIZED']) ||
                isset($_ENV['DUSK_START_MAXIMIZED']);

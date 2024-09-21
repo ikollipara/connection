@@ -12,23 +12,40 @@ description: The HTML for the add to collection component
   $in_collection = fn($collection) => $content_collection_ids->contains($collection->id) ? 'true' : 'false';
 @endphp
 
-<x-modal title="Add to Collection" no-delete>
-  <x-slot name="btn" class="is-primary">
-    <x-lucide-bookmark :width="24" :height="24" />
+<x-modal title="Add to Collection"
+         no-delete>
+  <x-slot class="is-primary"
+          name="btn">
+    <x-lucide-bookmark :width="24"
+                       :height="24" />
   </x-slot>
-  <form id="add-to-collections-form" action="{{ route('entries.toggle') }}" method="post">
+  <form id="add-to-collections-form"
+        action="{{ route('entries.toggle') }}"
+        method="post">
     @csrf
-    <input type="hidden" name="content_id" value="{{ $content->id }}">
+    <input name="content_id"
+           type="hidden"
+           value="{{ $content->id }}">
     <x-table :items="$collections">
       @forelse ($collections as $item)
         <tr>
           <td>
-            <button x-data="{ checked: {{ $in_collection($item) }} }" type="button" x-on:click="checked = !checked">
+            <button type="button"
+                    x-data="{ checked: {{ $in_collection($item) }} }"
+                    x-on:click="checked = !checked">
               <template x-if="checked">
-                <input type="hidden" name="collections[]" value="{{ $item->id }}">
+                <input name="collections[]"
+                       type="hidden"
+                       value="{{ $item->id }}">
               </template>
-              <x-lucide-check-circle x-show="checked" :width="24" :height="24" class="has-text-success" />
-              <x-lucide-circle x-show="!checked" :width="24" :height="24" class="has-text-danger" />
+              <x-lucide-check-circle class="has-text-success"
+                                     x-show="checked"
+                                     :width="24"
+                                     :height="24" />
+              <x-lucide-circle class="has-text-danger"
+                               x-show="!checked"
+                               :width="24"
+                               :height="24" />
             </button>
           </td>
           <td>{{ $item->title }}</td>
@@ -44,7 +61,9 @@ description: The HTML for the add to collection component
     <x-slot name="footer">
     @empty($collections)
     @else
-      <button form="add-to-collections-form" type="submit" class="button is-primary preserve-rounding">Done</button>
+      <button class="button is-primary preserve-rounding"
+              form="add-to-collections-form"
+              type="submit">Done</button>
     @endempty
   </x-slot>
 </form>

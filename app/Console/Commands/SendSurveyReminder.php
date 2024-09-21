@@ -13,14 +13,14 @@ class SendSurveyReminder extends Command
      *
      * @var string
      */
-    protected $signature = "app:send-survey-reminder";
+    protected $signature = 'app:send-survey-reminder';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Send out survey reminder to users who have not completed the survey.";
+    protected $description = 'Send out survey reminder to users who have not completed the survey.';
 
     /**
      * Create a new command instance.
@@ -40,11 +40,12 @@ class SendSurveyReminder extends Command
     public function handle()
     {
         User::query()
-            ->where("consented", true)
+            ->where('consented', true)
             ->each(function (User $user) {
                 $user->notify(new SurveyReminder($user));
                 $this->info("Survey reminder sent to {$user->email}.");
             });
+
         return 0;
     }
 }

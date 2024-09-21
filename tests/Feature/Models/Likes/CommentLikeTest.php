@@ -3,8 +3,6 @@
 namespace Tests\Feature\Models\Likes;
 
 use App\Models\Likes\CommentLike;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CommentLikeTest extends TestCase
@@ -12,7 +10,7 @@ class CommentLikeTest extends TestCase
     public function test_comment_like_can_be_created()
     {
         $like = CommentLike::factory()->create();
-        $this->assertDatabaseCount("comment_likes", 1);
+        $this->assertDatabaseCount('comment_likes', 1);
         $this->assertTrue($like->is(CommentLike::sole()));
     }
 

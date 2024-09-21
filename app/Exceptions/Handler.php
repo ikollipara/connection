@@ -23,9 +23,9 @@ class Handler extends ExceptionHandler
      * @var array<int, string>
      */
     protected $dontFlash = [
-        "current_password",
-        "password",
-        "password_confirmation",
+        'current_password',
+        'password',
+        'password_confirmation',
     ];
 
     /**
@@ -41,8 +41,8 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (InvalidSignatureException $e) {
             return response()->view(
-                "errors.link-expired",
-                ["message" => $e->getMessage()],
+                'errors.link-expired',
+                ['message' => $e->getMessage()],
                 403,
             );
         });

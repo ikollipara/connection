@@ -14,6 +14,6 @@ class Audience extends Enum
 {
     protected static function labels(): Closure
     {
-        return fn(string $value) => Str::of($value)->title()->plural()->__toString();
+        return fn (string $value) => Str::of($value)->title()->plural()->__toString();
     }
 }

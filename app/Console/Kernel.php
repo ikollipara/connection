@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\Models\User;
-use App\Notifications\QualtricsSurvey;
 use App\Services\SurveyService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -13,7 +12,6 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -21,16 +19,16 @@ class Kernel extends ConsoleKernel
         $schedule
             ->call(function () {
                 User::query()
-                    ->where("consented", true)
+                    ->where('consented', true)
                     ->each(
-                        fn($user) => (new SurveyService($user))
+                        fn ($user) => (new SurveyService($user))
                             ->sendSurvey([SurveyService::CT_CAST], SurveyService::ONCE)
                             ->sendSurvey([SurveyService::CT_CAST, SurveyService::SCALES], SurveyService::YEARLY),
                     );
             })
             ->daily();
         $schedule
-            ->command("queue:work --stop-when-empty")
+            ->command('queue:work --stop-when-empty')
             ->everyMinute()
             ->withoutOverlapping();
     }
@@ -42,8 +40,8 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . "/Commands");
+        $this->load(__DIR__.'/Commands');
 
-        require base_path("routes/console.php");
+        require base_path('routes/console.php');
     }
 }

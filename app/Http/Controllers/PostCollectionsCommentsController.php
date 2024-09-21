@@ -12,7 +12,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function index(PostCollection $postCollection)
@@ -23,15 +22,14 @@ class PostCollectionsCommentsController extends Controller
             ->paginate(10);
 
         return view(
-            "collections.comments.index",
-            compact("postCollection", "comments"),
+            'collections.comments.index',
+            compact('postCollection', 'comments'),
         );
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function create(PostCollection $postCollection)
@@ -42,8 +40,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreCommentRequest  $request
-     * @param  \App\Models\PostCollection  $postCollection
      * @return \Illuminate\Http\Response
      */
     public function store(
@@ -58,8 +54,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function show(PostCollection $postCollection, Comment $comment)
@@ -70,8 +64,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function edit(PostCollection $postCollection, Comment $comment)
@@ -82,9 +74,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function update(
@@ -98,8 +87,6 @@ class PostCollectionsCommentsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PostCollection  $postCollection
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function destroy(PostCollection $postCollection, Comment $comment)

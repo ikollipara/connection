@@ -20,12 +20,13 @@ description: A tab component for Blade views. Based on Bulma's tabs.
 
 @unless ($component)
   <article {{ $attributes->class(['is-hidden' => !$isFirst]) }}
-    x-bind:class="{ 'is-hidden': tab != {{ $tabIndex }} }">
+           x-bind:class="{ 'is-hidden': tab != {{ $tabIndex }} }">
     {{ $slot }}
   </article>
 @else
-  <x-dynamic-component {{ $attributes->class(['is-hidden' => !$isFirst]) }} :component="$component"
-    x-bind:class="{ 'is-hidden': tab != {{ $tabIndex }} }">
+  <x-dynamic-component {{ $attributes->class(['is-hidden' => !$isFirst]) }}
+                       :component="$component"
+                       x-bind:class="{ 'is-hidden': tab != {{ $tabIndex }} }">
     {{ $slot }}
   </x-dynamic-component>
 @endunless

@@ -13,14 +13,14 @@ class RestoreFromBackup extends Command
      *
      * @var string
      */
-    protected $signature = "db:restore {file} {--wipe}";
+    protected $signature = 'db:restore {file} {--wipe}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Restore the database from a backup sql file";
+    protected $description = 'Restore the database from a backup sql file';
 
     /**
      * Create a new command instance.
@@ -39,52 +39,55 @@ class RestoreFromBackup extends Command
      */
     public function handle()
     {
-        if ($this->option("wipe")) {
-            Artisan::call("db:wipe");
+        if ($this->option('wipe')) {
+            Artisan::call('db:wipe');
         }
-        if ($file = $this->argument("file")) {
-            $stream = fopen($file, "r");
-            if ($password = env("DB_PASSWORD")) {
+        if ($file = $this->argument('file')) {
+            $stream = fopen($file, 'r');
+            if ($password = env('DB_PASSWORD')) {
                 $process = new Process([
-                    "mysql",
-                    "-h" . env("DB_HOST"),
-                    "-u" . env("DB_USERNAME"),
-                    "-p" . $password,
-                    "-P" . env("DB_PORT"),
-                    env("DB_DATABASE"),
+                    'mysql',
+                    '-h'.env('DB_HOST'),
+                    '-u'.env('DB_USERNAME'),
+                    '-p'.$password,
+                    '-P'.env('DB_PORT'),
+                    env('DB_DATABASE'),
                 ]);
             } else {
                 $process = new Process([
-                    "mysql",
-                    "-h" . env("DB_HOST"),
-                    "-u" . env("DB_USERNAME"),
-                    "-P" . env("DB_PORT"),
-                    env("DB_DATABASE"),
+                    'mysql',
+                    '-h'.env('DB_HOST'),
+                    '-u'.env('DB_USERNAME'),
+                    '-P'.env('DB_PORT'),
+                    env('DB_DATABASE'),
                 ]);
             }
             $process->setInput($stream);
             try {
                 $process->mustRun(function ($type, $buffer) {
-                    if (Process::ERR === $type) {
+                    if ($type === Process::ERR) {
                         $this->error($buffer);
                     } else {
                         $this->info($buffer);
                     }
                 });
-                $this->info("Database restored from " . $file);
+                $this->info('Database restored from '.$file);
+
                 return 0;
             } catch (\Throwable $th) {
                 $this->error(
-                    "Failed to restore database from " .
-                        $file .
-                        ". Error:" .
-                        PHP_EOL .
+                    'Failed to restore database from '.
+                        $file.
+                        '. Error:'.
+                        PHP_EOL.
                         $th->getMessage(),
                 );
+
                 return 1;
             }
         }
-        $this->error("No file specified");
+        $this->error('No file specified');
+
         return 1;
     }
 }

@@ -16,8 +16,8 @@ class CommentLikeFactory extends Factory
     public function definition()
     {
         return [
-            "user_id" => User::factory(),
-            "comment_id" => Comment::factory(),
+            'user_id' => User::factory(),
+            'comment_id' => Comment::factory(),
         ];
     }
 }

@@ -18,7 +18,8 @@ description: The HTML for a row in the dashboard
   <td>{{ $title }}</td>
   <td>
     @if ($has_user)
-      <a href="{{ route('users.show', $item->user) }}" class="link">{{ $item->user->full_name }}</a>
+      <a class="link"
+         href="{{ route('users.show', $item->user) }}">{{ $item->user->full_name }}</a>
     @else
       [Deleted]
     @endif

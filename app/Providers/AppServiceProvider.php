@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blueprint::macro("metadata", function () {
-            $this->jsonb("metadata");
+        Blueprint::macro('metadata', function () {
+            $this->jsonb('metadata');
         });
 
-        Blade::if("session", function ($key) {
+        Blade::if('session', function ($key) {
             return session()->has($key);
         });
     }

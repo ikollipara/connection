@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\CommentLike
+ *
  * @property int $id
  * @property string $user_id
  * @property string $comment_id
@@ -20,27 +21,31 @@ use Illuminate\Database\Eloquent\Model;
 class CommentLike extends Model
 {
     use HasFactory;
-    protected $table = "comment_likes";
+
+    protected $table = 'comment_likes';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
-    protected $fillable = ["user_id", "comment_id"];
+    protected $fillable = ['user_id', 'comment_id'];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array<string, string>
      */
     protected $casts = [
-        "created_at" => "datetime",
-        "updated_at" => "datetime",
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Relationships
 
     /**
      * Get the comment that the like belongs to.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Comment>
      */
     public function comment()
@@ -50,6 +55,7 @@ class CommentLike extends Model
 
     /**
      * Get the user that liked the comment.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()

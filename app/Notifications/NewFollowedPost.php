@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Post;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -21,7 +20,7 @@ class NewFollowedPost extends Notification
      */
     public function __construct(Post $post)
     {
-        $this->post = $post->load("user");
+        $this->post = $post->load('user');
     }
 
     /**
@@ -32,7 +31,7 @@ class NewFollowedPost extends Notification
      */
     public function via($notifiable)
     {
-        return ["mail"];
+        return ['mail'];
     }
 
     /**
@@ -43,11 +42,11 @@ class NewFollowedPost extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject("New Post from {$this->post->user->full_name}")
             ->line("{$this->post->user->full_name} has posted a new post!")
             ->line("{$this->post->title}")
-            ->action("View Post", route("posts.show", $this->post));
+            ->action('View Post', route('posts.show', $this->post));
     }
 
     /**
@@ -59,7 +58,7 @@ class NewFollowedPost extends Notification
     public function toArray($notifiable)
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }

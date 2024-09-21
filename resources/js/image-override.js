@@ -1,5 +1,4 @@
-
-import  ImageTool from '@editorjs/image';
+import ImageTool from "@editorjs/image";
 
 export default class ImageOverride extends ImageTool {
     constructor({ data, api, config, readOnly, block }) {

@@ -2,11 +2,11 @@
 
 namespace App\Http\Handlers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\SearchRequest;
 use App\Models\Content;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ContentSearchHandler extends Controller
 {
@@ -21,7 +21,6 @@ class ContentSearchHandler extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \App\Http\Requests\SearchRequest $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(SearchRequest $request)
@@ -34,7 +33,8 @@ class ContentSearchHandler extends Controller
         }
 
         session()->flashInput($validated);
-        return view("search", compact("results"));
+
+        return view('search', compact('results'));
     }
 
     private function logSearch($request, $validated)
@@ -43,7 +43,7 @@ class ContentSearchHandler extends Controller
             ->user()
             ->searches()
             ->create([
-                "search_params" => json_encode(array_merge($validated, ["model" => Content::class])),
+                'search_params' => json_encode(array_merge($validated, ['model' => Content::class])),
             ]);
     }
 }

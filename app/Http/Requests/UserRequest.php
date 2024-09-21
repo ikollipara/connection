@@ -24,14 +24,14 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => "email",
-            "first_name" => "string",
-            "last_name" => "string",
-            "school" => "string",
-            "subject" => "string",
-            "grades" => "array",
-            "avatar" => "image",
-            "bio" => "json",
+            'email' => 'email',
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'school' => 'string',
+            'subject' => 'string',
+            'grades' => 'array',
+            'avatar' => 'image',
+            'bio' => 'json',
         ];
     }
 }

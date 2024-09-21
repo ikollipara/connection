@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/prettierrc",
-    "plugins": ["@prettier/plugin-php", "@shufo/prettier-plugin-blade"],
+    "plugins": ["@shufo/prettier-plugin-blade"],
     "overrides": [
         {
             "files": ["*.blade.php"],
@@ -9,14 +9,6 @@
                "tabWidth": 2,
                "sortHtmlAttributes": "code-guide",
                "wrapAttributes": "force-aligned"
-            }
-        },
-        {
-            "files": ["*[^blade].php"],
-            "options": {
-                "parser": "php",
-                "phpVersion": "7.4",
-                "printWidth": 120
             }
         }
     ]

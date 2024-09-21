@@ -28,20 +28,27 @@ description: This file contains the HTML for a select input.
 @endphp
 
 @push('styles')
-  <link rel="stylesheet" href="{{ mix('css/slim-select.css') }}">
+  <link href="{{ mix('css/slim-select.css') }}"
+        rel="stylesheet">
 @endpush
 
-<x-forms.field :label="$label" :class="$fieldClasses">
-  <select {{ $attributes }} x-data="slimSelect('{{ $label }}...')" name="{{ $name }}" {{ $multiple ? 'multiple' : '' }}>
+<x-forms.field :label="$label"
+               :class="$fieldClasses">
+  <select name="{{ $name }}"
+          {{ $attributes }}
+          x-data="slimSelect('{{ $label }}...')"
+          {{ $multiple ? 'multiple' : '' }}>
     @if ($is_enum)
       @foreach ($enum::cases() as $option)
-        <option @if ($result = in_array($option->value, $selected)) selected @endif value="{{ $option->value }}">
+        <option value="{{ $option->value }}"
+                @if ($result = in_array($option->value, $selected)) selected @endif>
           {{ $option->label }}
         </option>
       @endforeach
     @else
       @foreach ($options as $option)
-        <option @if (in_array($option, $selected)) selected @endif value="{{ $option }}">
+        <option value="{{ $option }}"
+                @if (in_array($option, $selected)) selected @endif>
           {{ ucwords($option) }}
         </option>
       @endforeach

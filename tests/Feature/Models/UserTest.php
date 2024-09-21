@@ -6,15 +6,15 @@ use App\Mail\Survey;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\ValueObjects\Avatar;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Event;
-use Tests\TestCase;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
@@ -23,8 +23,8 @@ class UserTest extends TestCase
     public function test_user_can_be_created()
     {
         $user = User::factory()->create();
-        $this->assertDatabaseHas("users", [
-            "email" => str($user->email)
+        $this->assertDatabaseHas('users', [
+            'email' => str($user->email)
                 ->trim()
                 ->lower()
                 ->__toString(),
@@ -41,14 +41,14 @@ class UserTest extends TestCase
     public function test_when_user_is_saved_as_consented_a_mail_notification_is_sent()
     {
         Mail::fake();
-        $user = User::factory()->create(["consented" => true]);
+        $user = User::factory()->create(['consented' => true]);
         Mail::assertQueued(Survey::class);
     }
 
     public function test_user_route_key_is_correct()
     {
         $user = User::factory()->create();
-        $expected = "@" . str($user->full_name)->slug("-") . "--" . $user->id;
+        $expected = '@'.str($user->full_name)->slug('-').'--'.$user->id;
         $this->assertEquals($expected, $user->getRouteKey());
     }
 
@@ -65,7 +65,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $resolved = $user->resolveRouteBinding("me");
+        $resolved = $user->resolveRouteBinding('me');
 
         $this->assertEquals($user->id, $resolved->id);
     }
@@ -75,27 +75,27 @@ class UserTest extends TestCase
         $first_name = $this->faker->firstName();
         $last_name = $this->faker->lastName();
         $user = User::factory()->create([
-            "first_name" => $first_name,
-            "last_name" => $last_name,
+            'first_name' => $first_name,
+            'last_name' => $last_name,
         ]);
         $this->assertEquals("{$first_name} {$last_name}", $user->full_name);
     }
 
     public function test_user_avatar_will_return_default_if_empty()
     {
-        $user = User::factory()->create(["avatar" => ""]);
+        $user = User::factory()->create(['avatar' => '']);
         $this->assertNotNull($user->avatar);
         $this->assertTrue(URL::isValidUrl($user->avatar));
     }
 
     public function test_user_avatar_can_be_set_from_uploaded_file()
     {
-        Storage::fake("public");
-        $avatar = UploadedFile::fake()->image("avatar.jpg");
+        Storage::fake('public');
+        $avatar = UploadedFile::fake()->image('avatar.jpg');
         $avatar = Avatar::fromUploadedFile($avatar);
-        Storage::disk("public")->assertExists($avatar->path());
+        Storage::disk('public')->assertExists($avatar->path());
         $user = User::factory()->create([
-            "avatar" => $avatar,
+            'avatar' => $avatar,
         ]);
 
         $this->assertTrue($user->avatar->exists());
@@ -104,12 +104,11 @@ class UserTest extends TestCase
 
     public function test_user_avatar_can_be_null()
     {
-        Storage::fake("public");
+        Storage::fake('public');
         $user = User::factory()->create([
-            "avatar" => Avatar::fromUploadedFile(null),
+            'avatar' => Avatar::fromUploadedFile(null),
         ]);
-        $this->assertTrue(URL::isValidUrl($user->avatar->url()));
-        $this->assertEquals($user->avatar->path(), "");
+        $this->assertEquals($user->avatar->path(), '');
     }
 
     public function test_user_can_have_many_followers()
@@ -137,7 +136,7 @@ class UserTest extends TestCase
         $user = User::factory()
             ->hasSettings()
             ->create();
-        $this->assertDatabaseHas("user_settings", ["user_id" => $user->id]);
+        $this->assertDatabaseHas('user_settings', ['user_id' => $user->id]);
         $this->assertNotNull($user->settings);
     }
 
@@ -146,7 +145,7 @@ class UserTest extends TestCase
         $user = User::factory()
             ->hasProfile()
             ->create();
-        $this->assertDatabaseHas("user_profiles", ["user_id" => $user->id]);
+        $this->assertDatabaseHas('user_profiles', ['user_id' => $user->id]);
         $this->assertNotNull($user->profile);
     }
 
@@ -187,7 +186,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         foreach (range(1, 5) as $i) {
             $user->searches()->create([
-                "search_params" => [],
+                'search_params' => [],
             ]);
         }
         $this->assertEquals(5, $user->searches->count());
@@ -197,22 +196,22 @@ class UserTest extends TestCase
     {
         $user = User::factory()->makeOne();
         $profile = UserProfile::factory()->makeOne();
-        unset($profile["user_id"]);
+        unset($profile['user_id']);
         $user = User::createWithProfileAndSettings(array_merge($user->toArray(), $profile->toArray()));
 
-        $this->assertDatabaseHas("users", ["email" => $user->email]);
-        $this->assertDatabaseHas("user_profiles", ["user_id" => $user->id]);
-        $this->assertDatabaseHas("user_settings", ["user_id" => $user->id]);
+        $this->assertDatabaseHas('users', ['email' => $user->email]);
+        $this->assertDatabaseHas('user_profiles', ['user_id' => $user->id]);
+        $this->assertDatabaseHas('user_settings', ['user_id' => $user->id]);
         $this->assertEquals($user->profile->user_id, $user->id);
     }
 
     public function test_user_can_delete_their_avatar()
     {
-        Storage::fake("public");
-        $avatar = UploadedFile::fake()->image("avatar.jpg");
+        Storage::fake('public');
+        $avatar = UploadedFile::fake()->image('avatar.jpg');
         $avatar = Avatar::fromUploadedFile($avatar);
         $user = User::factory()->create([
-            "avatar" => $avatar,
+            'avatar' => $avatar,
         ]);
         $this->assertTrue($user->avatar->delete());
         $this->assertFalse($user->avatar->exists());

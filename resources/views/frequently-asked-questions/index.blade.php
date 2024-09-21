@@ -10,18 +10,29 @@ description: Frequently Asked Questions (FAQ) page
   $has_search = request()->has('q');
 @endphp
 
-<x-layout :title="$title" no-livewire>
-  <form x-data action="{{ url()->current() }}" class="hero is-primary" method="get">
+<x-layout :title="$title"
+          no-livewire>
+  <form class="hero is-primary"
+        x-data
+        action="{{ url()->current() }}"
+        method="get">
     <div class="hero-body">
-      <x-forms.input x-on:change.debounce.200ms="$root.submit()" tabindex="0" name="q" placeholder="Search..."
-        value="{{ $has_search ? request('q') : '' }}" without-label has-addons>
+      <x-forms.input name="q"
+                     value="{{ $has_search ? request('q') : '' }}"
+                     tabindex="0"
+                     x-on:change.debounce.200ms="$root.submit()"
+                     placeholder="Search..."
+                     without-label
+                     has-addons>
         <div class="control">
-          <a href="{{ route('faq.create') }}" class="button is-dark">Create Question</a>
+          <a class="button is-dark"
+             href="{{ route('faq.create') }}">Create Question</a>
         </div>
       </x-forms.input>
     </div>
   </form>
-  <x-container is-fluid class="mt-5">
+  <x-container class="mt-5"
+               is-fluid>
     <table class="table is-fullwidth is-hoverable">
       <tbody>
         @forelse ($questions as $question)
@@ -34,12 +45,14 @@ description: Frequently Asked Questions (FAQ) page
               <td>{{ $question->rating . '%' }}</td>
             @endunless
             <td>
-              <a class="link" href="{{ route('faq.show', $question) }}">Visit</a>
+              <a class="link"
+                 href="{{ route('faq.show', $question) }}">Visit</a>
             </td>
           </tr>
         @empty
           <tr>
-            <td colspan="4" class="mt-5 mx-5 subtitle is-4 has-text-centered">
+            <td class="mt-5 mx-5 subtitle is-4 has-text-centered"
+                colspan="4">
               No Questions Found.
             </td>
           </tr>

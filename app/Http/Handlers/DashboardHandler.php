@@ -2,17 +2,15 @@
 
 namespace App\Http\Handlers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Content;
-use App\Models\User;
+use Illuminate\Http\Request;
 
 class DashboardHandler extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)
@@ -23,11 +21,11 @@ class DashboardHandler extends Controller
             ->get();
         $new_follower_content = Content::query()
             ->whereIn(
-                "user_id",
+                'user_id',
                 auth()
                     ->user()
                     ->following()
-                    ->pluck("followed_id"),
+                    ->pluck('followed_id'),
             )
             ->wherePublished()
             ->latest()
@@ -35,8 +33,8 @@ class DashboardHandler extends Controller
             ->get();
 
         return view(
-            "dashboard",
-            compact("top_content", "new_follower_content"),
+            'dashboard',
+            compact('top_content', 'new_follower_content'),
         );
     }
 }

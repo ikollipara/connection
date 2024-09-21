@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreEntryRequest extends FormRequest
 {
@@ -25,7 +24,7 @@ class StoreEntryRequest extends FormRequest
     public function rules()
     {
         return [
-            "content_id" => "required|string|exists:content,id",
+            'content_id' => 'required|string|exists:content,id',
         ];
     }
 }

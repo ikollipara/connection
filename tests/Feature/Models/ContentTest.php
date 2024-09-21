@@ -4,9 +4,7 @@ namespace Tests\Feature\Models;
 
 use App\Enums\Status;
 use App\Models\Content;
-use App\Models\Likes\ContentLike;
 use App\Models\User;
-use App\ValueObjects\Metadata;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -18,7 +16,7 @@ class ContentTest extends TestCase
     public function test_content_can_be_created()
     {
         $content = Content::factory()->create();
-        $this->assertDatabaseCount("content", 1);
+        $this->assertDatabaseCount('content', 1);
         $this->assertTrue($content->is(Content::sole()));
     }
 
@@ -26,10 +24,10 @@ class ContentTest extends TestCase
     {
         $content = Content::factory()->create();
         $searchableArray = $content->toSearchableArray();
-        $this->assertArrayHasKey("title", $searchableArray);
-        $this->assertArrayHasKey("body", $searchableArray);
-        $this->assertEquals($content->title, $searchableArray["title"]);
-        $this->assertEquals($content->asPlainText("body"), $searchableArray["body"]);
+        $this->assertArrayHasKey('title', $searchableArray);
+        $this->assertArrayHasKey('body', $searchableArray);
+        $this->assertEquals($content->title, $searchableArray['title']);
+        $this->assertEquals($content->asPlainText('body'), $searchableArray['body']);
     }
 
     public function test_content_should_be_searchable()
@@ -50,7 +48,7 @@ class ContentTest extends TestCase
     public function test_content_should_get_the_correct_route_key()
     {
         $content = Content::factory()->create();
-        $expected = str($content->title)->slug() . "--" . $content->id;
+        $expected = str($content->title)->slug().'--'.$content->id;
         $this->assertEquals($expected, $content->getRouteKey());
     }
 
@@ -105,7 +103,7 @@ class ContentTest extends TestCase
         $content = Content::factory()
             ->hasLikes(5)
             ->create();
-        $this->assertDatabaseCount("content_likes", 5);
+        $this->assertDatabaseCount('content_likes', 5);
         $this->assertEquals(5, $content->likes->count());
     }
 
@@ -114,7 +112,7 @@ class ContentTest extends TestCase
         $content = Content::factory()
             ->hasViews(5)
             ->create();
-        $this->assertDatabaseCount("views", 5);
+        $this->assertDatabaseCount('views', 5);
         $this->assertEquals(5, $content->views->count());
     }
 
@@ -187,16 +185,16 @@ class ContentTest extends TestCase
     public function test_content_can_normalize_search_constraints()
     {
         $normalized = Content::normalizeSearchConstraints([]);
-        $this->assertArrayHasKey("type", $normalized);
-        $this->assertArrayHasKey("categories", $normalized);
-        $this->assertArrayHasKey("audiences", $normalized);
-        $this->assertArrayHasKey("grades", $normalized);
-        $this->assertArrayHasKey("standards", $normalized);
-        $this->assertArrayHasKey("practices", $normalized);
-        $this->assertArrayHasKey("languages", $normalized);
-        $this->assertArrayHasKey("standard_groups", $normalized);
-        $this->assertArrayHasKey("likes_count", $normalized);
-        $this->assertArrayHasKey("views_count", $normalized);
+        $this->assertArrayHasKey('type', $normalized);
+        $this->assertArrayHasKey('categories', $normalized);
+        $this->assertArrayHasKey('audiences', $normalized);
+        $this->assertArrayHasKey('grades', $normalized);
+        $this->assertArrayHasKey('standards', $normalized);
+        $this->assertArrayHasKey('practices', $normalized);
+        $this->assertArrayHasKey('languages', $normalized);
+        $this->assertArrayHasKey('standard_groups', $normalized);
+        $this->assertArrayHasKey('likes_count', $normalized);
+        $this->assertArrayHasKey('views_count', $normalized);
     }
 
     public function test_content_can_be_scoped_by_search_constraints()

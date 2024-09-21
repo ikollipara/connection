@@ -14,8 +14,8 @@ class UpdateFrequentlyAskedQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            "title" => "string|max:255|min:1",
-            "content" => "string",
+            'title' => 'string|max:255|min:1',
+            'content' => 'string',
         ];
     }
 }

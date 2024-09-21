@@ -21,6 +21,7 @@ description: Frequently Asked Questions (FAQ) question row
   <td>{{ $excerpt }}</td>
   <td>{{ $rating_percent }}</td>
   <td>
-    <a class="link" href="{{ route('faq.show', compact('question')) }}">Visit</a>
+    <a class="link"
+       href="{{ route('faq.show', compact('question')) }}">Visit</a>
   </td>
 </tr>

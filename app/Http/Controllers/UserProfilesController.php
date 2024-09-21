@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserProfileRequest;
-use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -33,7 +32,6 @@ class UserProfilesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreUserProfileRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreUserProfileRequest $request)
@@ -44,7 +42,6 @@ class UserProfilesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
     public function show(UserProfile $userProfile)
@@ -55,37 +52,35 @@ class UserProfilesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
-        $this->authorize("update", $user);
-        $user = $user->load("profile");
-        return view("users.profile.edit", compact("user"));
+        $this->authorize('update', $user);
+        $user = $user->load('profile');
+
+        return view('users.profile.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateUserRequest  $request
-     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateUserRequest $request, User $user)
     {
         $validated = $request->validated();
         $user->updateWithProfile($validated);
-        return redirect(route("users.profile.edit", "me"), 303)->with(
-            "success",
-            __("Your profile has been updated."),
+
+        return redirect(route('users.profile.edit', 'me'), 303)->with(
+            'success',
+            __('Your profile has been updated.'),
         );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
     public function destroy(UserProfile $userProfile)

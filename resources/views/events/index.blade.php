@@ -6,6 +6,7 @@ description: The view for the events index page.
  --}}
 
 <x-layout title="conneCTION - Calendar">
+  @dump($events->map(fn($event) => $event->toFullCalendar(auth()->user())))
   <x-hero class="is-primary">
     <h1 class="title">Calendar</h1>
     <p class="subtitle">Stay up-to-date with all the events happening on conneCTION.</p>
