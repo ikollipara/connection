@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [
     laravel([
       "resources/js/app.js",
+      "resources/css/app.css",
       "resources/css/slim-select.css",
       "resources/css/animate.css",
     ]),
