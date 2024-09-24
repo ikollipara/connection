@@ -27,3 +27,4 @@ covhtml
 cov.xml
 .env.testing
 public/build/*
+composer.phar

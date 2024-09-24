@@ -8,7 +8,6 @@ export default defineConfig({
       "resources/js/app.js",
       "resources/css/slim-select.css",
       "resources/css/animate.css",
-      "resources/scss/app.scss",
     ]),
     compression({
       algorithm: "brotliCompress",

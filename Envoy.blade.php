@@ -1,4 +1,4 @@
-@servers(['local' => '127.0.0.1', 'csce' => 'connection@csce.unl.edu', 'cse' => 'connection@cse-linux-01.unl.edu'])
+@servers(['local' => '127.0.0.1', 'nuros' => 'connection@nuros.unl.edu'])
 
 @story('deploy')
   maintenance-on
@@ -9,77 +9,38 @@
   maintenance-off
 @endstory
 
-@story('staging')
-  update-repo-staging
-  build-frontend-staging
-  run-migrations-staging
-  cache-staging
-@endstory
-
-@task('update-repo-staging', ['on' => 'cse'])
-  cd public_html/connection-main
-  git pull
-  composer install --optimize-autoloader --no-dev
-@endtask
-
-@task('build-frontend-staging', ['on' => 'local'])
-  npm ci
-  npm run build
-  tar -czf public.tar.gz public
-  scp public.tar.gz connection@cse-linux-01.unl.edu:public_html/connection-main
-  rm public.tar.gz
-  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
-  public.tar.gz'
-@endtask
-
-@task('run-migrations-staging', ['on' => 'cse'])
-  cd public_html/connection-main
-  php artisan migrate --force
-  php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\ContentCollection"
-@endtask
-
-@task('cache-staging', ['on' => 'cse'])
-  cd public_html/connection-main
-  php artisan config:cache
-  php artisan route:cache
-  php artisan view:cache
-  php artisan storage:link
-@endtask
-
-@task('maintenance-on', ['on' => 'csce'])
+@task('maintenance-on', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan down
 @endtask
 
-@task('maintenance-off', ['on' => 'csce'])
+@task('maintenance-off', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan up
 @endtask
 
 @task('build-frontend', ['on' => 'local'])
-  npm ci
-  npm run build
+  sail npm ci
+  sail npm run build
   tar -czf public.tar.gz public
-  scp public.tar.gz connection@csce.unl.edu:public_html/connection-main
+  scp public.tar.gz connection@nuros.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@csce.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
+  ssh connection@nuros.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
+  public.tar.gz'
 @endtask
 
-@task('update-repo', ['on' => 'csce'])
+@task('update-repo', ['on' => 'nuros'])
   cd public_html/connection-main
-  git pull origin main
+  git pull origin php-8.1
   php composer.phar install --optimize-autoloader --no-dev
 @endtask
 
-@task('run-migrations', ['on' => 'csce'])
+@task('run-migrations', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan migrate --force
-  php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\ContentCollection"
 @endtask
 
-@task('cache', ['on' => 'csce'])
+@task('cache', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan config:cache
   php artisan route:cache
