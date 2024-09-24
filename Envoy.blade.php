@@ -25,8 +25,7 @@
   tar -czf public.tar.gz public
   scp public.tar.gz connection@nuros.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@nuros.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
-  public.tar.gz'
+  ssh connection@nuros.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
 @endtask
 
 @task('update-repo', ['on' => 'nuros'])
