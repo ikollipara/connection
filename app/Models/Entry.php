@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\Content $content
- * @property \App\Models\PostCollection $collection
+ * @property \App\Models\ContentCollection $collection
  */
 class Entry extends Model
 {
@@ -61,10 +61,10 @@ class Entry extends Model
     /**
      * Get the collection that the entry belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<PostCollection>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<ContentCollection>
      */
     public function collection()
     {
-        return $this->belongsTo(PostCollection::class);
+        return $this->belongsTo(ContentCollection::class);
     }
 }

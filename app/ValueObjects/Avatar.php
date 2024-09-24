@@ -62,9 +62,10 @@ class Avatar
 
     public function url()
     {
-        return $this->exists()
-            ? $this->storage->url($this->path)
-            : $this->default;
+        // return $this->exists()
+            // ? $this->storage->url($this->path)
+            // : $this->default;
+        return $this->default;
     }
 
     public function exists(): bool

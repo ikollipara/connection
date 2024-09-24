@@ -43,7 +43,8 @@ class PostsCommentsController extends Controller
     {
         $validated = $request->validated();
         $comment = $post->comments()->create($validated);
-        return session_back()->with("success", __("Comment successfully created."));
+
+        return session_back()->with('success', __('Comment successfully created.'));
     }
 
     /**

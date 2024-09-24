@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Enums\Grade;
+use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * \App\Models\UserProfile
@@ -18,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $subject
  * @property-read string $short_title
  * @property \Illuminate\Support\Collection<\App\Enums\Grade> $grades
- * @property-read string $bio_text
  * @property string $gender
  * @property int $years_of_experience
  * @property \Illuminate\Support\Carbon $created_at
@@ -27,10 +29,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserProfile extends Model
 {
-    use HasFactory;
+    use HasFactory, Viewable;
 
     protected $guarded = [];
-    protected $with = ["user"];
+
     protected $casts = [
         'bio' => 'array',
         'grades' => Grade::class.':collection',
@@ -44,25 +46,28 @@ class UserProfile extends Model
 
     // Accessors and Mutators
 
-    public function getShortTitleAttribute(): string
+    protected function shortTitle(): Attribute
     {
-        $year_str =
-            $this->years_of_experience < 2
-                ? '(First Year)'
-                : "({$this->years_of_experience} Years)";
-        $suffix = $this->is_preservice ? 'Pre-Service Teacher' : 'Teacher';
+        $years = match ($this->years_of_experience) {
+            0 => 'First Year',
+            1 => 'Second Year',
+            default => "{$this->years_of_experience} Years",
+        };
 
-        return "{$this->subject} {$suffix} {$year_str}";
+        return Attribute::make(
+            get: fn () => match ($this->is_preservice) {
+                true => "$this->subject Pre-Service Teacher ($years)",
+                false => "$this->subject Teacher ($years)",
+            },
+        );
     }
 
-    protected function getBioAttribute($value): Editor
+    protected function bio(): Attribute
     {
-        return Editor::fromJson($value);
-    }
-
-    protected function setBioAttribute(Editor $editor): string
-    {
-        return $this->attributes["bio"] = $editor->toJson();
+        return Attribute::make(
+            fn ($value) => Editor::fromJson($value),
+            fn (Editor $value) => $value->toJson(),
+        );
     }
 
     // Relationships
@@ -72,7 +77,7 @@ class UserProfile extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -12,7 +12,7 @@ class Login extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $login_link;
+    public string $url;
 
     /**
      * Create a new message instance.
@@ -21,7 +21,7 @@ class Login extends Mailable
      */
     public function __construct(User $user)
     {
-        $this->login_link = URL::temporarySignedRoute(
+        $this->url = URL::temporarySignedRoute(
             'login.show',
             now()->addHour(),
             [
@@ -39,8 +39,6 @@ class Login extends Mailable
     {
         return $this->from(env('MAIL_FROM_ADDRESS'))
             ->subject('Login to conneCTION')
-            ->view('mail.login', [
-                'login_link' => $this->login_link,
-            ]);
+            ->markdown('mail.login');
     }
 }

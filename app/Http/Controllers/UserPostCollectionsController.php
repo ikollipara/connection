@@ -72,9 +72,9 @@ class UserPostCollectionsController extends Controller
     public function store(StorePostCollectionRequest $request, User $user)
     {
         $validated = $request->validated();
-        $validated["published"] = $validated["published"] == "1";
-        $validated["metadata"] = new Metadata($validated["metadata"]);
-        $validated["body"] = Editor::fromJson($validated["body"]);
+        $validated['published'] = $validated['published'] == '1';
+        $validated['metadata'] = new Metadata($validated['metadata']);
+        $validated['body'] = Editor::fromJson($validated['body']);
         $collection = $user->collections()->create($validated);
 
         return redirect(
@@ -119,20 +119,21 @@ class UserPostCollectionsController extends Controller
         PostCollection $postCollection
     ) {
         $validated = $request->validated();
-        if (isset($validated["archive"])) {
-            $should_archive = $validated["archive"] == "1";
-            $postCollection->{$should_archive ? "delete" : "restore"}();
+        if (isset($validated['archive'])) {
+            $should_archive = $validated['archive'] == '1';
+            $postCollection->{$should_archive ? 'delete' : 'restore'}();
+
             return session_back()->with(
-                "success",
+                'success',
                 __(
                     'Collection successfully '.
                         ($should_archive ? 'archived' : 'restored'),
                 ),
             );
         }
-        $validated["published"] = $validated["published"] == "1";
-        $validated["metadata"] = new Metadata($validated["metadata"]);
-        $validated["body"] = Editor::fromJson($validated["body"]);
+        $validated['published'] = $validated['published'] == '1';
+        $validated['metadata'] = new Metadata($validated['metadata']);
+        $validated['body'] = Editor::fromJson($validated['body']);
         $postCollection->update($validated);
 
         return redirect(

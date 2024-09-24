@@ -84,7 +84,7 @@ class PostCollectionEntriesController extends Controller
     {
         $successful = $entry->delete();
         if ($successful) {
-            return session_back()->with("success", __("Entry deleted successfully"));
+            return session_back()->with('success', __('Entry deleted successfully'));
         }
 
         return back(500)->with('error', __('Failed to delete entry'));

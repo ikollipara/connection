@@ -8,8 +8,8 @@ description: The HTML for a help button
 @props(['title'])
 
 <x-modal :title="$title">
-  <x-slot class="is-primary"
-          name="btn">
+  <x-slot:btn
+          class="is-primary">
     <x-lucide-help-circle class="icon" />
   </x-slot>
   {{ $slot }}

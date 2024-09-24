@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use App\Contracts\Commentable;
-use App\Contracts\IsSearchable;
 use App\Enums\Standard;
 use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
+use App\Models\Concerns\Likeable;
+use App\Models\Concerns\Searchable;
+use App\Models\Concerns\Sluggable;
+use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Parental\HasChildren;
 
 /**
@@ -31,32 +32,18 @@ use Parental\HasChildren;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
- * @property-read \Illuminate\Database\Eloquent\Collection<PostCollection> $collections
+ * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
  */
-class Content extends Model implements Commentable, IsSearchable
+class Content extends Model
 {
-    use HasFactory, HasChildren, HasUuids, HasMetadata, SoftDeletes, Searchable;
+    use HasChildren, HasFactory, HasMetadata, HasUuids, Likeable, Searchable, Sluggable, SoftDeletes, Viewable;
 
     protected $table = 'content';
 
     protected $childTypes = [
         'post' => Post::class,
-        'collection' => PostCollection::class,
+        'collection' => ContentCollection::class,
     ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array<int, string>
-     */
-    protected $with = ['user'];
-
-    /**
-     * The relationships that should always be counted.
-     *
-     * @var array<int, string>
-     */
-    protected $withCount = ['likes', 'views'];
 
     /**
      * The attributes that are mass assignable.
@@ -87,39 +74,13 @@ class Content extends Model implements Commentable, IsSearchable
         'title' => '',
     ];
 
-    // Laravel Scout configuration
-    public function toSearchableArray()
+    protected $searchableColumns = ['title', 'body'];
+
+    protected $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
+
+    protected function scopeShouldBeSearchable(Builder $query)
     {
-        return [
-            'title' => $this->title,
-            'body' => $this->asPlainText('body'),
-        ];
-    }
-
-    public function shouldBeSearchable()
-    {
-        return $this->published and ! $this->trashed();
-    }
-
-    // Overrides
-
-    public function getRouteKey()
-    {
-        return Str::slug($this->title).'--'.$this->getAttribute($this->getRouteKeyName());
-    }
-
-    public function resolveRouteBinding($value, $field = null)
-    {
-        $id = last(explode('--', $value));
-
-        return parent::resolveRouteBinding($id, $field);
-    }
-
-    public function resolveSoftDeletableRouteBinding($value, $field = null)
-    {
-        $id = last(explode('--', $value));
-
-        return parent::resolveSoftDeletableRouteBinding($id, $field);
+        return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
 
     // Accessors and Mutators
@@ -148,7 +109,7 @@ class Content extends Model implements Commentable, IsSearchable
 
     protected function setBodyAttribute(Editor $value)
     {
-        $this->attributes["body"] = $value->toJson();
+        $this->attributes['body'] = $value->toJson();
     }
 
     // Relationships
@@ -163,29 +124,9 @@ class Content extends Model implements Commentable, IsSearchable
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the likes for the content.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Likes\ContentLike>
-     */
-    public function likes()
-    {
-        return $this->hasMany(Likes\ContentLike::class);
-    }
-
-    /**
-     * Get the views for the content.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\View>
-     */
-    public function views()
-    {
-        return $this->hasMany(View::class);
-    }
-
     public function collections()
     {
-        return $this->belongsToMany(PostCollection::class, 'entries', 'content_id', 'collection_id')->using(
+        return $this->belongsToMany(ContentCollection::class, 'entries', 'content_id', 'collection_id')->using(
             Entry::class,
         );
     }
@@ -210,14 +151,11 @@ class Content extends Model implements Commentable, IsSearchable
      */
     public function scopeStatus($query, Status $status)
     {
-        switch (true) {
-            case $status->equals(Status::archived()):
-                return $query->onlyTrashed();
-            case $status->equals(Status::published()):
-                return $query->where('published', true);
-            case $status->equals(Status::draft()):
-                return $query->where('published', false);
-        }
+        return match (true) {
+            $status->equals(Status::archived()) => $query->onlyTrashed(),
+            $status->equals(Status::published()) => $query->where('published', true),
+            $status->equals(Status::draft()) => $query->where('published', false),
+        };
     }
 
     /**
@@ -328,5 +266,10 @@ class Content extends Model implements Commentable, IsSearchable
             'likes_count' => data_get($constraints, 'likes_count', 0),
             'views_count' => data_get($constraints, 'views_count', 0),
         ];
+    }
+
+    public function scopeAreSearchable(Builder $query)
+    {
+        return $query->where('published', true)->whereNull('deleted_at');
     }
 }

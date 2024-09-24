@@ -5,7 +5,20 @@ date: 2024-06-24
 description: Edit view for a collection
  --}}
 
-@php
+<x-writing-layout title="New Collection"
+                  drawer-name="edit-collection-drawer">
+  @include('users.collections.partials.form', [
+      'action' => route('api.users.collections.update', [$user, $collection]),
+      'formName' => 'edit-collection',
+      'collection' => $collection,
+      'method' => 'put',
+      'drawerName' => 'edit-collection-drawer',
+      'drawerAction' => route('users.collections.publish', ['me', $collection]),
+  ])
+  @includeWhen($collection->exists(), 'users.collections.partials.entries', ['collection' => $collection])
+</x-writing-layout>
+
+{{-- @php
   $title = 'conneCTION - Edit ' . ($collection->title ? $collection->title : 'Unnamed Collection');
   $body = old('body', $collection->body->toArray());
   $body = is_string($body) ? $body : json_encode($body);
@@ -115,4 +128,4 @@ description: Edit view for a collection
       </x-tabs.tab>
     </x-tabs>
   </x-container>
-</x-layout>
+</x-layout> --}}

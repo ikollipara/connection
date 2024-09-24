@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FileUploadController extends Controller
 {
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'file' => 'file|required_without_all:image,url',
@@ -18,19 +18,24 @@ class FileUploadController extends Controller
             'url' => 'url|required_without_all:image,file',
         ]);
 
-        $path = isset($validated['url'])
-            ? $this->saveUrl($validated['url'])
-            : $this->saveFile($request->file('file') ?? $request->file('image'));
+        $path = match (true) {
+            isset($validated['url']) => $this->saveUrl($validated['url']),
+            isset($validated['file']) => $validated['file']->store('files', 'public'),
+            isset($validated['image']) => $validated['image']->store('files', 'public'),
+        };
 
-        return response()->json([
-            'success' => $path ? 1 : 0,
-            'file' => [
-                'url' => $path ? Storage::url($path) : '',
+        return response(
+            content: [
+                'success' => filled($path) ? 1 : 0,
+                'file' => [
+                    'url' => filled($path) ? Storage::url($path) : '',
+                ],
             ],
-        ]);
+            status: Response::HTTP_OK,
+        );
     }
 
-    public function destroy(Request $request): void
+    public function destroy(Request $request)
     {
         $validated = $request->validate([
             'path' => 'required|string',
@@ -43,23 +48,18 @@ class FileUploadController extends Controller
         Storage::disk('public')->delete($validated['path']);
     }
 
-    private function saveFile(UploadedFile $file)
+    protected function saveUrl(string $url)
     {
-        return $file->store('files', 'public');
-    }
-
-    private function saveUrl(string $url)
-    {
-        $request = Http::get($url);
-        if ($request->failed()) {
-            return false;
+        $response = Http::get($url);
+        if ($response->failed()) {
+            return $response->failed();
         }
 
-        $ext = str($request->header('content-type'))
+        $ext = str($response->header('content-type'))
             ->split("/\//")
             ->last();
         $hashName = Str::random(40);
-        $successful = Storage::disk('public')->put("files/{$hashName}.{$ext}", $request->body());
+        $successful = Storage::disk('public')->put("files/{$hashName}.{$ext}", $response->body());
 
         return $successful ? "files/{$hashName}.{$ext}" : false;
     }

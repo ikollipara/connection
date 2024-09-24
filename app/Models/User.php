@@ -5,23 +5,25 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Enums\Grade;
+use App\Mail\Login;
 use App\Services\SurveyService;
 use App\ValueObjects\Avatar;
+use App\ValueObjects\Editor;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+// use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use App\ValueObjects\Editor;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Mail;
 
 /**
  * App\Models\User
@@ -39,7 +41,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool $sent_week_one_survey
  * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
  * @property-read Collection<\App\Models\Comment> $comments
- * @property-read Collection<\App\Models\PostCollection> $collections
+ * @property-read Collection<\App\Models\ContentCollection> $collections
  * @property-read Collection<\App\Models\Post> $posts
  *  @property-read Collection<\App\Models\Event> $events
  * @property-read Collection<\App\Models\User> $followers
@@ -85,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->email = trim(strtolower($user->email));
         });
         static::created(function (User $user) {
-            event(new Registered($user));
+            // event(new Registered($user));
             $user->notifyIfConsented();
         });
         static::saved(function (User $user) {
@@ -136,7 +138,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarAttribute(): Avatar
     {
-        $avatar = new Avatar($this->attributes['avatar']);
+        $avatar = new Avatar(/* $this->attributes['avatar'] */ "");
         $full_name = trim(str_replace(' ', '+', $this->full_name));
         $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
 
@@ -178,9 +180,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(self::class, 'followers', 'follower_id', 'followed_id')->using(Follower::class);
     }
 
-    public function attending()
+    public function attending(): BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'user_id', 'event_id')->using(Attendee::class);
+        return $this->belongsToMany(Event::class, 'attendees');
     }
 
     /**
@@ -226,11 +228,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's post collections
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\PostCollection>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ContentCollection>
      */
     public function collections()
     {
-        return $this->hasMany(PostCollection::class);
+        return $this->hasMany(ContentCollection::class);
     }
 
     /**
@@ -275,12 +277,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function createWithProfileAndSettings(array $data): User
     {
         $profile = [
-            "school" => $data["school"],
-            "is_preservice" => isset($data["is_preservice"]),
-            "years_of_experience" => data_get($data, "years_of_experience", 0),
-            "subject" => $data["subject"],
-            "bio" =>  Editor::fromJson($data["bio"]),
-            "grades" => collect($data["grades"])
+            'school' => $data['school'],
+            'is_preservice' => isset($data['is_preservice']),
+            'years_of_experience' => data_get($data, 'years_of_experience', 0),
+            'subject' => $data['subject'],
+            'bio' => Editor::fromJson($data['bio']),
+            'grades' => collect($data['grades'])
                 ->map(fn ($grade) => Grade::from($grade))
                 ->toArray(),
             'gender' => '',
@@ -304,5 +306,15 @@ class User extends Authenticatable implements MustVerifyEmail
 
             return $user;
         });
+    }
+
+    public function sendLoginLink()
+    {
+        Mail::to($this)->queue(new Login($this));
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('followed_id', $user->id)->exists();
     }
 }

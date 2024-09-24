@@ -28,14 +28,15 @@
   tar -czf public.tar.gz public
   scp public.tar.gz connection@cse-linux-01.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
+  ssh connection@cse-linux-01.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm
+  public.tar.gz'
 @endtask
 
 @task('run-migrations-staging', ['on' => 'cse'])
   cd public_html/connection-main
   php artisan migrate --force
   php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\PostCollection"
+  php artisan scout:import "App\Models\ContentCollection"
 @endtask
 
 @task('cache-staging', ['on' => 'cse'])
@@ -75,7 +76,7 @@
   cd public_html/connection-main
   php artisan migrate --force
   php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\PostCollection"
+  php artisan scout:import "App\Models\ContentCollection"
 @endtask
 
 @task('cache', ['on' => 'csce'])

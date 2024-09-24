@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\Grade;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserProfileFactory extends Factory
@@ -19,7 +20,7 @@ class UserProfileFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'bio' => json_encode(['blocks' => []]),
+            'bio' => Editor::fromJson(json_encode(['blocks' => []])),
             'is_preservice' => $is_preservice,
             'school' => $this->faker->sentence(),
             'subject' => $this->faker->sentence(),

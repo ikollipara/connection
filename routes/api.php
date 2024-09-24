@@ -1,6 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ContentContentCollectionController;
+use App\Http\Controllers\Api\LikeLogController;
+use App\Http\Controllers\Api\UserContentCollectionController;
+use App\Http\Controllers\Api\UserPostController;
+use App\Http\Controllers\FileUploadController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::apiResource('users.posts', UserPostController::class)->only(['store', 'update']);
+Route::apiResource('users.collections', UserContentCollectionController::class)->only(['store', 'update', 'index']);
+Route::post('like', LikeLogController::class)->name('like');
+Route::post('posts/{content}/collections', ContentContentCollectionController::class)->name('posts.collections.store');
+Route::post('collections/{content}/collections', ContentContentCollectionController::class)->name('collections.collections.store');
+Route::post('upload', [FileUploadController::class, 'store'])->name('upload.store');
+Route::delete('upload', [FileUploadController::class, 'destroy'])->name('upload.destroy');

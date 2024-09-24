@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAttendeeRequest;
-use App\Models\Attendee;
+use App\Models\Event;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class EventAttendeeController extends Controller
 {
@@ -13,15 +14,15 @@ class EventAttendeeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAttendeeRequest $request)
+    public function store(Request $request, Event $event)
     {
-        $validated = $request->validated();
-        $successful = Attendee::create($validated);
-        if (! $successful) {
-            return back(303)->with('error', __('Failed to attend.'));
-        }
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
 
-        return back(303)->with('success', __('You are now attending'));
+        $event->attendees()->attach($request->user_id);
+
+        return session_back(303)->with('success', __('You are now attending.'));
     }
 
     /**
@@ -29,13 +30,18 @@ class EventAttendeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Attendee $attendee)
+    public function destroy(Event $event, User $attendee)
     {
-        $successful = $attendee->delete();
-        if (! $successful) {
-            return back(303)->with('error', __('Failed to remove.'));
-        }
+        $event->attendees()->detach($attendee);
 
-        return back(303)->with('success', __('You are no longer attending.'));
+        return session_back(303)->with('success', __('You are no longer attending.'));
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'auth',
+            'verified',
+        ];
     }
 }

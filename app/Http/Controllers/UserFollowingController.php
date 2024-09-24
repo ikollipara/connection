@@ -8,79 +8,89 @@ use Illuminate\Http\Request;
 
 class UserFollowingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(User $user)
+    public function __invoke(Request $request, User $user)
     {
-        $user = $user->loadCount(['following', 'followers'])->load('profile');
-        $following = $user
-            ->following()
-            ->with('profile')
-            ->paginate(15);
+        $following = $user->following()->paginate();
 
-        return view('users.following.index', compact('user', 'following'));
+        return view('users.following', [
+            'user' => $user,
+            'following' => $following,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(User $user)
-    {
-        //
-    }
+    // /**
+    //  * Display a listing of the resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function index(User $user)
+    // {
+    //     $user = $user->loadCount(['following', 'followers'])->load('profile');
+    //     $following = $user
+    //         ->following()
+    //         ->with('profile')
+    //         ->paginate(15);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, User $user)
-    {
-        //
-    }
+    //     return view('users.following.index', compact('user', 'following'));
+    // }
 
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user, Follower $follower)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for creating a new resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function create(User $user)
+    // {
+    //     //
+    // }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user, Follower $follower)
-    {
-        //
-    }
+    // /**
+    //  * Store a newly created resource in storage.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function store(Request $request, User $user)
+    // {
+    //     //
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user, Follower $follower)
-    {
-        //
-    }
+    // /**
+    //  * Display the specified resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function show(User $user, Follower $follower)
+    // {
+    //     //
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user, Follower $follower)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function edit(User $user, Follower $follower)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function update(Request $request, User $user, Follower $follower)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Remove the specified resource from storage.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function destroy(User $user, Follower $follower)
+    // {
+    //     //
+    // }
 }

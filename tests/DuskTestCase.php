@@ -52,8 +52,6 @@ abstract class DuskTestCase extends BaseTestCase
 
     /**
      * Determine whether the Dusk command has disabled headless mode.
-     *
-     * @return bool
      */
     protected function hasHeadlessDisabled(): bool
     {
@@ -63,8 +61,6 @@ abstract class DuskTestCase extends BaseTestCase
 
     /**
      * Determine if the browser window should start maximized.
-     *
-     * @return bool
      */
     protected function shouldStartMaximized(): bool
     {

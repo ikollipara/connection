@@ -11,4 +11,5 @@ description: The HTML for the guest layout
                {{ $attributes }}>
   <x-navbar />
   {{ $slot }}
+
 </x-layouts.app>

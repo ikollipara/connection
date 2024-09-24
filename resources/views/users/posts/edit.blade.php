@@ -1,11 +1,30 @@
 {{--
 file: resources/views/users/posts/edit.blade.php
 author: Ian Kollipara
+date: 2024-09-11
+description: The HTML for the edit post page
+ --}}
+
+<x-writing-layout title="New Post"
+                  drawer-name="edit-post-drawer">
+  @include('users.posts.partials.form', [
+      'action' => route('api.users.posts.update', [$user, $post]),
+      'formName' => 'edit-post',
+      'post' => $post,
+      'method' => 'put',
+      'drawerName' => 'edit-post-drawer',
+      'drawerAction' => route('users.posts.publish', ['me', $post]),
+  ])
+</x-writing-layout>
+
+{{--
+file: resources/views/users/posts/edit.blade.php
+author: Ian Kollipara
 date: 2024-06-19
 description: The HTML for the edit post page
  --}}
 
-@php
+{{-- @php
   $title = "conneCTION - Edit {$post->title}";
   $body = old('body', $post->body->toArray());
   $body = is_string($body) ? $body : json_encode($body);
@@ -98,4 +117,4 @@ description: The HTML for the edit post page
               form="edit-post-form"
               value="{!! $body !!}" />
   </x-container>
-</x-layout>
+</x-layout> --}}

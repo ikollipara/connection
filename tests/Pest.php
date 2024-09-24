@@ -11,10 +11,7 @@
 |
 */
 
-uses(
-    Tests\TestCase::class,
-    // Illuminate\Foundation\Testing\RefreshDatabase::class,
-)->in('Feature');
+pest()->extends(Tests\TestCase::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------

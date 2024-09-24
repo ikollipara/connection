@@ -1,4 +1,27 @@
-@php
+{{--
+file: resources/events/show.blade.php
+author: Ian Kollipara
+date: 2024-09-23
+description: The HTML for the event show page
+ --}}
+
+<x-reading-layout title="{{ $event->title }}">
+  <x-slot:aside>
+    @include('events.partials.details-sidebar', ['event' => $event])
+  </x-slot>
+  <main class="flex flex-col gap-y-3">
+    <x-title label="{{ $event->title }}" />
+    @include('events.partials.action-bar', ['event' => $event])
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{{ $event->description->toJson() }}' })">
+      <input name="name"
+             type="hidden"
+             x-bind="input">
+      <div x-bind="editor"></div>
+    </div>
+  </main>
+</x-reading-layout>
+
+{{-- @php
   $avatar = $event->user ? $event->user->avatar : 'https://ui-avatars.com/api/?name=Deleted&color=7F9CF5&background=EBF4FF';
   $full_name = $event->user ? $event->user->full_name : 'Deleted';
   $description = Js::from(old('description')) ?? $event->description;
@@ -72,4 +95,4 @@
       {{ $event->description }}
     </div>
   </x-container>
-</x-layout>
+</x-layout> --}}
