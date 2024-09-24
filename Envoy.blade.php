@@ -1,3 +1,4 @@
+{{-- prettier-ignore-start --}}
 @servers(['local' => '127.0.0.1', 'nuros' => 'connection@nuros.unl.edu'])
 
 @story('deploy')
@@ -30,6 +31,7 @@
 
 @task('update-repo', ['on' => 'nuros'])
   cd public_html/connection-main
+  git restore .
   git pull origin php-8.1
   php composer.phar install --optimize-autoloader --no-dev
 @endtask
@@ -46,3 +48,4 @@
   php artisan view:cache
   php artisan storage:link
 @endtask
+{{-- prettier-ignore-end --}}

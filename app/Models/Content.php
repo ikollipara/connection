@@ -58,7 +58,6 @@ class Content extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'body' => 'array',
         'published' => 'boolean',
     ];
 
