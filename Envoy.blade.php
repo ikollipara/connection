@@ -20,8 +20,8 @@
 @endtask
 
 @task('build-frontend', ['on' => 'local'])
-  sail npm ci
-  sail npm run build
+  npm ci
+  npm run build
   tar -czf public.tar.gz public
   scp public.tar.gz connection@nuros.unl.edu:public_html/connection-main
   rm public.tar.gz
