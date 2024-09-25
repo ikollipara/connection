@@ -20,7 +20,7 @@ description: The card for an event
       {{ $event->days_count }} {{ Str::plural('Day', $event->days_count) }}
     </p>
     <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
-      {{ $event->start->format('H:m A') }} - {{ $event->end->format('H:m A') }}
+      {{ $event->start->format('H:m A') }} - {{ optional($event->end)->format('H:m A') }}
     </p>
   </div>
   <div class="flex gap-x-3">
