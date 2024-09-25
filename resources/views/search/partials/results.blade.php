@@ -18,7 +18,7 @@ description: The search results for the search form
           'href' => route('collections.show', $result),
       ])
     @elseif ($result instanceof App\Models\Event)
-      @include('search.partials.event-result', ['content' => $result])
+      @include('search.partials.event-result', ['event' => $result])
     @endif
   @empty
     @if (request()->has('q'))

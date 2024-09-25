@@ -11,13 +11,13 @@ description: The HTML for the rich text form component
 
 @php
   $value ??= Js::from(['blocks' => []]);
-  $old = old($name)
-  if($old) {
-    $value = Js::from($old);
-  } elseif($model?->getAttribute($name)) {
-    $value = Js::from($model?->getAttribute($name));
+  $old = old($name);
+  if ($old) {
+      $value = Js::from($old);
+  } elseif ($model?->getAttribute($name)) {
+      $value = Js::from($model?->getAttribute($name));
   } else {
-    $value = Js::from($value);
+      $value = Js::from($value);
   }
 @endphp
 

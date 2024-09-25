@@ -11,9 +11,9 @@ description: The post result for the search form
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
       {{ empty($content->title) ? 'Untitled' : $content->title }}
     </h5>
-    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+    {{-- <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
       {{ Str::limit(strip_tags($content->body->toHtml()), 10) }}
-    </p>
+    </p> --}}
     <div class="flex gap-x-3">
       <p class="inline-flex font-medium items-center text-gray-600">
         By {{ $content->user->full_name }}
