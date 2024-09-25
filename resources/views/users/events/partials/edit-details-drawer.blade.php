@@ -148,7 +148,7 @@ description: The drawer for editing event details
                    id="end-time"
                    name="end"
                    type="time"
-                   value="{{ $event->end->format('H:i') }}"
+                   value="{{ optional($event->end)->format('H:i') }}"
                    x-data
                    required />
           </div>
