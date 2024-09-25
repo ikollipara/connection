@@ -71,7 +71,7 @@ description: The profile page for a user
     </div>
   </div>
   <div class="px-4"
-       x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{{ $profile->bio->toJson() }}' })">
+       x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $profile->bio->toJson() !!}' })">
     <input name="name"
            type="hidden"
            x-bind="input">

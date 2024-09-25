@@ -124,7 +124,7 @@ description: The drawer for editing event details
                    id="start-time"
                    name="start"
                    type="time"
-                   value="{{ $event->start->toTimeString() }}"
+                   value="{{ $event->start->format('H:i') }}"
                    x-data
                    required />
           </div>
@@ -148,7 +148,7 @@ description: The drawer for editing event details
                    id="end-time"
                    name="end"
                    type="time"
-                   value="{{ $event->end->toTimeString() }}"
+                   value="{{ $event->end->format('H:i') }}"
                    x-data
                    required />
           </div>

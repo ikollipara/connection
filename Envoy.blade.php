@@ -43,7 +43,8 @@
 
 @task('cache', ['on' => 'nuros'])
   cd public_html/connection-main
-  php artisan optmize
+  php artisan optimize:clear
+  php artisan optimize
   php artisan storage:link
 @endtask
 {{-- prettier-ignore-end --}}

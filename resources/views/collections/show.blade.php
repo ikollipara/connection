@@ -12,7 +12,7 @@ description: The view for showing a collection
   <main class="flex flex-col gap-y-3">
     <x-title label="{{ $collection->title }}" />
     @include('collections.partials.action-bar', ['collection' => $collection])
-    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{{ $collection->body->toJson() }}' })">
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $collection->body->toJson() !!}' })">
       <input name="name"
              type="hidden"
              x-bind="input">

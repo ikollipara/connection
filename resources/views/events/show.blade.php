@@ -12,7 +12,7 @@ description: The HTML for the event show page
   <main class="flex flex-col gap-y-3">
     <x-title label="{{ $event->title }}" />
     @include('events.partials.action-bar', ['event' => $event])
-    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{{ $event->description->toJson() }}' })">
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $event->description->toJson() !!}' })">
       <input name="name"
              type="hidden"
              x-bind="input">

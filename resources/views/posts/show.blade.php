@@ -12,7 +12,7 @@ description: Show view for a post
   <main class="flex flex-col gap-y-3">
     <x-title>{{ $post->title }}</x-title>
     @include('posts.partials.action-bar', ['post' => $post])
-    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{{ $post->body->toJson() }}' })">
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $post->body->toJson() !!}' })">
       <input name="name"
              type="hidden"
              x-bind="input">
