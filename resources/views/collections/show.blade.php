@@ -8,7 +8,7 @@ description: The view for showing a collection
 <x-reading-layout title="{{ $collection->title }}">
   @push('scripts')
     <script>
-      window.body = JSON.stringify({{ $post->body->toJson(parse: true) }});
+      window.body = JSON.stringify({{ $collection->body->toJson(parse: true) }});
     </script>
   @endpush
   <x-slot:aside>
