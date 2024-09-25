@@ -9,6 +9,11 @@ description: The profile page for a user
 
 <x-reading-layout :title="$user->full_name"
                   wrapper-class="xl:!mx-5">
+  @push('scripts')
+    <script>
+      window.body = JSON.stringify({{ $post->body->toJson() }});
+    </script>
+  @endpush
   <div class="py-8 px-4 mx-auto lg:py-16">
     <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12 mb-8">
       <img class="rounded-full w-36 h-36 mx-auto"
@@ -71,7 +76,7 @@ description: The profile page for a user
     </div>
   </div>
   <div class="px-4"
-       x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $profile->bio->toJson() !!}' })">
+       x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: window.body })">
     <input name="name"
            type="hidden"
            x-bind="input">

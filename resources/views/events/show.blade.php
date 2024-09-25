@@ -6,13 +6,18 @@ description: The HTML for the event show page
  --}}
 
 <x-reading-layout title="{{ $event->title }}">
+  @push('scripts')
+    <script>
+      window.body = JSON.stringify({{ $post->body->toJson() }});
+    </script>
+  @endpush
   <x-slot:aside>
     @include('events.partials.details-sidebar', ['event' => $event])
   </x-slot>
   <main class="flex flex-col gap-y-3">
     <x-title label="{{ $event->title }}" />
     @include('events.partials.action-bar', ['event' => $event])
-    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: '{!! $event->description->toJson() !!}' })">
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: window.body })">
       <input name="name"
              type="hidden"
              x-bind="input">

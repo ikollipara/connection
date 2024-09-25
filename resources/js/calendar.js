@@ -7,17 +7,17 @@
  * and handling the user's interactions with it.
  *------------------------------------------------------------**/
 
+import { Calendar } from "@fullcalendar/core";
+
 export default ({ user = null }) => ({
   init() {
     Promise.allSettled([
-      import("@fullcalendar/core"),
       import("@fullcalendar/daygrid"),
       import("@fullcalendar/timegrid"),
       import("@fullcalendar/list"),
       import("@fullcalendar/icalendar"),
     ]).then(
       ([
-        { Calendar },
         { default: dayGridPlugin },
         { default: timeGridPlugin },
         { default: listViewPlugin },
