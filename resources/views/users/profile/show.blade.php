@@ -11,7 +11,7 @@ description: The profile page for a user
                   wrapper-class="xl:!mx-5">
   @push('scripts')
     <script>
-      window.body = JSON.stringify({{ $post->body->toJson() }});
+      window.body = JSON.stringify({{ $post->body->toJson(parse: true) }});
     </script>
   @endpush
   <div class="py-8 px-4 mx-auto lg:py-16">

@@ -8,7 +8,7 @@ description: The HTML for the event show page
 <x-reading-layout title="{{ $event->title }}">
   @push('scripts')
     <script>
-      window.body = JSON.stringify({{ $post->body->toJson() }});
+      window.body = JSON.stringify({{ $post->body->toJson(parse: true) }});
     </script>
   @endpush
   <x-slot:aside>

@@ -31,9 +31,12 @@ class Editor implements Arrayable, Htmlable
         return new HtmlString("<article class=\"content is-medium\">{$content}</article>");
     }
 
-    public function toJson()
+    public function toJson(bool $parse = false)
     {
-        return Js::from($this->data);
+        if ($parse) {
+            return Js::from($this->data);
+        }
+        return Js::encode($this->data);
     }
 
     public static function fromJson(string $json)
