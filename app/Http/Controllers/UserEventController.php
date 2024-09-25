@@ -42,6 +42,7 @@ class UserEventController extends Controller
 
     public function store(Request $request, User $user)
     {
+        try {
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -56,8 +57,8 @@ class UserEventController extends Controller
             'practices.*' => 'enum:'.Practice::class,
             'languages' => 'sometimes|array',
             'languages.*' => 'enum:'.Language::class,
-            'start' => 'required|date_format:H:i:s',
-            'end' => 'required|date_format:H:i:s',
+            'start' => 'required|date_format:H:i',
+            'end' => 'required|date_format:H:i',
             'days' => 'required|array',
             'days.*.date' => 'required|date',
         ]);
@@ -70,6 +71,10 @@ class UserEventController extends Controller
         $event->days()->createMany($validated['days']);
 
         return to_route('users.events.edit', ['me', $event]);
+
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
     public function edit(Request $request, User $user, Event $event)
@@ -96,8 +101,8 @@ class UserEventController extends Controller
             'practices.*' => 'enum:'.Practice::class,
             'languages' => 'sometimes|array',
             'languages.*' => 'enum:'.Language::class,
-            'start' => 'required|date_format:H:i:s',
-            'end' => 'required|date_format:H:i:s',
+            'start' => 'required|date_format:H:i',
+            'end' => 'required|date_format:H:i',
             'days' => 'required|array',
             'days.*.date' => 'required|date',
         ]);

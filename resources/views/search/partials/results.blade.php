@@ -12,7 +12,7 @@ description: The search results for the search form
           'content' => $result,
           'href' => route('posts.show', $result),
       ])
-    @elseif ($result instanceof App\Models\Collection)
+    @elseif ($result instanceof App\Models\ContentCollection)
       @include('search.partials.content-result', [
           'content' => $result,
           'href' => route('collections.show', $result),

@@ -46,6 +46,7 @@ class SearchController extends Controller
             default => collect(),
         };
 
+
         return view('search.index', [
             'results' => $results,
         ]);

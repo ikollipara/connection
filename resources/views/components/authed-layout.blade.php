@@ -41,20 +41,29 @@ description: The layout for authenticated users.
         </div>
         <div class="flex items-center">
 
-          <form class="max-w-md mx-auto">
+          <x-form class="max-w-md mx-auto hidden md:block mb-0"
+                  form-name="search"
+                  x-data
+                  action="{{ route('search') }}"
+                  method="get">
             <label class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
                    for="default-search">Search</label>
             <div class="relative">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <x-lucide-search class="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </div>
+              <input name="type"
+                     type="hidden"
+                     value="{{ request('type', 'post') }}">
               <input class="block w-full ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                      id="default-search"
+                     name="q"
                      type="search"
+                     x-on:keydown.enter.prevent="$root.submit()"
                      placeholder="Search..."
                      required />
             </div>
-          </form>
+          </x-form>
           <div class="flex items-center ms-3">
             <div>
               <button class="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
