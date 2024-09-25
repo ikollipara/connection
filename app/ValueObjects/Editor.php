@@ -5,6 +5,7 @@ namespace App\ValueObjects;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 
 class Editor implements Arrayable, Htmlable
 {
@@ -32,7 +33,7 @@ class Editor implements Arrayable, Htmlable
 
     public function toJson()
     {
-        return json_encode($this->data);
+        return Js::from($this->data);
     }
 
     public static function fromJson(string $json)

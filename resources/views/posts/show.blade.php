@@ -8,7 +8,7 @@ description: Show view for a post
 <x-reading-layout title="{{ $post->title }}">
   @push('scripts')
     <script>
-      window.body = '{!! $post->body->toJson() !!}';
+      window.body = JSON.stringify({{ $post->body->toJson() }});
     </script>
   @endpush
   <x-slot:aside>
