@@ -56,13 +56,28 @@ description: This file contains the form for registering a new user.
           <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full"
                id="register-sections">
             <div id="account-information"
-                 role="tabpanel">@include('auth.register.partials.account-information')</div>
+                 role="tabpanel"
+                 x-data
+                 x-on:invalid:first_name="document.getElementById('account-information-tab').click()"
+                 x-on:invalid:last_name="document.getElementById('account-information-tab').click()"
+                 x-on:invalid:email="document.getElementById('account-information-tab').click()">
+              @include('auth.register.partials.account-information')
+            </div>
             <div class="hidden"
                  id="profile-information"
-                 role="tabpanel">@include('auth.register.partials.profile-information')</div>
+                 role="tabpanel"
+                 x-data
+                 x-on:invalid:school="document.getElementById('profile-information-tab').click()"
+                 x-on:invalid:subject="document.getElementById('profile-information-tab').click()"
+                 x-on:invalid:grades[]="document.getElementById('profile-information-tab').click()"
+                 x-on:invalid:years_of_experience="document.getElementById('profile-information-tab').click()">
+              @include('auth.register.partials.profile-information')
+            </div>
             <div class="hidden"
                  id="consent-information"
-                 role="tabpanel">@include('auth.register.partials.consent-information')</div>
+                 role="tabpanel">
+              @include('auth.register.partials.consent-information')
+            </div>
           </div>
       </x-form>
     </div>

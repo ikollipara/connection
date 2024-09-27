@@ -28,3 +28,4 @@ cov.xml
 .env.testing
 public/build/*
 composer.phar
+db_backup.sql

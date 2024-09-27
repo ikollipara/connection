@@ -10,6 +10,7 @@ description: The action bar for an event
     <x-form form-name="like"
             x-data
             x-on:submit.prevent="
+            const previousLikes = {{ $event->likes() }};
             fetch($el.action, {
                 method: $el.method,
                 headers: {
@@ -28,6 +29,7 @@ description: The action bar for an event
                 } else {
                     response.json().then(data => {
                         alert(data.message);
+                        $refs.like_button.textContent = previousLikes === 1 ? (previousLikes + ' Like') : (previousLikes + ' Likes');
                     });
                 }
             })

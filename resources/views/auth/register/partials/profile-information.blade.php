@@ -14,6 +14,7 @@ description: This file contains the form for the user to enter their profile inf
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">Grades</span>
     <x-form-select name="grades"
+                   required
                    :options="Grade::cases()"
                    multiple />
     <x-form-input-error name="grades" />
@@ -22,14 +23,16 @@ description: This file contains the form for the user to enter their profile inf
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">School</span>
     <x-form-input name="school"
-                  type="text" />
+                  type="text"
+                  required />
     <x-form-input-error name="school" />
   </label>
   <label class="block mb-3"
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">Subject</span>
     <x-form-input name="subject"
-                  type="text" />
+                  type="text"
+                  required />
     <x-form-input-error name="subject" />
   </label>
   <div class="flex items-center mb-4">
@@ -48,6 +51,7 @@ description: This file contains the form for the user to enter their profile inf
       </span>
       <x-form-input name="years_of_experience"
                     type="number"
+                    required
                     min="0" />
       <x-form-help-text message="How many years you have taught. If you are in your first year, please put 0." />
       <x-form-input-error name="years_of_experience" />
@@ -62,11 +66,12 @@ description: This file contains the form for the user to enter their profile inf
     <x-form-input-error name="bio" />
     <x-form-rich-text name="bio" />
   </label>
-  <div class="flex gap-x-3">
+  <div class="flex gap-x-3 justify-end">
     <button type="button"
             x-data
             x-on:click="document.querySelector('#account-information-tab').click()">Previous</button>
-    <button type="button"
+    <button class="text-blue-600"
+            type="button"
             x-data
             x-on:click="document.querySelector('#consent-information-tab').click()">Next</button>
   </div>

@@ -5,6 +5,7 @@ date: 2024-09-23
 description: The form for creating or updating an event
  --}}
 
+@include('users.events.partials.auto-save-warning')
 <x-form form-name="{{ $formName }}"
         action="{{ $action }}"
         method="{{ $method }}"

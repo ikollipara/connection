@@ -39,8 +39,8 @@ class Day extends Model
         return ICalEvent::create($this->event->title)
             ->description($this->event->description->toHtml())
             ->address($this->event->location)
-            ->startsAt($this->date->setTimeFromTimeString($this->event->start))
-            ->endsAt($this->date->setTimeFromTimeString($this->event->end))
+            ->startsAt($this->date->setTimeFromTimeString($this->event->start->format('H:i')))
+            ->endsAt($this->date->setTimeFromTimeString($this->event->end?->format('H:i')))
             ->uniqueIdentifier(strval($this->id))
             ->url(route('events.show', $this->event));
     }

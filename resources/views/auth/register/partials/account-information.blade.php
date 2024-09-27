@@ -11,24 +11,28 @@ description: This file contains the form for the user to enter their account inf
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">First Name</span>
     <x-form-input name="first_name"
-                  type="text" />
+                  type="text"
+                  required />
     <x-form-input-error name="first_name" />
   </label>
   <label class="block mb-3"
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">Last Name</span>
     <x-form-input name="last_name"
-                  type="text" />
+                  type="text"
+                  required />
     <x-form-input-error name="last_name" />
   </label>
   <label class="block mb-3"
          for="">
     <span class="mb-2 text-sm font-medium text-gray-900 dark:text-white block">Email</span>
     <x-form-input name="email"
-                  type="email" />
+                  type="email"
+                  required />
     <x-form-input-error name="email" />
   </label>
-  <button type="button"
+  <button class="text-blue-600 float-right"
+          type="button"
           x-data
           x-on:click="document.querySelector('#profile-information-tab').click()">Next</button>
 </div>

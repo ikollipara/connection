@@ -41,10 +41,15 @@ description: This file contains the form for the user to enter their consent inf
       <x-form-input-error name="consent.full_name" />
     </label>
   </div>
-  <div class="flex gap-x-3">
+  <div class="flex gap-x-3 float-right">
     <button type="button"
             x-data
-            x-on:click="document.querySelector('#profile-information-tab').click()">Previous</button>
-    <button type="submit">Submit</button>
+            x-on:click="document.querySelector('#profile-information-tab').click()">
+      Previous
+    </button>
+    <button class="text-blue-600"
+            type="submit">
+      Submit
+    </button>
   </div>
 </div>

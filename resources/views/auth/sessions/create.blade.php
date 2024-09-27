@@ -16,7 +16,7 @@ description: The login form for the user to enter their credentials.
         <x-form-input name="email"
                       type="email"
                       label="Email" />
-        <x-form-input-success message="Check your email for the login link." />
+        <x-form-input-success />
         <x-form-input-error name="email"
                             message="Invalid credentials. Try signing up." />
         <x-form-submit label="Login" />
