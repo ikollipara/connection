@@ -80,6 +80,7 @@ class UserPostController extends Controller
             return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
         } catch (\Throwable $th) {
             logger()->error('Post update failed', ['user' => $user, 'post' => $post, 'error' => $th->getMessage()]);
+
             return session_back()->with('error', 'Post update failed');
         }
     }

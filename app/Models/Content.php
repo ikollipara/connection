@@ -111,6 +111,7 @@ class Content extends Model
         if ($value[0] == '"') {
             $value = json_decode($value);
         }
+
         return Editor::fromJson($value);
     }
 
@@ -215,21 +216,21 @@ class Content extends Model
     {
         return $query
             ->where('published', true)
-            ->when($constraints['type'], fn($query, $types) => $query->where('type', $types))
+            ->when($constraints['type'], fn ($query, $types) => $query->where('type', $types))
             ->when(
                 $constraints['grades'],
-                fn($query, $grades) => $query->whereJsonContains('metadata->grades', $grades),
+                fn ($query, $grades) => $query->whereJsonContains('metadata->grades', $grades),
             )
             ->when(
                 $constraints['standards'],
-                fn($query, $standards) => $query->whereJsonContains('metadata->standards', $standards),
+                fn ($query, $standards) => $query->whereJsonContains('metadata->standards', $standards),
             )
             ->when(
                 $constraints['standard_groups'],
-                fn($query, $standard_groups) => $query->where(
-                    fn($query) => collect($standard_groups)
+                fn ($query, $standard_groups) => $query->where(
+                    fn ($query) => collect($standard_groups)
                         ->map(
-                            fn($group) => $query->orWhereJsonContains(
+                            fn ($group) => $query->orWhereJsonContains(
                                 'metadata->standards',
                                 Standard::getGroup(StandardGroup::from($group)),
                             ),
@@ -239,19 +240,19 @@ class Content extends Model
             )
             ->when(
                 $constraints['practices'],
-                fn($query, $practices) => $query->whereJsonContains('metadata->practices', $practices),
+                fn ($query, $practices) => $query->whereJsonContains('metadata->practices', $practices),
             )
             ->when(
                 $constraints['languages'],
-                fn($query, $languages) => $query->whereJsonContains('metadata->languages', $languages),
+                fn ($query, $languages) => $query->whereJsonContains('metadata->languages', $languages),
             )
             ->when(
                 $constraints['categories'],
-                fn($query, $categories) => $query->whereIn('metadata->category', $categories),
+                fn ($query, $categories) => $query->whereIn('metadata->category', $categories),
             )
             ->when(
                 $constraints['audiences'],
-                fn($query, $audiences) => $query->whereIn('metadata->audience', $audiences),
+                fn ($query, $audiences) => $query->whereIn('metadata->audience', $audiences),
             )
             ->whereHas('likes', null, '>=', $constraints['likes_count'])
             ->whereHas('views', null, '>=', $constraints['views_count']);

@@ -57,7 +57,6 @@ class ContentCollection extends Content
 
         $content = $content instanceof Content ? $content->id : $content;
 
-
         return $query->addSelect([
             'has_entry' => DB::table('entries')->where('content_id', $content)->whereColumn('collection_id', 'content.id')->selectRaw('1')->limit(1),
         ]);

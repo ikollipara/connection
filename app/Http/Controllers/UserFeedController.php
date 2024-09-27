@@ -6,6 +6,7 @@ use App\Models\Content;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Cache;
 
 class UserFeedController extends Controller
 {
@@ -14,7 +15,12 @@ class UserFeedController extends Controller
      */
     public function __invoke(Request $request, User $user)
     {
-        $feed = Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->areSearchable()->latest()->get();
+        $feed = Cache::remember(
+            key: "$user->id--feed",
+            ttl: now()->addMinutes(5),
+            callback: fn() =>
+            Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->areSearchable()->latest()->get()
+        );
 
         return view('users.feed', [
             'feed' => $feed,

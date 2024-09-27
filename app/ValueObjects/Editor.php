@@ -36,6 +36,7 @@ class Editor implements Arrayable, Htmlable
         if ($parse) {
             return Js::from($this->data);
         }
+
         return Js::encode($this->data);
     }
 

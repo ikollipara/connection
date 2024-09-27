@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
             'last_name' => 'required|string',
             'bio' => 'json',
             'grades' => 'array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'school' => 'required|string',
             'subject' => 'required|string',
             'years_of_experience' => 'required_without:is_preservice|integer|min:0',
@@ -37,7 +37,6 @@ class RegisteredUserController extends Controller
         data_set($validated, 'consented', data_get($validated, 'consented.full_name'));
         data_set($validated, 'is_preservice', isset($validated['is_preservice']));
         data_set($validated, 'gender', '');
-
 
         $user = User::create(Arr::only($validated, ['email', 'first_name', 'last_name', 'consented']));
         $user->profile()->create(Arr::except($validated, ['email', 'first_name', 'last_name', 'consented']));

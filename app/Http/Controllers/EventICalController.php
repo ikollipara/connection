@@ -13,7 +13,6 @@ class EventICalController extends Controller
     {
         $calendar = Event::toICalCalendar($user->exists ? $user : null);
 
-
         return response(
             content: $calendar->refreshInterval(minutes: 5)->get(),
             status: Response::HTTP_OK,

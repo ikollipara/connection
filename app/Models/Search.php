@@ -36,6 +36,7 @@ class Search extends Model
 
         $this->search_params = $params;
         $this->save();
+
         return $params['type']::query()
             ->search($params['q'])
             ->filterBy(Arr::except($params, ['type', 'q']))

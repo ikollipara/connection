@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class UserEventController extends Controller
 {
@@ -43,34 +42,34 @@ class UserEventController extends Controller
     public function store(Request $request, User $user)
     {
         try {
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'location' => 'nullable|string',
-            'audience' => 'enum:'.Audience::class,
-            'category' => 'enum:'.Category::class,
-            'grades' => 'sometimes|array',
-            'grades.*' => 'enum:'.Grade::class,
-            'standards' => 'sometimes|array',
-            'standards.*' => 'enum:'.Standard::class,
-            'practices' => 'sometimes|array',
-            'practices.*' => 'enum:'.Practice::class,
-            'languages' => 'sometimes|array',
-            'languages.*' => 'enum:'.Language::class,
-            'start' => 'required|date_format:H:i',
-            'end' => 'required|date_format:H:i',
-            'days' => 'required|array',
-            'days.*.date' => 'required|date',
-        ]);
+            $validated = $request->validate([
+                'title' => 'required|string',
+                'description' => 'required|string',
+                'location' => 'nullable|string',
+                'audience' => 'enum:'.Audience::class,
+                'category' => 'enum:'.Category::class,
+                'grades' => 'sometimes|array',
+                'grades.*' => 'enum:'.Grade::class,
+                'standards' => 'sometimes|array',
+                'standards.*' => 'enum:'.Standard::class,
+                'practices' => 'sometimes|array',
+                'practices.*' => 'enum:'.Practice::class,
+                'languages' => 'sometimes|array',
+                'languages.*' => 'enum:'.Language::class,
+                'start' => 'required|date_format:H:i',
+                'end' => 'required|date_format:H:i',
+                'days' => 'required|array',
+                'days.*.date' => 'required|date',
+            ]);
 
-        data_fill($validated, 'days', [['date' => Carbon::today()]]);
-        $validated['description'] = Editor::fromJson($validated['description']);
-        $validated['metadata'] = new Metadata($validated);
+            data_fill($validated, 'days', [['date' => Carbon::today()]]);
+            $validated['description'] = Editor::fromJson($validated['description']);
+            $validated['metadata'] = new Metadata($validated);
 
-        $event = $user->events()->create(Arr::except($validated, 'days'));
-        $event->days()->createMany($validated['days']);
+            $event = $user->events()->create(Arr::except($validated, 'days'));
+            $event->days()->createMany($validated['days']);
 
-        return to_route('users.events.edit', ['me', $event]);
+            return to_route('users.events.edit', ['me', $event]);
 
         } catch (\Throwable $th) {
             dd($th);
@@ -87,7 +86,7 @@ class UserEventController extends Controller
 
     public function update(Request $request, User $user, Event $event)
     {
-         $validated = $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'nullable|string',
@@ -121,7 +120,9 @@ class UserEventController extends Controller
 
     public function destroy(User $user, Event $event)
     {
-        if($event->attendees_count > 0) return session_back()->with('error', __('Event has attendees'));
+        if ($event->attendees_count > 0) {
+            return session_back()->with('error', __('Event has attendees'));
+        }
 
         $successful = $event->delete();
 

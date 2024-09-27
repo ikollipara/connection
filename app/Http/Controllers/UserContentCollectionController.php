@@ -6,10 +6,8 @@ use App\Enums\Status;
 use App\Models\ContentCollection;
 use App\Models\User;
 use App\ValueObjects\Editor;
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Js;
 
 class UserContentCollectionController extends Controller

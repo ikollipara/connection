@@ -138,7 +138,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarAttribute(): Avatar
     {
-        $avatar = new Avatar(/* $this->attributes['avatar'] */ "");
+        $avatar = new Avatar(/* $this->attributes['avatar'] */ '');
         $full_name = trim(str_replace(' ', '+', $this->full_name));
         $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
 

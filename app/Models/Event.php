@@ -32,7 +32,7 @@ use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
 #[ScopedBy(OrderByLikes::class)]
 class Event extends Model
 {
-    use HasFactory, HasMetadata, Likeable, Sluggable, Viewable, Searchable;
+    use HasFactory, HasMetadata, Likeable, Searchable, Sluggable, Viewable;
 
     protected $fillable = [
         'title',
@@ -57,6 +57,7 @@ class Event extends Model
     ];
 
     protected $searchableColumns = ['title', 'description'];
+
     protected $filterableColumns = ['metadata->category', 'metadata->audience', 'metadata->languages', 'metadata->grades', 'metadata->standards', 'metadata->practices'];
 
     protected function scopeShouldBeSearchable($query)
@@ -156,7 +157,7 @@ class Event extends Model
             default => Calendar::create('conneCTION Calendar'),
         };
         $events = Event::query()->when(filled($user), fn ($q) => $q->isAttending($user))->with('days')->get();
-        foreach($events as $event) {
+        foreach ($events as $event) {
             $event->days->each->setRelation('event', $event);
             $event->days->each(fn (Day $day) => $calendar->event($day->toIcalEvent()));
         }
