@@ -21,9 +21,6 @@ description: The metadata card for a post
       @foreach ($metadata->standards as $standard)
         <span
               class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ $standard->value }}</span>
-        @unless ($loop->last)
-          ,
-        @endunless
       @endforeach
     </dd>
   </div>
@@ -32,10 +29,7 @@ description: The metadata card for a post
     <dd class="text-sm font-semibold">
       @foreach ($metadata->practices as $practice)
         <span
-              class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ $practice->label }}</span>
-        @unless ($loop->last)
-          ,
-        @endunless
+              class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ $practice->value }}</span>
       @endforeach
     </dd>
   </div>
@@ -45,9 +39,6 @@ description: The metadata card for a post
       @foreach ($metadata->languages as $language)
         <span
               class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ $language->label }}</span>
-        @unless ($loop->last)
-          ,
-        @endunless
       @endforeach
     </dd>
   </div>

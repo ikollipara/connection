@@ -7,7 +7,7 @@ description: The form for creating or editing a post
 
 <x-form form-name="{{ $formName }}"
         action="{{ $action }}"
-        x-data="{
+        {{-- x-data="{
             title: {{ Js::from($post->title) }},
             body: {{ Js::from($post->body) }},
             persisted: {{ Js::from($post->exists) }},
@@ -18,7 +18,7 @@ description: The form for creating or editing a post
                     method: this.$refs.method.value,
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': this.$refs.csrf.value ? 'Accept' : 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
                     body: JSON.stringify(data)
                 }).then(response => {
@@ -41,7 +41,7 @@ description: The form for creating or editing a post
                         });
                     }
                 })
-        
+
             }
         }"
         x-init="$watch('queue', queue => {
@@ -56,16 +56,18 @@ description: The form for creating or editing a post
             queue.length = 0;
             save({ title, body });
           }
-          "
+          " --}}
+        x-on:manual-save.window="$el.submit()"
         method="{{ $method }}"
         :model="$post">
   <x-form-input class="bg-none border-none bg-transparent !text-4xl leading-none tracking-tight text-gray-900 focus:ring-0 focus:border-b focus:border-blue-700 px-0 mb-5 py-0"
                 name="title"
-                x-model="title"
+                value="{{ $post->title }}"
+                {{-- x-model="title" --}}
                 x-on:input="$dispatch('editor:unsaved')"
                 placeholder="Post Title..." />
   <x-form-rich-text name="body"
-                    x-model="body"
+                    {{-- x-model="body" --}}
                     :value="$post->body" />
 </x-form>
 @include('users.posts.partials.publishing-drawer', [

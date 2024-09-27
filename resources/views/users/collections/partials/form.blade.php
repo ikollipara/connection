@@ -5,9 +5,8 @@ date: 2024-09-11
 description: The form for creating or editing a post
  --}}
 
-<x-form form-name="{{ $formName }}"
-        action="{{ $action }}"
-        x-data="{
+<x-form action="{{ $action }}"
+        {{-- x-data="{
             title: {{ Js::from($collection->title) }},
             body: {{ Js::from($collection->body) }},
             persisted: {{ Js::from($collection->exists) }},
@@ -41,7 +40,7 @@ description: The form for creating or editing a post
                         });
                     }
                 })
-        
+
             }
         }"
         x-init="$watch('queue', queue => {
@@ -56,16 +55,18 @@ description: The form for creating or editing a post
             queue.length = 0;
             save({ title, body });
           }
-          "
+          " --}}
+        x-on:manual-save.window="$el.submit()"
         method="{{ $method }}"
         :model="$collection">
   <x-form-input class="bg-none border-none bg-transparent !text-4xl leading-none tracking-tight text-gray-900 focus:ring-0 focus:border-b focus:border-blue-700 px-0 mb-5 py-0"
                 name="title"
-                x-model="title"
+                value="{{ $collection->title }}"
+                {{-- x-model="title" --}}
                 x-on:input="$dispatch('editor:unsaved')"
                 placeholder="Post Title..." />
   <x-form-rich-text name="body"
-                    x-model="body"
+                    {{-- x-model="body" --}}
                     :value="$collection->body" />
 </x-form>
 @include('users.collections.partials.publishing-drawer', [

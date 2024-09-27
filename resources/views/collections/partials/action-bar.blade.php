@@ -11,7 +11,7 @@ description: The action bar for a post
             x-data
             x-on:submit.prevent="
             const previousLikes = {{ $collection->likes() }};
-            $refs.like_button.textContent = data.likes === 1 ? (data.likes + ' Like') : (data.likes + ' Likes');
+            $refs.like_button.textContent = (previousLikes + 1) === 1 ? ((previousLikes + 1) + ' Like') : ((previousLikes + 1) + ' Likes');
             fetch($el.action, {
                 method: $el.method,
                 headers: {
@@ -78,7 +78,7 @@ description: The action bar for a post
        tabindex="-1">
     <div class="relative p-4 w-full max-w-2xl max-h-full"
          x-data="{ collections: [], collectionId: {{ Js::from($collection->id) }} }"
-         x-init="fetch('{{ route('api.users.collections.index', auth()->user()) }}')
+         x-init="fetch('{{ route('api.users.collections.index', auth()->user()) }}?content_id=' + collectionId)
              .then(response => response.json())
              .then(data => collections = data.collections.map(el => ({ ...el, selected: Boolean(el.hasEntry) })).filter(el => el.id !== '{{ $collection->id }}'))">
       <!-- Modal content -->

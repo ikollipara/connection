@@ -11,6 +11,7 @@ description: The action bar for an event
             x-data
             x-on:submit.prevent="
             const previousLikes = {{ $event->likes() }};
+            $refs.like_button.textContent = (previousLikes + 1) === 1 ? ((previousLikes + 1) + ' Like') : ((previousLikes + 1) + ' Likes');
             fetch($el.action, {
                 method: $el.method,
                 headers: {

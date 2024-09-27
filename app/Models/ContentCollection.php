@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 
 /**
@@ -47,7 +49,7 @@ class ContentCollection extends Content
             ->exists();
     }
 
-    protected function scopeWithHasEntry($query, $content = null)
+    protected function scopeWithHasEntry(Builder $query, $content = null)
     {
         if (is_null($content)) {
             return $query;
@@ -55,10 +57,9 @@ class ContentCollection extends Content
 
         $content = $content instanceof Content ? $content->id : $content;
 
+
         return $query->addSelect([
-            'has_entry' => $query->whereHas('entries', function ($query) use ($content) {
-                $query->where('content_id', $content);
-            })->select(['id']),
+            'has_entry' => DB::table('entries')->where('content_id', $content)->whereColumn('collection_id', 'content.id')->selectRaw('1')->limit(1),
         ]);
     }
 }

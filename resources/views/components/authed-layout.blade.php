@@ -40,9 +40,7 @@ description: The layout for authenticated users.
           </a>
         </div>
         <div class="flex items-center">
-
           <x-form class="max-w-md mx-auto hidden md:block mb-0"
-                  form-name="search"
                   x-data
                   action="{{ route('search') }}"
                   method="get">

@@ -8,14 +8,13 @@ description: |
     token and method spoofing for non-GET requests.
  --}}
 
-@props(['formName', 'action', 'method' => 'post', 'model' => null])
+@props(['action', 'method' => 'post', 'model' => null])
 
 @php
   $isGet = str($method)->lower()->__toString() === 'get';
 @endphp
 
-<form id="{{ $formName }}"
-      action="{{ $action }}"
+<form action="{{ $action }}"
       {{ $attributes }}
       method="{{ $isGet ? 'get' : 'post' }}">
   @unless ($isGet)

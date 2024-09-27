@@ -6,9 +6,11 @@ description: The HTML for the create post page
  --}}
 
 <x-writing-layout title="New Post"
-                  drawer-name="create-post-drawer">
+                  drawer-name="create-post-drawer"
+                  show-save>
+  @include('users.posts.partials.auto-save-warning')
   @include('users.posts.partials.form', [
-      'action' => route('api.users.posts.store', $user),
+      'action' => route('users.posts.store', 'me'),
       'formName' => 'create-post',
       'post' => $post,
       'method' => 'post',

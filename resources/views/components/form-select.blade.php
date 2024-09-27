@@ -45,11 +45,9 @@ description: The HTML for the select form component
 
 <select id="{{ $id }}"
         name="{{ $name . ($multiple ? '[]' : '') }}"
-        form="{{ $formName }}"
+        @if ($formName) form="{{ $formName }}" @endif
         x-data="slimSelect('{{ $placeholder }}...')"
         x-on:invalid="$dispatch('invalid:{{ $name . ($multiple ? '[]' : '') }}'); $nextTick(() => $el.focus());"
-        @isset($formName)
-        @endisset
         @if ($multiple) multiple @endif {{ $attributes }}>
   @foreach ($options as $option)
     <option value="{{ $option->value }}"

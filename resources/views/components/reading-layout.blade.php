@@ -51,7 +51,6 @@ description: The layout for reading pages
             @endguest
           </div>
           <x-form class="max-w-md mx-auto hidden md:block mb-0"
-                  form-name="search"
                   x-data
                   action="{{ route('search') }}"
                   method="get">

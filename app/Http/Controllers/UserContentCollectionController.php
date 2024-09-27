@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Models\ContentCollection;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Js;
 
 class UserContentCollectionController extends Controller
 {
@@ -37,6 +39,29 @@ class UserContentCollectionController extends Controller
         return view('users.collections.create', ['user' => $user, 'collection' => new ContentCollection]);
     }
 
+    public function store(Request $request, User $user)
+    {
+
+        $body = $request->input('body', '');
+        $title = $request->input('title', '');
+
+        try {
+            $collection = $user->collections()->create([
+                'title' => $title,
+                'body' => Editor::fromJson($body),
+            ]);
+
+            info('Collection created', ['collection' => $collection, 'user' => $user]);
+
+            return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection created successfully');
+        } catch (\Throwable $th) {
+            $message = $th->getMessage();
+            logger()->error('Collection creation failed', ['user' => $user, 'error' => $message]);
+
+            return session_back()->with('error', 'Collection creation failed');
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -45,17 +70,34 @@ class UserContentCollectionController extends Controller
         return view('users.collections.edit', ['user' => $user, 'collection' => $collection->load('entries')]);
     }
 
+    public function update(Request $request, User $user, ContentCollection $collection)
+    {
+        $body = $request->input('body', Js::encode($collection->body));
+        $title = $request->input('title', $collection->title);
+
+        try {
+            $collection->update([
+                'title' => $title,
+                'body' => Editor::fromJson($body),
+            ]);
+
+            info('Collection updated', ['collection' => $collection, 'user' => $user]);
+
+            return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection updated successfully');
+        } catch (\Throwable $th) {
+            $message = $th->getMessage();
+            logger()->error('Collection update failed', ['user' => $user, 'error' => $message]);
+
+            return session_back()->with('error', 'Collection update failed');
+        }
+    }
+
     public static function middleware(): array
     {
         return [
             new Middleware('auth'),
-            function (Request $request, Closure $next) {
-                if (! $request->route()->parameter('user')->is(Auth::user())) {
-                    return to_route('users.collections.index', ['user' => 'me']);
-                }
-
-                return $next($request);
-            },
+            new Middleware('owner', only: ['index', 'create', 'store']),
+            new Middleware('owner:collection', only: ['edit', 'update']),
         ];
     }
 }

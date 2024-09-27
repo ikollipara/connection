@@ -11,13 +11,13 @@ description: The search form for the entire site
     @include('search.partials.filters', ['formName' => 'search'])
   </x-slot>
   <x-title label="Search" />
-  <x-form form-name="search"
+  <x-form id="search"
           method="GET"
+          x-data
           action="{{ route('search') }}">
     <div class="flex">
       <x-form-input class="rounded-e-none"
                     name="q"
-                    form-name="search"
                     type="search"
                     value="{{ request('q', '') }}"
                     placeholder="Search" />
