@@ -7,6 +7,7 @@ description: The HTML for the user's events create page
 
 <x-writing-layout title="New Event"
                   drawer-name="create-event-drawer"
+                  show-drawer
                   drawer-title="Edit Details">
   @include('users.events.partials.form', [
       'action' => route('users.events.store', 'me'),

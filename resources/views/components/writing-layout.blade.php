@@ -5,7 +5,7 @@ date: 2024-09-09
 description: The layout for writing posts & collections
  --}}
 
-@props(['title' => '', 'drawerName', 'showSave' => false])
+@props(['title' => '', 'drawerName', 'showSave' => false, 'showDrawer' => false])
 
 @php
   $resourceType = str(request()->route()->getName())
@@ -14,6 +14,7 @@ description: The layout for writing posts & collections
   $resourceTypeSingular = match ($resourceType->__toString()) {
       'posts' => 'post',
       'collections' => 'collection',
+      'events' => 'event',
   };
 @endphp
 
@@ -61,7 +62,7 @@ description: The layout for writing posts & collections
                x-text="unsaved ? 'Unsaved' : saving ? 'Saving...' : 'Saved'">
             </p>
           </li>
-          @if (request()->route()->parameter($resourceTypeSingular))
+          @if ($showDrawer || request()->route()->parameter($resourceTypeSingular))
             <li>
               <button class='block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
                       id="drawer-btn"

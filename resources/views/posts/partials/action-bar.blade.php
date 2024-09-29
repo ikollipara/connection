@@ -7,8 +7,7 @@ description: The action bar for a post
 
 <ul class="flex flex-wrap items-center justify-start text-gray-900 dark:text-white">
   <li>
-    <x-form form-name="like"
-            x-data
+    <x-form x-data
             x-on:submit.prevent="
             const previousLikes = {{ $post->likes() }};
             $refs.like_button.textContent = (previousLikes + 1) === 1 ? ((previousLikes + 1) + ' Like') : ((previousLikes + 1) + ' Likes');

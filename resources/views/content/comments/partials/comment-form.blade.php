@@ -10,7 +10,6 @@ description: The comment form for a content
 @endphp
 
 <x-form class="mb-6"
-        form-name="create-comment"
         action="{{ $action }}"
         method="post">
   <input name="user_id"

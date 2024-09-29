@@ -6,7 +6,6 @@ description: The search form for the user's posts
  --}}
 
 <x-form class="mb-4"
-        form-name="posts--search"
         role="search"
         action="{{ url()->current() }}"
         x-data

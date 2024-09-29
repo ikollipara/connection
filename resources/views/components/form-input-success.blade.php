@@ -9,6 +9,6 @@ description: The HTML for the input form component with success messages
 
 @session('success')
   <p class="mt-2 text-sm text-green-600 dark:text-green-500">
-    <span class="font-medium">All Good!</span> {{ $value ?? ($message ?? $slot) }}
+    <span class="font-medium">All Good!</span> {{ session('success', $message ?? $slot) }}
   </p>
 @endsession

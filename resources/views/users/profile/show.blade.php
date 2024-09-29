@@ -28,7 +28,6 @@ description: The profile page for a user
       @auth
         @if (auth()->user()->isFollowing($user))
           <x-form class="w-full flex mx-auto mb-6"
-                  form-name="follow"
                   method="delete"
                   action="{{ route('users.followers.destroy', [$user, auth()->user()]) }}">
             <button class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex text-center mx-auto dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-800"
@@ -39,7 +38,6 @@ description: The profile page for a user
           </x-form>
         @else
           <x-form class="w-full flex mx-auto mb-6"
-                  form-name="follow"
                   method="post"
                   action="{{ route('users.followers.store', $user) }}">
             <input name="follower_id"

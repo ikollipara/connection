@@ -11,8 +11,7 @@ description: This file contains the HTML for editing a user's profile.
     <div class="w-full my-4">
       <x-form-input-success message="Profile Updated Successfully" />
     </div>
-    <x-form form-name="edit-profile"
-            action="{{ route('users.profile.update', 'me') }}"
+    <x-form action="{{ route('users.profile.update', 'me') }}"
             method="PUT"
             :model="$profile">
       <div class="mb-3">

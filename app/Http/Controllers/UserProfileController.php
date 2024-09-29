@@ -20,8 +20,8 @@ class UserProfileController extends Controller
     {
         $profile = $user->profile;
         $user = $user->loadCount([
-            'posts' => fn ($query) => $query->areSearchable(),
-            'collections' => fn ($query) => $query->areSearchable(),
+            'posts' => fn($query) => $query->areSearchable(),
+            'collections' => fn($query) => $query->areSearchable(),
             'followers',
             'following',
         ]);
@@ -61,11 +61,11 @@ class UserProfileController extends Controller
         $validated = $request->validate([
             'school' => 'string',
             'subject' => 'string',
-            'years_of_experience' => 'integer|min:0',
+            'years_of_experience' => 'sometimes|integer|min:0',
             'grades' => 'array',
-            'grades.*' => 'enum:'.Grade::class,
+            'grades.*' => 'enum:' . Grade::class,
             'bio' => 'json',
-            'consented.full_name' => 'string',
+            'consented.full_name' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($user, $validated) {

@@ -75,7 +75,6 @@ description: The partial view for a comment
       Reply
     </button>
     <x-form class="ml-4"
-            form-name="like--{{ $comment->id }}"
             x-data
             x-on:submit.prevent="
             fetch($el.action, {

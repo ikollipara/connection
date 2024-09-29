@@ -7,8 +7,7 @@ description: The action bar for an event
 
 <ul class="flex flex-wrap items-center justify-start text-gray-900 dark:text-white">
   <li>
-    <x-form form-name="like"
-            x-data
+    <x-form x-data
             x-on:submit.prevent="
             const previousLikes = {{ $event->likes() }};
             $refs.like_button.textContent = (previousLikes + 1) === 1 ? ((previousLikes + 1) + ' Like') : ((previousLikes + 1) + ' Likes');
@@ -55,15 +54,13 @@ description: The action bar for an event
   </li>
   @auth
     @if ($event->attendedBy(auth()->user()))
-      <x-form form-name="unattend-event"
-              action="{{ route('events.attendees.destroy', [$event, auth()->id()]) }}"
+      <x-form action="{{ route('events.attendees.destroy', [$event, auth()->id()]) }}"
               method="delete">
         <button class="me-4 hover:underline md:me-6"
                 type="submit">Unattend</button>
       </x-form>
     @else
-      <x-form form-name="attend-event"
-              action="{{ route('events.attendees.store', $event) }}"
+      <x-form action="{{ route('events.attendees.store', $event) }}"
               method="post">
         <input name="user_id"
                type="hidden"

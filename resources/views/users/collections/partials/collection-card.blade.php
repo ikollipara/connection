@@ -26,7 +26,6 @@ description: The card for a user's post
       View
     </a>
     <x-form class="inline"
-            form-name="delete-collection"
             action="{{ route('users.collections.status', ['me', $collection]) }}"
             method="patch">
       <input name="status"

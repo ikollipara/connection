@@ -6,8 +6,7 @@ description: The form for creating or updating an event
  --}}
 
 @include('users.events.partials.auto-save-warning')
-<x-form form-name="{{ $formName }}"
-        action="{{ $action }}"
+<x-form action="{{ $action }}"
         method="{{ $method }}"
         x-data
         x-on:save.window.once="

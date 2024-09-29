@@ -10,7 +10,6 @@ description: The login form for the user to enter their credentials.
     <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
       <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Login</h2>
       <x-form class="flex flex-col gap-y-4"
-              form-name="login"
               action="{{ route('login') }}"
               method="post">
         <x-form-input name="email"

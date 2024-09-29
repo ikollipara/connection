@@ -25,15 +25,15 @@ class RegisteredUserController extends Controller
             'last_name' => 'required|string',
             'bio' => 'json',
             'grades' => 'array',
-            'grades.*' => 'enum:'.Grade::class,
+            'grades.*' => 'enum:' . Grade::class,
             'school' => 'required|string',
             'subject' => 'required|string',
             'years_of_experience' => 'required_without:is_preservice|integer|min:0',
             'is_preservice' => 'required_without:years_of_experience|sometimes|accepted',
-            'consented.full_name' => 'string',
+            'consented.full_name' => 'nullable|string',
         ]);
 
-        data_set($validated, 'bio', Editor::fromJson($validated['bio']));
+        data_set($validated, 'bio', Editor::fromJson(json_decode($validated['bio'])));
         data_set($validated, 'consented', data_get($validated, 'consented.full_name'));
         data_set($validated, 'is_preservice', isset($validated['is_preservice']));
         data_set($validated, 'gender', '');

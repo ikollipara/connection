@@ -22,8 +22,7 @@ description: The card for a user's collection entry
       View
     </a>
     @if ($editable)
-      <x-form form-name="remove-entry-{{ $post->pivot->id }}"
-              action="{{ route('users.collections.entries.destroy', ['me', $collection, $post->pivot->id]) }}"
+      <x-form action="{{ route('users.collections.entries.destroy', ['me', $collection, $post->pivot->id]) }}"
               method="delete">
         <button class="inline-flex font-medium items-center text-blue-600 hover:underline"
                 type="submit">

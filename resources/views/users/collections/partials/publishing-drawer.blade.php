@@ -36,7 +36,6 @@ description: The drawer for publishing a collection
     <span class="sr-only">Close menu</span>
   </button>
   <x-form class="py-4 overflow-y-auto"
-          form-name="collection-meta"
           action="{{ $action }}"
           method="{{ $method }}"
           x-data

@@ -6,7 +6,6 @@ description: The search form for the user's events
  --}}
 
 <x-form class="mb-4"
-        form-name="events--search"
         role="search"
         method="get"
         x-data

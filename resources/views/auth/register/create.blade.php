@@ -11,7 +11,6 @@ description: This file contains the form for registering a new user.
       <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Sign Up</h2>
 
       <x-form class="flex flex-col gap-y-4"
-              form-name="sign-up"
               action="{{ route('register') }}"
               method="post">
         <div class="md:flex">

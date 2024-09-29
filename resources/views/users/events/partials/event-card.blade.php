@@ -34,7 +34,6 @@ description: The card for an event
     </a>
     @unless ($event->attendees_count > 0)
       <x-form class="inline"
-              form-name="delete-post"
               action="{{ route('users.events.destroy', ['me', $event]) }}"
               method="delete">
         <button class="inline-flex font-medium items-center text-blue-600 hover:underline"

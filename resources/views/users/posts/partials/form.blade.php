@@ -5,8 +5,7 @@ date: 2024-09-11
 description: The form for creating or editing a post
  --}}
 
-<x-form form-name="{{ $formName }}"
-        action="{{ $action }}"
+<x-form action="{{ $action }}"
         {{-- x-data="{
             title: {{ Js::from($post->title) }},
             body: {{ Js::from($post->body) }},

@@ -7,12 +7,6 @@ description: The details tab for the user profile
 
 @use('App\Enums\Grade')
 
-@php
-  $profile_grades = collect($profile->grades)
-      ->map(fn($grade) => [$grade->value => $grade->label])
-      ->collapseWithKeys();
-@endphp
-
 <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
      id="details"
      role="tabpanel"
@@ -50,6 +44,7 @@ description: The details tab for the user profile
       </span>
       <x-form-input name="years_of_experience"
                     type="number"
+                    value="{{ $profile->years_of_experience }}"
                     min="0" />
       <x-form-help-text message="How many years you have taught. If you are in your first year, please put 0." />
       <x-form-input-error name="years_of_experience" />
@@ -62,7 +57,7 @@ description: The details tab for the user profile
     <x-form-select name="grades"
                    :options="Grade::cases()"
                    multiple
-                   :selected="$profile_grades" />
+                   :selected="$profile->grades" />
     <x-form-help-text message="The grades that you teach. Please list them all." />
     <x-form-input-error name="grades" />
   </label>
