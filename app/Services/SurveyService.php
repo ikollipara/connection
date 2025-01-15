@@ -63,8 +63,8 @@ class SurveyService
     private function handleYearly(Collection $urls)
     {
         if (
-            $this->user->yearly_survey_sent_at and
-            $this->user->yearly_survey_sent_at->diffInYears(now()) === 0
+            !is_null($this->user->yearly_survey_sent_at) and
+            $this->user->yearly_survey_sent_at->diffInYears(now()) < 1
         ) {
             return;
         }

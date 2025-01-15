@@ -11,6 +11,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
 /**
@@ -32,19 +33,14 @@ class Follower extends Model
 
     public $timestamps = true;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = ['followed_id', 'follower_id'];
 
     /**
      * Get the user that the followed belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return BelongsTo<User, covariant self>
      */
-    public function followed()
+    public function followed(): BelongsTo
     {
         return $this->belongsTo(User::class, 'followed_id');
     }
@@ -52,9 +48,9 @@ class Follower extends Model
     /**
      * Get the user that the follower belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return BelongsTo<User, covariant self>
      */
-    public function follower()
+    public function follower(): BelongsTo
     {
         return $this->belongsTo(User::class, 'follower_id');
     }

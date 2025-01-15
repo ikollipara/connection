@@ -15,7 +15,7 @@ class UserPostStatusController extends Controller
     public function __invoke(Request $request, User $user, Post $post)
     {
         $status = Status::from($request->validate([
-            'status' => 'required|enum:'.Status::class,
+            'status' => 'required|enum:' . Status::class,
         ])['status']);
 
         if ($status->equals(Status::draft())) {
@@ -25,6 +25,7 @@ class UserPostStatusController extends Controller
         $successful = match ($status->value) {
             Status::archived()->value => $post->delete(),
             Status::published()->value => $post->restore(),
+            default => true,
         };
 
         return session_back()->with($successful ? 'success' : 'error', $successful ? 'Post status updated.' : 'Post status update failed.');

@@ -6,6 +6,7 @@ use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 
 /**
  * @property int $id
@@ -26,7 +27,7 @@ class Search extends Model
     protected static function booted()
     {
         static::creating(function (Search $search) {
-            $search->user_id = Auth::user()?->id ?? request()->ip();
+            $search->user_id = Auth::user()->id ?? request()->ip();
         });
     }
 
@@ -71,6 +72,7 @@ class Search extends Model
             'collection' => $params['type'] = ContentCollection::class,
             'event' => $params['type'] = Event::class,
             'user' => $params['type'] = UserProfile::class,
+            default => null,
         };
     }
 }

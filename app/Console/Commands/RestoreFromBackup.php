@@ -44,22 +44,23 @@ class RestoreFromBackup extends Command
         }
         if ($file = $this->argument('file')) {
             $stream = fopen($file, 'r');
-            if ($password = env('DB_PASSWORD')) {
+            $config = config('database.connections.mysql');
+            if ($password = $config['password']) {
                 $process = new Process([
                     'mysql',
-                    '-h'.env('DB_HOST'),
-                    '-u'.env('DB_USERNAME'),
-                    '-p'.$password,
-                    '-P'.env('DB_PORT'),
-                    env('DB_DATABASE'),
+                    '-h' . $config['host'],
+                    '-u' . $config['username'],
+                    '-p' . $password,
+                    '-P' . $config['port'],
+                    $config['database'],
                 ]);
             } else {
                 $process = new Process([
                     'mysql',
-                    '-h'.env('DB_HOST'),
-                    '-u'.env('DB_USERNAME'),
-                    '-P'.env('DB_PORT'),
-                    env('DB_DATABASE'),
+                    '-h' . $config['host'],
+                    '-u' . $config['username'],
+                    '-P' . $config['port'],
+                    $config['database'],
                 ]);
             }
             $process->setInput($stream);
@@ -71,15 +72,15 @@ class RestoreFromBackup extends Command
                         $this->info($buffer);
                     }
                 });
-                $this->info('Database restored from '.$file);
+                $this->info('Database restored from ' . $file);
 
                 return 0;
             } catch (\Throwable $th) {
                 $this->error(
-                    'Failed to restore database from '.
-                        $file.
-                        '. Error:'.
-                        PHP_EOL.
+                    'Failed to restore database from ' .
+                        $file .
+                        '. Error:' .
+                        PHP_EOL .
                         $th->getMessage(),
                 );
 

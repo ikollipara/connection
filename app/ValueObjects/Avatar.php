@@ -39,10 +39,10 @@ class Avatar
     public static function fromUploadedFile($file, $disk = 'public'): self
     {
         if ($file === null) {
-            return new static('');
+            return new self('');
         }
 
-        return new static($file->store('avatars', $disk));
+        return new self($file->store('avatars', $disk));
     }
 
     public static function is($value): bool

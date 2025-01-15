@@ -15,7 +15,7 @@ class UserContentCollectionStatusController extends Controller
     public function __invoke(Request $request, User $user, ContentCollection $collection)
     {
         $status = Status::from($request->validate([
-            'status' => 'required|enum:'.Status::class,
+            'status' => 'required|enum:' . Status::class,
         ])['status']);
 
         if ($status->equals(Status::draft())) {
@@ -25,6 +25,7 @@ class UserContentCollectionStatusController extends Controller
         $successful = match ($status->value) {
             Status::archived()->value => $collection->delete(),
             Status::published()->value => $collection->restore(),
+            default => true,
         };
 
         return session_back()->with($successful ? 'success' : 'error', $successful ? 'Collection status updated.' : 'Collection status update failed.');

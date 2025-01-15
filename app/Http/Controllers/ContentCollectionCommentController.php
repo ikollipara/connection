@@ -34,7 +34,8 @@ class ContentCollectionCommentController extends Controller
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        $successful = $collection->comments()->create($validated);
+        $comment = $collection->comments()->make($validated);
+        $successful = $comment->save();
 
         return session_back()->with('success', $successful ? 'Comment created successfully' : 'Failed to create comment');
     }

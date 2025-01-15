@@ -24,8 +24,8 @@ trait Searchable
         foreach ($params as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $k => $v) {
-                    if (in_array($key.'->'.$k, $this->getFilterableColumns())) {
-                        $query->whereJsonContains($key.'->'.$k, $v);
+                    if (in_array($key . '->' . $k, $this->getFilterableColumns())) {
+                        $query->whereJsonContains($key . '->' . $k, $v);
                     }
                 }
             } elseif (in_array($key, $this->getFilterableColumns())) {
@@ -33,7 +33,11 @@ trait Searchable
             }
         }
 
+        // These lines assume the builder has implemented them.
+        // TODO: Figure out how to type this.
+        /** @phpstan-ignore-next-line */
         $query->HasViewsCount($params['views']);
+        /** @phpstan-ignore-next-line */
         $query->HasLikesCount($params['likes']);
 
         return $query;

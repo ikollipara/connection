@@ -16,7 +16,7 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
 
-        $successful = mail(env('MAINTAINER_EMAIL'), $validated['subject'], $validated['message'], 'From: '.$validated['email']);
+        $successful = mail(config('mail.maintainer'), $validated['subject'], $validated['message'], 'From: ' . $validated['email']);
 
         if ($successful) {
             return to_route('contact')->with('success');

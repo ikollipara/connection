@@ -24,8 +24,8 @@ class Editor implements Arrayable, Htmlable
     public function toHtml()
     {
         $content = collect($this->data['blocks'])
-            ->map(fn ($block) => $this->extractBlock($block))
-            ->map(fn ($block) => $block->toHtml())
+            ->map(fn($block) => $this->extractBlock($block))
+            ->map(fn($block) => $block->toHtml())
             ->join('');
 
         return new HtmlString("<article class=\"content is-medium\">{$content}</article>");
@@ -42,7 +42,7 @@ class Editor implements Arrayable, Htmlable
 
     public static function fromJson(string $json)
     {
-        return new static(json_decode($json, true));
+        return new self(json_decode($json, true));
     }
 
     private function extractBlock(array $block)
@@ -123,7 +123,7 @@ class Editor implements Arrayable, Htmlable
         $withHeadings = data_get($block, 'data.withHeadings', false);
         if ($withHeadings) {
             $headings = collect($block['data']['content'][0])
-                ->map(fn ($heading) => "<th>{$heading}</th>")
+                ->map(fn($heading) => "<th>{$heading}</th>")
                 ->join('');
             $block['data']['content'] = collect($block['data']['content'])
                 ->slice(1)
@@ -134,9 +134,9 @@ class Editor implements Arrayable, Htmlable
         }
 
         $content = collect($block['data']['content'])
-            ->map(fn ($row) => '<tr>'.collect($row)
-                ->map(fn ($cell) => "<td>{$cell}</td>")
-                ->join('').'</tr>')
+            ->map(fn($row) => '<tr>' . collect($row)
+                ->map(fn($cell) => "<td>{$cell}</td>")
+                ->join('') . '</tr>')
             ->join('');
 
         return new HtmlString("<table>{$header}<tbody>{$content}</tbody></table>");
@@ -163,7 +163,7 @@ class Editor implements Arrayable, Htmlable
     {
         $style = $block['data']['style'] === 'ordered' ? 'ol' : 'ul';
         $content = collect($block['data']['items'])
-            ->map(fn ($item) => $this->extractItems($item, $style))
+            ->map(fn($item) => $this->extractItems($item, $style))
             ->join('');
 
         return new HtmlString("<{$style}>{$content}</{$style}>");
@@ -174,7 +174,7 @@ class Editor implements Arrayable, Htmlable
         $hasItems = filled($items['items']);
 
         if ($hasItems) {
-            return "<li>{$items['content']}<{$style}>".$this->extractItems($items['items'], $style)."</{$style}></li>";
+            return "<li>{$items['content']}<{$style}>" . $this->extractItems($items['items'], $style) . "</{$style}></li>";
         } else {
             return new HtmlString("<li>{$items['content']}</li>");
         }

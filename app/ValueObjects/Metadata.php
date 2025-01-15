@@ -68,29 +68,29 @@ class Metadata
         $this->category =
             array_key_exists('category', $data) &&
             ($category = Category::tryFrom($data['category']))
-                ? $category
-                : Category::material();
+            ? $category
+            : Category::material();
         $this->audience =
             array_key_exists('audience', $data) &&
             ($audience = Audience::tryFrom($data['audience']))
-                ? $audience
-                : Audience::students();
+            ? $audience
+            : Audience::students();
     }
 
     public function toArray()
     {
         return [
             'grades' => $this->grades
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
@@ -101,16 +101,16 @@ class Metadata
     {
         return json_encode([
             'grades' => $this->grades
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
@@ -140,7 +140,7 @@ class Metadata
             'audience' => $faker->randomElement(Audience::toValues()),
         ];
 
-        return new static($data);
+        return new self($data);
     }
 
     /**
@@ -152,8 +152,8 @@ class Metadata
     {
         return array_key_exists($key, $data)
             ? collect($data[$key])
-                ->map(fn (string $value) => $enum::tryFrom($value))
-                ->filter(fn ($value) => ! is_null($value))
+            ->map(fn(string $value) => $enum::tryFrom($value))
+            ->filter(fn($value) => ! is_null($value))
             : collect([]);
     }
 }

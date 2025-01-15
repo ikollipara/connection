@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class FileUploadController extends Controller
 {
@@ -18,10 +19,12 @@ class FileUploadController extends Controller
             'url' => 'url|required_without_all:image,file',
         ]);
 
+
         $path = match (true) {
             isset($validated['url']) => $this->saveUrl($validated['url']),
             isset($validated['file']) => $validated['file']->store('files', 'public'),
             isset($validated['image']) => $validated['image']->store('files', 'public'),
+            default => throw new InvalidArgumentException("Missing url, file, or image"),
         };
 
         return response(

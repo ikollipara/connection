@@ -22,7 +22,7 @@ trait Likeable
                 ->where('model_id', $this->id)
                 ->select('user_id')
                 ->distinct()
-                ->count(['user_id']);
+                ->count('user_id');
         });
     }
 
@@ -31,7 +31,7 @@ trait Likeable
         DB::table('likes_log')->insert([
             'model_type' => self::class,
             'model_id' => $this->id,
-            'user_id' => Auth::user()?->id ?? request()->ip(),
+            'user_id' => Auth::user()->id ?? request()->ip(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -41,23 +41,30 @@ trait Likeable
 
     protected function scopeOrderByLikes(Builder $query, $direction = 'desc')
     {
+
+        $model = $query->getModel();
+        $model_type = $model::class;
         return $query->orderBy(
             DB::table('likes_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable().'.id')
-                ->where('model_type', self::class),
+                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->where('model_type', $model_type)
+                ->toSql(),
             $direction
         );
     }
 
     protected function scopeHasLikesCount(Builder $query, $count)
     {
+        $model = $query->getModel();
+        $model_type = $model::class;
         return $query->where(
             DB::table('likes_log')
-                ->whereColumn('model_id', $this->getTable().'.id')
-                ->where('model_type', self::class)
+                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->where('model_type', $model_type)
                 ->distinct()
-                ->selectRaw('count(user_id) as likes_count'),
+                ->selectRaw('count(user_id) as likes_count')
+                ->toSql(),
             '>=',
             $count
         );

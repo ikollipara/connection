@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * \App\Models\View
@@ -23,7 +24,7 @@ class View extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = ['user_id', 'content_id'];
 
@@ -42,9 +43,9 @@ class View extends Model
     /**
      * Get the content that the view belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Content>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Content, covariant self>
      */
-    public function content()
+    public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);
     }
@@ -52,9 +53,9 @@ class View extends Model
     /**
      * Get the user that viewed the content.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, covariant self>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -62,7 +62,7 @@ class Event extends Model
 
     protected function scopeShouldBeSearchable($query)
     {
-        return $query->whereHas('days', fn ($query) => $query->where('date', '>=', now()));
+        return $query->whereHas('days', fn($query) => $query->where('date', '>=', now()));
     }
 
     public function user(): BelongsTo
@@ -93,14 +93,14 @@ class Event extends Model
     protected function isClonedAttribute(): Attribute
     {
         return Attribute::make(
-            get: fn () => filled($this->cloned_from),
+            get: fn() => filled($this->cloned_from),
         );
     }
 
     protected function isSourceAttribute(): Attribute
     {
         return Attribute::make(
-            get: fn () => empty($this->cloned_from),
+            get: fn() => empty($this->cloned_from),
         );
     }
 
@@ -116,7 +116,7 @@ class Event extends Model
 
     protected function scopeIsAttending($query, User $user)
     {
-        return $query->whereHas('attendees', fn ($query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
+        return $query->whereHas('attendees', fn($query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
     }
 
     public function isMultiDay()
@@ -126,19 +126,18 @@ class Event extends Model
 
     public function replicate(?array $except = null)
     {
-        return DB::transaction(function () {
+        return DB::transaction(function () use ($except) {
             $except = array_merge(['cloned_from'], $except ?? []);
             $replica = parent::replicate($except);
 
             $replica->cloned_from = $this->id;
             $replica->save();
 
-            $this->days->each(function (Day $day) use ($replica) {
+            foreach ($this->days as $day) {
                 $replica->days()->create($day->toArray());
-            });
+            }
 
             return $replica;
-
         });
     }
 
@@ -147,6 +146,8 @@ class Event extends Model
      */
     public function toIcalEvent()
     {
+        // PHPStan can't handle the closures for laravel yet :(
+        /** @phpstan-ignore-next-line */
         return $this->days->map->toIcalEvent();
     }
 
@@ -156,10 +157,15 @@ class Event extends Model
             $user => Calendar::create("$user->name's conneCTION Calendar"),
             default => Calendar::create('conneCTION Calendar'),
         };
-        $events = Event::query()->when(filled($user), fn ($q) => $q->isAttending($user))->with('days')->get();
+        $events = Event::query()->when(filled($user), fn($q) => $q->isAttending($user))->with('days')->get();
         foreach ($events as $event) {
             $event->days->each->setRelation('event', $event);
-            $event->days->each(fn (Day $day) => $calendar->event($day->toIcalEvent()));
+            foreach ($event->days as $day) {
+                // Because the days are pulled from a queried event,
+                // phpstan thinks its just a base model.
+                /** @phpstan-ignore-next-line */
+                $calendar->event($day->toIcalEvent());
+            }
         }
 
         return $calendar;

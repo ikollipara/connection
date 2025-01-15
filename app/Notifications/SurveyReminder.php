@@ -61,13 +61,11 @@ class SurveyReminder extends Notification
             )
             ->action(
                 'CT-CAST',
-                env('APP_QUALTRICS_CT_CAST_LINK').
-                    '?userId='.
-                    $this->user->id,
+                "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}"
             )
             ->action(
                 'Interest and Self-Efficacy Scales',
-                env('APP_QUALTRICS_SCALES_LINK').'?userId='.$this->user->id,
+                "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}"
             )
             ->salutation('Thank you for your participation in the research.');
     }

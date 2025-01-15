@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 
@@ -18,10 +19,12 @@ class ContentCollection extends Content
     /**
      * Get all the entries for the post collection.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Content>
+     * @return BelongsToMany<Content, covariant self>
      */
-    public function entries()
+    public function entries(): BelongsToMany
     {
+        // Phpstan doesn't handle custom pivot models well.
+        /** @phpstan-ignore-next-line */
         return $this->belongsToMany(
             Content::class,
             'entries',

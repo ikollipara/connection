@@ -15,6 +15,9 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Parental\HasChildren;
@@ -31,7 +34,6 @@ use Parental\HasChildren;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
  * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
  */
 class Content extends Model
@@ -45,28 +47,13 @@ class Content extends Model
         'collection' => ContentCollection::class,
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['title', 'body', 'metadata', 'published', 'user_id', 'type'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'published' => 'boolean',
         'body' => 'array',
     ];
 
-    /**
-     * The attributes that should be defaults.
-     *
-     * @var array<string, mixed>
-     */
     protected $attributes = [
         'published' => false,
         'metadata' => '{"category": "material", "audience": "Teachers"}',
@@ -125,15 +112,21 @@ class Content extends Model
     /**
      * Get the user that owns the content.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return BelongsTo<User, covariant self>
      */
-    public function user()
+    public function user(): BelongsTo
     {
+        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
-    public function collections()
+    /**
+     * @return BelongsToMany<ContentCollection, covariant self>
+     */
+    public function collections(): BelongsToMany
     {
+        // Phpstan cannot handle custom pivot models
+        /** @phpstan-ignore-next-line */
         return $this->belongsToMany(ContentCollection::class, 'entries', 'content_id', 'collection_id')->using(
             Entry::class,
         );
@@ -142,9 +135,9 @@ class Content extends Model
     /**
      * Get all of the comments for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\App\Models\Comment>
+     * @return MorphMany<Comment, covariant self>
      */
-    public function comments()
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
@@ -159,11 +152,17 @@ class Content extends Model
      */
     public function scopeStatus($query, Status $status)
     {
-        return match (true) {
-            $status->equals(Status::archived()) => $query->onlyTrashed(),
-            $status->equals(Status::published()) => $query->where('published', true),
-            $status->equals(Status::draft()) => $query->where('published', false),
-        };
+        if ($status->equals(Status::archived())) {
+            return $query->onlyTrashed();
+        } elseif (
+            $status->equals(Status::published())
+        ) {
+            return $query->where('published', true);
+        } elseif ($status->equals(Status::draft())) {
+            return $query->where('published', false);
+        }
+
+        return $query;
     }
 
     /**
@@ -203,59 +202,6 @@ class Content extends Model
             ->orderByDesc('last_month_views')
             ->orderByDesc('last_month_comments')
             ->orderByDesc('created_at');
-    }
-
-    /**
-     * Apply search constraints to the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @param  array<string, mixed>  $constraints
-     * @return \Illuminate\Database\Eloquent\Builder<self>
-     */
-    public function scopeWithSearchConstraints($query, array $constraints)
-    {
-        return $query
-            ->where('published', true)
-            ->when($constraints['type'], fn ($query, $types) => $query->where('type', $types))
-            ->when(
-                $constraints['grades'],
-                fn ($query, $grades) => $query->whereJsonContains('metadata->grades', $grades),
-            )
-            ->when(
-                $constraints['standards'],
-                fn ($query, $standards) => $query->whereJsonContains('metadata->standards', $standards),
-            )
-            ->when(
-                $constraints['standard_groups'],
-                fn ($query, $standard_groups) => $query->where(
-                    fn ($query) => collect($standard_groups)
-                        ->map(
-                            fn ($group) => $query->orWhereJsonContains(
-                                'metadata->standards',
-                                Standard::getGroup(StandardGroup::from($group)),
-                            ),
-                        )
-                        ->flatten(),
-                ),
-            )
-            ->when(
-                $constraints['practices'],
-                fn ($query, $practices) => $query->whereJsonContains('metadata->practices', $practices),
-            )
-            ->when(
-                $constraints['languages'],
-                fn ($query, $languages) => $query->whereJsonContains('metadata->languages', $languages),
-            )
-            ->when(
-                $constraints['categories'],
-                fn ($query, $categories) => $query->whereIn('metadata->category', $categories),
-            )
-            ->when(
-                $constraints['audiences'],
-                fn ($query, $audiences) => $query->whereIn('metadata->audience', $audiences),
-            )
-            ->whereHas('likes', null, '>=', $constraints['likes_count'])
-            ->whereHas('views', null, '>=', $constraints['views_count']);
     }
 
     // Methods

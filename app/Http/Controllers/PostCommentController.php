@@ -34,10 +34,11 @@ class PostCommentController extends Controller
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        $successful = $post->comments()->create($validated);
+        $comment = $post->comments()->make($validated);
+
+        $successful = $comment->save();
 
         return session_back()->with('success', $successful ? 'Comment created successfully' : 'Failed to create comment');
-
     }
 
     /**

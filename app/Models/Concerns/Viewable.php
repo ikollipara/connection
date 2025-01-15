@@ -21,7 +21,7 @@ trait Viewable
                 ->where('model_id', $this->id)
                 ->select('user_id')
                 ->distinct()
-                ->count(['user_id']);
+                ->count('user_id');
         });
     }
 
@@ -30,7 +30,7 @@ trait Viewable
         DB::table('views_log')->insert([
             'model_type' => self::class,
             'model_id' => $this->id,
-            'user_id' => Auth::user()?->id ?? request()->ip(),
+            'user_id' => Auth::user()->id ?? request()->ip(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -43,7 +43,7 @@ trait Viewable
         return $query->orderBySub(
             DB::table('views_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', self::class),
             $direction
         );
@@ -53,7 +53,7 @@ trait Viewable
     {
         return $query->where(
             DB::table('views_log')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', self::class)
                 ->distinct()
                 ->selectRaw('count(user_id) as views_count'),

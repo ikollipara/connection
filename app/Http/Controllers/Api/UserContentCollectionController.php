@@ -19,10 +19,12 @@ class UserContentCollectionController extends Controller
                     ->collections()
                     ->withHasEntry($request->input('content_id'))
                     ->get()
+                    /** @phpstan-ignore-next-line */
                     ->map(function ($collection) {
                         return [
                             'id' => $collection->id,
                             'title' => $collection->title,
+                            /** @phpstan-ignore-next-line */
                             'hasEntry' => $collection->has_entry,
                         ];
                     }),

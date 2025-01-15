@@ -29,6 +29,10 @@ class Day extends Model
         });
     }
 
+    /**
+     * The event the day belongs to.
+     * @return BelongsTo<Event, covariant self>
+     */
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);

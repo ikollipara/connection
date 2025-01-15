@@ -6,55 +6,12 @@ use App\Http\Requests\StoreUserSettingsRequest;
 use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Models\User;
 use App\Models\UserSettings;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class UserSettingsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreUserSettingsRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(UserSettings $userSettings)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
+    public function edit(User $user): View
     {
         $this->authorize('update', $user);
         $user = $user->load('settings');
@@ -62,32 +19,17 @@ class UserSettingsController extends Controller
         return view('users.settings.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateUserSettingsRequest $request, User $user)
+    public function update(UpdateUserSettingsRequest $request, User $user): RedirectResponse
     {
         $data = $this->transformUpdateRequest($request);
         $success = $user->settings->update($data);
 
-        return redirect(route('users.settings.edit', $user), 303)->with(
+        return to_route('users.settings.edit', $user, 303)->with(
             $success ? 'success' : 'error',
             $success
                 ? 'Settings successfully updated'
                 : 'Failed to update settings',
         );
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(UserSettings $userSettings)
-    {
-        //
     }
 
     private function transformUpdateRequest(UpdateUserSettingsRequest $request)

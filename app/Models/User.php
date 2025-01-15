@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,25 +56,10 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = ['remember_token'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'consented' => 'boolean',
@@ -161,11 +148,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's followers
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, covariant self>
      *
      * @see \App\Models\User::followers()
      */
-    public function followers()
+    public function followers(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'followers', 'followed_id', 'follower_id')->using(Follower::class);
     }
@@ -173,13 +160,17 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the users who the users is following
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, covariant self>
      */
-    public function following()
+    public function following(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'followers', 'follower_id', 'followed_id')->using(Follower::class);
     }
 
+    /**
+     * What events the user is attending.
+     * @return BelongsToMany<Event, covariant self>
+     */
     public function attending(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'attendees');
@@ -188,9 +179,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's settings
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\UserSettings>
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserSettings, covariant self>
      */
-    public function settings()
+    public function settings(): HasOne
     {
         return $this->hasOne(UserSettings::class);
     }
@@ -198,9 +189,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's profile
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\Profile>
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserProfile, covariant self>
      */
-    public function profile()
+    public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
@@ -208,9 +199,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's content
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Content>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Content, covariant self>
      */
-    public function content()
+    public function content(): HasMany
     {
         return $this->hasMany(Content::class);
     }
@@ -218,9 +209,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's posts
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Post, covariant self>
      */
-    public function posts()
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
@@ -228,9 +219,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's post collections
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ContentCollection>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ContentCollection, covariant self>
      */
-    public function collections()
+    public function collections(): HasMany
     {
         return $this->hasMany(ContentCollection::class);
     }
@@ -238,9 +229,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's posts
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Event>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Event, covariant self>
      */
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }
@@ -248,9 +239,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's comments
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Comment>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Comment, covariant self>
      */
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
@@ -258,9 +249,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's searches
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Search>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Search, covariant self>
      */
-    public function searches()
+    public function searches(): HasMany
     {
         return $this->hasMany(Search::class);
     }
