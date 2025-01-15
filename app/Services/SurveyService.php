@@ -14,6 +14,7 @@ use App\Mail\Survey;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
+use InvalidArgumentException;
 
 class SurveyService
 {
@@ -101,6 +102,8 @@ class SurveyService
             return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}";
         } elseif ($survey_type == static::SCALES) {
             return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}";
+        } else {
+            throw new InvalidArgumentException("$survey_type is not one of " . static::CT_CAST . " or " . static::SCALES);
         }
     }
 }
