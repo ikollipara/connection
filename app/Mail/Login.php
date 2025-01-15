@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\URL;
@@ -13,7 +12,7 @@ class Login extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $login_link;
+    public string $url;
 
     /**
      * Create a new message instance.
@@ -22,11 +21,11 @@ class Login extends Mailable
      */
     public function __construct(User $user)
     {
-        $this->login_link = URL::temporarySignedRoute(
-            "login.show",
+        $this->url = URL::temporarySignedRoute(
+            'login.show',
             now()->addHour(),
             [
-                "user" => $user,
+                'user' => $user,
             ],
         );
     }
@@ -38,10 +37,8 @@ class Login extends Mailable
      */
     public function build()
     {
-        return $this->from(env("MAIL_FROM_ADDRESS"))
-            ->subject("Login to conneCTION")
-            ->view("mail.login", [
-                "login_link" => $this->login_link,
-            ]);
+        return $this->from(env('MAIL_FROM_ADDRESS'))
+            ->subject('Login to conneCTION')
+            ->markdown('mail.login');
     }
 }

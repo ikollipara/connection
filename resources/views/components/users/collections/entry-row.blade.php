@@ -23,10 +23,11 @@ description: The HTML for a row in the user's collections table
     <x-bulma-icon icon="lucide-eye">{{ $item->views_count }}</x-bulma-icon>
   </td>
   <td>
-    <x-modal title="Delete Entry" btn-delete>
+    <x-modal title="Delete Entry"
+             btn-delete>
       <form id="delete-{{ $item->pivot->id }}-entry-form"
-        action="{{ route('collections.entries.destroy', [$item->pivot->collection_id, $item->pivot->id]) }}"
-        method="post">
+            action="{{ route('collections.entries.destroy', [$item->pivot->collection_id, $item->pivot->id]) }}"
+            method="post">
         @csrf
         @method('DELETE')
         <p class="content">
@@ -35,7 +36,9 @@ description: The HTML for a row in the user's collections table
         </p>
       </form>
       <x-slot name="footer">
-        <button type="submit" form="delete-{{ $item->pivot->id }}-entry-form" class="button is-danger">Delete</button>
+        <button class="button is-danger"
+                form="delete-{{ $item->pivot->id }}-entry-form"
+                type="submit">Delete</button>
       </x-slot>
     </x-modal>
   </td>

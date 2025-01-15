@@ -36,7 +36,8 @@ description: The HTML for a table component
     @if ($has_items and $rowComponent)
       @forelse ($items as $item)
         @if ($rowComponent)
-          <x-dynamic-component :component="$rowComponent" :item="$item" />
+          <x-dynamic-component :component="$rowComponent"
+                               :item="$item" />
         @endif
       @empty
         {{ $empty }}

@@ -5,37 +5,34 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
-        "algolia/algoliasearch-client-php": "^3.4",
-        "doctrine/dbal": "^3.8",
-        "fruitcake/laravel-cors": "^2.0",
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.0.1",
-        "laravel/framework": "^8.75",
-        "laravel/sanctum": "^2.11",
-        "laravel/scout": "^9.8",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.0",
         "laravel/tinker": "^2.5",
-        "livewire/livewire": "^2.12",
+        "livewire/livewire": "^3.4",
         "mallardduck/blade-lucide-icons": "^1.8",
         "spatie/calendar-links": "^1.8",
         "spatie/icalendar-generator": "*",
-        "spatie/image": "^1.10",
         "spatie/laravel-enum": "^3.0",
         "tightenco/parental": "^1.0",
         "tightenco/ziggy": "^1.8"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
-        "brianium/paratest": "^6.11",
-        "facade/ignition": "^2.5",
+        "barryvdh/laravel-ide-helper": "^3.1",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.39",
-        "laravel/dusk": "^6.25",
+        "laravel/dusk": "^8.0",
         "laravel/envoy": "^2.8",
-        "laravel/sail": "^1.0.1",
+        "laravel/pint": "^1.17",
+        "laravel/sail": "^1.31",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
-        "nunomaduro/larastan": "^1.0",
-        "phpunit/phpunit": "^9.5.10"
+        "nunomaduro/collision": "^8.1",
+        "pestphp/pest": "^3.00",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -73,8 +70,11 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

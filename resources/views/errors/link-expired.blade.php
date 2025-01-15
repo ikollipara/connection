@@ -1,4 +1,5 @@
-<x-layout title="conneCTION - Link Expired" no-livewire>
+<x-layout title="conneCTION - Link Expired"
+          no-livewire>
   <x-hero class="is-danger">
     <h1 class="title">Link Expired</h1>
     <p class="subtitle">

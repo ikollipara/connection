@@ -10,9 +10,14 @@ description: This file contains the HTML for a select input for audiences.
 @endphp
 
 <span wire:ignore>
-  <select x-data="slimSelect('Audiences...')" x-modelable="selected" {{ $attributes }} name="audience" id="audience">
+  <select id="audience"
+          name="audience"
+          x-data="slimSelect('Audiences...')"
+          x-modelable="selected"
+          {{ $attributes }}>
     @foreach (Audience::cases() as $audience)
-      <option wire:key="{{ $audience->value }}" value="{{ $audience->value }}">{{ $audience->label }}</option>
+      <option value="{{ $audience->value }}"
+              wire:key="{{ $audience->value }}">{{ $audience->label }}</option>
     @endforeach
   </select>
 </span>

@@ -9,12 +9,17 @@ description: Frequently Asked Questions (FAQ) create page
   <x-hero class="is-primary">
     <h1 class="title">Create Question</h1>
   </x-hero>
-  <x-container is-fluid class="mt-5">
-    <form action="{{ route('faq.store') }}" method="POST">
+  <x-container class="mt-5"
+               is-fluid>
+    <form action="{{ route('faq.store') }}"
+          method="POST">
       @csrf
-      <x-forms.input name="title" label="Title" />
-      <x-forms.textarea name="content" label="Extra Context" />
-      <button type="submit" class="button is-primary">Submit</button>
+      <x-forms.input name="title"
+                     label="Title" />
+      <x-forms.textarea name="content"
+                        label="Extra Context" />
+      <button class="button is-primary"
+              type="submit">Submit</button>
     </form>
   </x-container>
 </x-layout>

@@ -5,17 +5,17 @@ namespace App\Notifications;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
 class CommentAdded extends Notification
 {
     // use Queueable;
 
     public Comment $comment;
+
     public User $commenter;
+
     public bool $is_post = false;
 
     /**
@@ -41,7 +41,7 @@ class CommentAdded extends Notification
      */
     public function via($notifiable)
     {
-        return ["mail"];
+        return ['mail'];
     }
 
     /**
@@ -52,20 +52,21 @@ class CommentAdded extends Notification
      */
     public function toMail($notifiable)
     {
-        $item = $this->is_post ? "post" : "collection";
+        $item = $this->is_post ? 'post' : 'collection';
         $see_now_route = $this->is_post
-            ? "posts.comments.index"
-            : "collections.comments.index";
-        return (new MailMessage())
+            ? 'posts.comments.index'
+            : 'collections.comments.index';
+
+        return (new MailMessage)
             ->greeting("Someone commented on your {$item}!")
-            ->lines(["Comment:", $this->comment->body])
+            ->lines(['Comment:', $this->comment->body])
             ->action(
-                "See the new comment now!",
+                'See the new comment now!',
                 route(
                     $see_now_route,
                     $this->is_post
-                        ? ["post" => $this->comment->commentable]
-                        : ["collection" => $this->comment->commentable],
+                        ? ['post' => $this->comment->commentable]
+                        : ['collection' => $this->comment->commentable],
                 ),
             );
     }
@@ -79,7 +80,7 @@ class CommentAdded extends Notification
     public function toArray($notifiable)
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 }

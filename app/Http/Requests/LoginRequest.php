@@ -14,7 +14,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => "email|required|exists:users,email",
+            'email' => 'email|required|exists:users,email',
         ];
     }
 
@@ -26,9 +26,9 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            "email.exists" => "The email you entered does not exist.",
-            "email.required" => "Please enter your email address.",
-            "email.email" => "Please enter a valid email address.",
+            'email.exists' => 'The email you entered does not exist.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
         ];
     }
 }

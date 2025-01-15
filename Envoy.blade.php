@@ -1,4 +1,5 @@
-@servers(['local' => '127.0.0.1', 'csce' => 'connection@csce.unl.edu'])
+{{-- prettier-ignore-start --}}
+@servers(['local' => '127.0.0.1', 'nuros' => 'connection@nuros.unl.edu'])
 
 @story('deploy')
   maintenance-on
@@ -9,42 +10,41 @@
   maintenance-off
 @endstory
 
-@task('maintenance-on', ['on' => 'csce'])
+@task('maintenance-on', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan down
 @endtask
 
-@task('maintenance-off', ['on' => 'csce'])
+@task('maintenance-off', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan up
 @endtask
 
 @task('build-frontend', ['on' => 'local'])
   npm ci
-  npm run prod
+  npm run build
   tar -czf public.tar.gz public
-  scp public.tar.gz connection@csce.unl.edu:public_html/connection-main
+  scp public.tar.gz connection@nuros.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@csce.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
+  ssh connection@nuros.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz ; chmod -R 755 public'
 @endtask
 
-@task('update-repo', ['on' => 'csce'])
+@task('update-repo', ['on' => 'nuros'])
   cd public_html/connection-main
-  git pull origin main
+  git restore .
+  git pull origin php-8.1
   php composer.phar install --optimize-autoloader --no-dev
 @endtask
 
-@task('run-migrations', ['on' => 'csce'])
+@task('run-migrations', ['on' => 'nuros'])
   cd public_html/connection-main
   php artisan migrate --force
-  php artisan scout:import "App\Models\Post"
-  php artisan scout:import "App\Models\PostCollection"
 @endtask
 
-@task('cache', ['on' => 'csce'])
+@task('cache', ['on' => 'nuros'])
   cd public_html/connection-main
-  php artisan config:cache
-  php artisan route:cache
-  php artisan view:cache
+  php artisan optimize:clear
+  php artisan optimize
   php artisan storage:link
 @endtask
+{{-- prettier-ignore-end --}}

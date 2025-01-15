@@ -5,7 +5,29 @@ date: 2024-06-24
 description: The view for showing a collection
  --}}
 
-@php
+<x-reading-layout title="{{ $collection->title }}">
+  @push('scripts')
+    <script>
+      window.body = JSON.stringify({{ $collection->body->toJson(parse: true) }});
+    </script>
+  @endpush
+  <x-slot:aside>
+    @include('collections.partials.details-sidebar', ['collection' => $collection])
+  </x-slot>
+  <main class="flex flex-col gap-y-3">
+    <x-title label="{{ $collection->title }}" />
+    @include('collections.partials.action-bar', ['collection' => $collection])
+    <div x-data="editor({ name: 'name', readOnly: true, canUpload: true, csrf: '{{ csrf_token() }}', body: window.body })">
+      <input name="name"
+             type="hidden"
+             x-bind="input">
+      <div x-bind="editor"></div>
+    </div>
+    @include('users.collections.partials.entries', ['collection' => $collection])
+  </main>
+</x-reading-layout>
+
+{{-- @php
   $title = 'conneCTION - ' . $collection->title;
   $avatar = $collection->user ? $collection->user->avatar : 'https://ui-avatars.com/api/?name=Deleted&color=7F9CF5&background=EBF4FF';
   $full_name = $collection->user ? $collection->user->full_name : 'Deleted';
@@ -96,4 +118,4 @@ description: The view for showing a collection
       </x-tabs.tab>
     </x-tabs>
   </x-container>
-</x-layout>
+</x-layout> --}}

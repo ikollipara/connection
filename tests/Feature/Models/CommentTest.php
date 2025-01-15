@@ -15,7 +15,7 @@ class CommentTest extends TestCase
     public function test_comment_can_be_created()
     {
         $comment = Comment::factory()->create();
-        $this->assertDatabaseCount("comments", 1);
+        $this->assertDatabaseCount('comments', 1);
         $this->assertTrue($comment->is(Comment::sole()));
     }
 

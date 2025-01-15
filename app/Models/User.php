@@ -5,25 +5,29 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Enums\Grade;
+use App\Mail\Login;
 use App\Services\SurveyService;
-use App\Models\Concerns\HasUuids;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-// use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Collection;
 use App\ValueObjects\Avatar;
 use App\ValueObjects\Editor;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+// use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+// use Illuminate\Support\Facades\Mail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
+use Mail;
 
 /**
  * App\Models\User
+ *
  * @property string $id
  * @property string $first_name
  * @property string $last_name
@@ -37,7 +41,7 @@ use Illuminate\Support\Facades\DB;
  * @property bool $sent_week_one_survey
  * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
  * @property-read Collection<\App\Models\Comment> $comments
- * @property-read Collection<\App\Models\PostCollection> $collections
+ * @property-read Collection<\App\Models\ContentCollection> $collections
  * @property-read Collection<\App\Models\Post> $posts
  *  @property-read Collection<\App\Models\Event> $events
  * @property-read Collection<\App\Models\User> $followers
@@ -48,21 +52,21 @@ use Illuminate\Support\Facades\DB;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ["first_name", "last_name", "avatar", "email"];
+    protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = ["remember_token"];
+    protected $hidden = ['remember_token'];
 
     /**
      * The attributes that should be cast.
@@ -70,10 +74,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<string, string>
      */
     protected $casts = [
-        "email_verified_at" => "datetime",
-        "consented" => "boolean",
-        "sent_week_one_survey" => "boolean",
-        "yearly_survey_sent_at" => "datetime",
+        'email_verified_at' => 'datetime',
+        'consented' => 'boolean',
+        'sent_week_one_survey' => 'boolean',
+        'yearly_survey_sent_at' => 'datetime',
     ];
 
     protected static function booted()
@@ -83,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->email = trim(strtolower($user->email));
         });
         static::created(function (User $user) {
-            event(new Registered($user));
+            // event(new Registered($user));
             $user->notifyIfConsented();
         });
         static::saved(function (User $user) {
@@ -93,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     private function notifyIfConsented()
     {
-        if ($this->consented and ($this->wasChanged("consented") or $this->wasRecentlyCreated)) {
+        if ($this->consented and ($this->wasChanged('consented') or $this->wasRecentlyCreated)) {
             (new SurveyService($this))->sendSurvey(Arr::wrap(SurveyService::SCALES), SurveyService::ONCE);
         }
     }
@@ -102,15 +106,16 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRouteKey()
     {
-        return "@" . Str::slug($this->full_name, "-") . "--" . $this->getAttribute($this->getRouteKeyName());
+        return '@' . Str::slug($this->full_name, '-') . '--' . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
     {
-        if ($value == "me") {
+        if ($value == 'me') {
             return auth()->user();
         }
-        $id = last(explode("--", $value));
+        $id = last(explode('--', $value));
+
         return parent::resolveRouteBinding($id, $field);
     }
 
@@ -118,6 +123,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's full name.
+     *
      * @return string The user's full name
      */
     protected function getFullNameAttribute(): string
@@ -127,54 +133,61 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's avatar
+     *
      * @return Avatar The user's avatar
      */
     public function getAvatarAttribute(): Avatar
     {
-        $avatar = new Avatar($this->attributes["avatar"]);
-        $full_name = trim(str_replace(" ", "+", $this->full_name));
+        $avatar = new Avatar(/* $this->attributes['avatar'] */'');
+        $full_name = trim(str_replace(' ', '+', $this->full_name));
         $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
+
         return $avatar;
     }
 
     /**
      * Set the user's avatar
-     * @param Avatar|string $value The new avatar object
+     *
+     * @param  Avatar|string  $value  The new avatar object
      */
     public function setAvatarAttribute($value): void
     {
         $value = is_string($value) ? new Avatar($value) : $value;
-        $this->attributes["avatar"] = $value->path();
+        $this->attributes['avatar'] = $value->path();
     }
 
     // Relationships
 
     /**
      * Get the user's followers
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
+     *
      * @see \App\Models\User::followers()
      */
     public function followers()
     {
-        return $this->belongsToMany(self::class, "followers", "followed_id", "follower_id")->using(Follower::class);
+        return $this->belongsToMany(self::class, 'followers', 'followed_id', 'follower_id')->using(Follower::class);
     }
 
     /**
      * Get the users who the users is following
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self>
      */
     public function following()
     {
-        return $this->belongsToMany(self::class, "followers", "follower_id", "followed_id")->using(Follower::class);
+        return $this->belongsToMany(self::class, 'followers', 'follower_id', 'followed_id')->using(Follower::class);
     }
 
-    public function attending()
+    public function attending(): BelongsToMany
     {
-        return $this->belongsToMany(self::class,"user_id","event_id")->using(Attendee::Class);
+        return $this->belongsToMany(Event::class, 'attendees');
     }
 
     /**
      * Get the user's settings
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\UserSettings>
      */
     public function settings()
@@ -184,6 +197,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's profile
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\Profile>
      */
     public function profile()
@@ -193,6 +207,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's content
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Content>
      */
     public function content()
@@ -202,6 +217,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's posts
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
      */
     public function posts()
@@ -211,15 +227,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's post collections
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\PostCollection>
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ContentCollection>
      */
     public function collections()
     {
-        return $this->hasMany(PostCollection::class);
+        return $this->hasMany(ContentCollection::class);
     }
 
     /**
      * Get the user's posts
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Event>
      */
     public function events()
@@ -229,6 +247,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's comments
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Comment>
      */
     public function comments()
@@ -238,6 +257,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the user's searches
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Search>
      */
     public function searches()
@@ -251,38 +271,50 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Create a User with their profile and settings
-     * @param array<string, mixed> $data The user's data
+     *
+     * @param  array<string, mixed>  $data  The user's data
      */
     public static function createWithProfileAndSettings(array $data): User
     {
         $profile = [
-            "school" => $data["school"],
-            "is_preservice" => isset($data["is_preservice"]),
-            "years_of_experience" => data_get($data, "years_of_experience", 0),
-            "subject" => $data["subject"],
-            "bio" =>  Editor::fromJson($data["bio"]),
-            "grades" => collect($data["grades"])
+            'school' => $data['school'],
+            'is_preservice' => isset($data['is_preservice']),
+            'years_of_experience' => data_get($data, 'years_of_experience', 0),
+            'subject' => $data['subject'],
+            'bio' => Editor::fromJson($data['bio']),
+            'grades' => collect($data['grades'])
                 ->map(fn($grade) => Grade::from($grade))
                 ->toArray(),
-            "gender" => "",
+            'gender' => '',
         ];
 
         return DB::transaction(function () use ($data, $profile) {
             $user = User::create([
-                "id" => Str::uuid()->toString(),
-                "first_name" => $data["first_name"],
-                "last_name" => $data["last_name"],
-                "email" => $data["email"],
-                "avatar" => Avatar::is($data["avatar"]) ? $data["avatar"] : Avatar::fromUploadedFile($data["avatar"]),
+                'id' => Str::uuid()->toString(),
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'email' => $data['email'],
+                'avatar' => Avatar::is($data['avatar']) ? $data['avatar'] : Avatar::fromUploadedFile($data['avatar']),
             ]);
             $user->profile()->create($profile);
             $user->settings()->create([
-                "receive_weekly_digest" => true,
-                "receive_comment_notifications" => true,
-                "receive_new_follower_notifications" => true,
-                "receive_follower_notifications" => true,
+                'receive_weekly_digest' => true,
+                'receive_comment_notifications' => true,
+                'receive_new_follower_notifications' => true,
+                'receive_follower_notifications' => true,
             ]);
+
             return $user;
         });
+    }
+
+    public function sendLoginLink()
+    {
+        Mail::to($this)->queue(new Login($this));
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('followed_id', $user->id)->exists();
     }
 }

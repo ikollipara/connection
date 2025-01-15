@@ -16,8 +16,8 @@ class ContentLikeFactory extends Factory
     public function definition()
     {
         return [
-            "user_id" => User::factory(),
-            "content_id" => Content::factory(),
+            'user_id' => User::factory(),
+            'content_id' => Content::factory(),
         ];
     }
 }

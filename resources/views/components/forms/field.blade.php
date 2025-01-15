@@ -12,12 +12,13 @@ description: The form field component. Based off of Bulma.
 @endphp
 
 <section {{ $attributes->class(['field']) }}>
-    @if ($empty)
-        {{{ $slot }}}
-    @else
-  <div @class(['control', 'is-expanded' => $isExpanded])>
-    <label for="{{ $name }}" class="label">{{ $label }}</label>
+  @if ($empty)
     {{ $slot }}
-  </div>
-    @endif
+  @else
+    <div @class(['control', 'is-expanded' => $isExpanded])>
+      <label class="label"
+             for="{{ $name }}">{{ $label }}</label>
+      {{ $slot }}
+    </div>
+  @endif
 </section>

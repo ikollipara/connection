@@ -14,7 +14,6 @@ use App\Models\User;
  * Interface Likable
  * All models that can be liked should implement this interface.
  * This can be done automatically using the `HasLikes` trait.
- * @package App\Contracts
  */
 interface Likable
 {

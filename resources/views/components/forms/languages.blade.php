@@ -3,9 +3,13 @@
 @endphp
 
 <span wire:ignore>
-  <select x-data="slimSelect('Languages...')" name="languages" id="languages" {{ $attributes }}>
+  <select id="languages"
+          name="languages"
+          x-data="slimSelect('Languages...')"
+          {{ $attributes }}>
     @foreach (Language::cases() as $language)
-      <option wire:key='{{ $language->value }}' value="{{ $language->value }}">{{ $language->label }}</option>
+      <option value="{{ $language->value }}"
+              wire:key='{{ $language->value }}'>{{ $language->label }}</option>
     @endforeach
   </select>
 </span>

@@ -24,14 +24,16 @@ description: Videos index view
       Kollipara!
     </p>
   </x-hero>
-  <x-container is-fluid class="mt-5 columns is-desktop" x-data="{ currentEpisode: 1 }">
+  <x-container class="mt-5 columns is-desktop"
+               is-fluid
+               x-data="{ currentEpisode: 1 }">
     <nav class="column is-one-quarter is-hidden-touch menu">
       <p class="menu-label">Episodes</p>
       <ul class="menu-list">
         @foreach ($episodes as $episode_id => $episode)
           <li>
             <a x-on:click="currentEpisode = {{ $episode_id }}"
-              x-bind:class="{ 'is-active': currentEpisode == {{ $episode_id }} }">
+               x-bind:class="{ 'is-active': currentEpisode == {{ $episode_id }} }">
               {{ $episode }}
             </a>
           </li>
@@ -39,15 +41,21 @@ description: Videos index view
       </ul>
     </nav>
     <x-videos.episode
-      class="column is-three-quarters is-flex is-flex-direction-column is-justify-content-center is-align-items-center" />
+                      class="column is-three-quarters is-flex is-flex-direction-column is-justify-content-center is-align-items-center" />
     <div class="buttons is-hidden-desktop is-justify-content-center">
-      <button x-on:click="currentEpisode--" x-bind:disabled="currentEpisode == 1" type="button" class="button is-link">
+      <button class="button is-link"
+              type="button"
+              x-on:click="currentEpisode--"
+              x-bind:disabled="currentEpisode == 1">
         <x-bulma-icon icon="lucide-arrow-left">
           Previous
         </x-bulma-icon>
       </button>
-      <button x-on:click="currentEpisode++" x-bind:disabled="currentEpisode == 6" type="button"
-        x-bind:class="{ 'is-outlined': currentEpisode != 6 }" class="button is-link is-outlined">
+      <button class="button is-link is-outlined"
+              type="button"
+              x-on:click="currentEpisode++"
+              x-bind:disabled="currentEpisode == 6"
+              x-bind:class="{ 'is-outlined': currentEpisode != 6 }">
         <x-bulma-icon icon="lucide-arrow-right">
           Next
         </x-bulma-icon>

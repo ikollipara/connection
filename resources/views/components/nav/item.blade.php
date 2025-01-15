@@ -1,12 +1,14 @@
 @props(['route', 'isButton' => false])
 @if ($isButton)
   <li class="navbar-item">
-    <a {{ $attributes->merge(['class' => 'button is-primary']) }} href="{{ $route }}">
+    <a href="{{ $route }}"
+       {{ $attributes->merge(['class' => 'button is-primary']) }}>
       {{ $slot }}
     </a>
   </li>
 @else
-  <a {{ $attributes->merge(['class' => 'navbar-item']) }} href="{{ $route }}">
+  <a href="{{ $route }}"
+     {{ $attributes->merge(['class' => 'navbar-item']) }}>
     {{ $slot }}
   </a>
 @endif

@@ -3,9 +3,13 @@
 @endphp
 
 <span wire:ignore>
-  <select {{ $attributes }} x-data="slimSelect('Standard Groups...')" name="standard_groups" id="standard_groups">
+  <select id="standard_groups"
+          name="standard_groups"
+          {{ $attributes }}
+          x-data="slimSelect('Standard Groups...')">
     @foreach (StandardGroup::cases() as $group)
-      <option wire:key="{{ $group->value }}" value="{{ $group->value }}">{{ $group->label }}</option>
+      <option value="{{ $group->value }}"
+              wire:key="{{ $group->value }}">{{ $group->label }}</option>
     @endforeach
   </select>
 </span>

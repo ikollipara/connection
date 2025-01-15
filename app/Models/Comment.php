@@ -2,75 +2,55 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasUuids;
-use App\Contracts\Likable;
-use App\Events\CommentLiked;
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\HasLikes;
+use App\Models\Concerns\Likeable;
+use App\Models\Scopes\OrderByLikes;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+#[ScopedBy(OrderByLikes::class)]
 class Comment extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, Likeable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = ["body", "user_id", "commentable_id", "commentable_type"];
+    protected $fillable = ['body', 'user_id', 'commentable_id', 'commentable_type', 'parent_id'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [];
 
-    /**
-     * Get the user that owns the comment.
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self>
-     */
-    public function user()
+    protected $with = ['children'];
+
+    public function user(): BelongsTo
     {
-        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the likes for the comment.
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Likes\CommentLike>
-     */
-    public function likes()
-    {
-        return $this->hasMany(Likes\CommentLike::class);
-    }
-
-    /**
-     * Get the post or post collection that owns the comment.
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<Content>
-     */
-    public function commentable()
+    public function commentable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    // Scopes
-
-    public function scopeThisMonth($query)
+    public function parent(): ?BelongsTo
     {
-        return $query->whereBetween("created_at", [now()->startOfMonth(), now()->endOfMonth()]);
+        return $this->belongsTo(self::class, 'parent_id', 'id');
     }
 
-    public function scopeLastMonth($query)
+    public function children(): HasMany
     {
-        return $query->whereBetween("created_at", [
-            now()
-                ->subMonth()
-                ->startOfMonth(),
-            now()
-                ->subMonth()
-                ->endOfMonth(),
-        ]);
+        return $this->hasMany(self::class, 'parent_id', 'id');
+    }
+
+    protected static function scopeRoot(Builder $query): Builder
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function isReply(): bool
+    {
+        return filled($this->parent_id);
     }
 }

@@ -5,34 +5,14 @@ date: 2024-06-06
 description: This file contains the HTML for displaying a user's followers.
  --}}
 
-@php
-  $title = 'conneCTION - ' . $user->full_name . '\'s Followers';
-@endphp
-
-<x-layout :title="$title" no-livewire>
-  <x-hero class="is-primary">
-    <a href="{{ route('users.show', $user) }}" class="icon-text is-link mt-3 mb-3">
-      <span class="icon">
-        <x-lucide-arrow-left class="icon" width="30" height="30" fill="none" />
-      </span>
-      <span>Back to Profile</span>
-    </a>
-    <x-users.profile :user="$user" />
-  </x-hero>
-  <x-container is-fluid class="mt-5">
-    <table class="table is-fullwidth">
-      <tbody>
-        @forelse ($followers as $follower)
-          <x-users.row :user="$follower" />
-        @empty
-          <tr>
-            <td>
-              <h2 class="subtitle is-3">{{ $user->full_name }} does not follow anyone.</h2>
-            </td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
-    {{ $followers->links('pagination') }}
-  </x-container>
-</x-layout>
+<x-reading-layout :title='"Followers of $user->full_name"'
+                  wrapper-class="xl:!mx-5 xl:!ml-64">
+  <x-slot:aside>
+    @include('users.followers.partials.details-sidebar', ['user' => $user, 'title' => 'Who Follows'])
+  </x-slot>
+  @forelse ($followers as $follower)
+    @include('users.followers.partials.follower-card', ['user' => $follower])
+  @empty
+    <p>No one follows {{ $user->full_name }}</p>
+  @endforelse
+</x-reading-layout>

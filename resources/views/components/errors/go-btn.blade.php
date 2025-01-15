@@ -7,9 +7,11 @@ description: This file contains the HTML for the go home button component.
 
 @props(['text' => __('Go Home'), 'route' => route('home')])
 
-<a href="{{ $route }}" class="button is-primary icon-text has-text-light">
+<a class="button is-primary icon-text has-text-light"
+   href="{{ $route }}">
   <span class="icon">
-    <x-lucide-chevron-left width="50" height="50" />
+    <x-lucide-chevron-left width="50"
+                           height="50" />
   </span>
   <span>{{ $text }}</span>
 </a>

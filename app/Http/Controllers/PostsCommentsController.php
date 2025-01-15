@@ -12,7 +12,6 @@ class PostsCommentsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function index(Post $post)
@@ -21,39 +20,36 @@ class PostsCommentsController extends Controller
             ->comments()
             ->latest()
             ->paginate(10);
-        return view("posts.comments.index", compact("post", "comments"));
+
+        return view('posts.comments.index', compact('post', 'comments'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function create(Post $post)
     {
-        return view("posts.comments.create", compact("post"));
+        return view('posts.comments.create', compact('post'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreCommentRequest  $request
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function store(StoreCommentRequest $request, Post $post)
     {
         $validated = $request->validated();
         $comment = $post->comments()->create($validated);
-        return session_back()->with("success", __("Comment successfully created."));
+
+        return session_back()->with('success', __('Comment successfully created.'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Post  $post
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function show(Post $post, Comment $comment)
@@ -64,8 +60,6 @@ class PostsCommentsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Post  $post
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function edit(Post $post, Comment $comment)
@@ -76,9 +70,6 @@ class PostsCommentsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Post $post, Comment $comment)
@@ -89,8 +80,6 @@ class PostsCommentsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Post  $post
-     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
     public function destroy(Post $post, Comment $comment)

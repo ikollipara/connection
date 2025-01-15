@@ -14,10 +14,10 @@ class UserSettingsFactory extends Factory
     public function definition()
     {
         return [
-            "receive_weekly_digest" => $this->faker->boolean(),
-            "receive_comment_notifications" => $this->faker->boolean(),
-            "receive_new_follower_notifications" => $this->faker->boolean(),
-            "receive_follower_notifications" => $this->faker->boolean(),
+            'receive_weekly_digest' => $this->faker->boolean(),
+            'receive_comment_notifications' => $this->faker->boolean(),
+            'receive_new_follower_notifications' => $this->faker->boolean(),
+            'receive_follower_notifications' => $this->faker->boolean(),
         ];
     }
 }

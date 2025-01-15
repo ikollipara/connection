@@ -25,19 +25,19 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            "first_name" => "sometimes|string",
-            "last_name" => "sometimes|string",
-            "email" => [
-                "sometimes",
-                "email",
-                Rule::unique("users", "email")->ignore(auth()->id()),
+            'first_name' => 'sometimes|string',
+            'last_name' => 'sometimes|string',
+            'email' => [
+                'sometimes',
+                'email',
+                Rule::unique('users', 'email')->ignore(auth()->id()),
             ],
-            "is_preservice" => "sometimes|accepted",
-            "school" => "sometimes|required_without:is_preservice|string",
-            "year" => "sometimes|required_without:is_preservice|integer|min:0",
-            "subject" => "sometimes|string",
-            "grades" => "sometimes",
-            "bio" => "json",
+            'is_preservice' => 'sometimes|accepted',
+            'school' => 'sometimes|required_without:is_preservice|string',
+            'year' => 'sometimes|required_without:is_preservice|integer|min:0',
+            'subject' => 'sometimes|string',
+            'grades' => 'sometimes',
+            'bio' => 'json',
         ];
     }
 }

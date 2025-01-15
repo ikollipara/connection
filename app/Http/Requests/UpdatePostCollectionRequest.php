@@ -30,21 +30,21 @@ class UpdatePostCollectionRequest extends FormRequest
     public function rules()
     {
         return [
-            "archive" => "sometimes|boolean",
-            "body" => "required_without:archive|json",
-            "title" => "required_without:archive|string",
-            "published" => "required_without:archive|boolean",
-            "metadata" => "array",
-            "metadata.audience" => "enum:" . Audience::class,
-            "metadata.category" => "enum:" . Category::class,
-            "metadata.grades" => "sometimes|array",
-            "metadata.grades.*" => "enum:" . Grade::class,
-            "metadata.standards" => "sometimes|array",
-            "metadata.standards.*" => "enum:" . Standard::class,
-            "metadata.practices" => "sometimes|array",
-            "metadata.practices.*" => "enum:" . Practice::class,
-            "metadata.languages" => "sometimes|array",
-            "metadata.languages.*" => "enum:" . Language::class,
+            'archive' => 'sometimes|boolean',
+            'body' => 'required_without:archive|json',
+            'title' => 'required_without:archive|string',
+            'published' => 'required_without:archive|boolean',
+            'metadata' => 'array',
+            'metadata.audience' => 'enum:'.Audience::class,
+            'metadata.category' => 'enum:'.Category::class,
+            'metadata.grades' => 'sometimes|array',
+            'metadata.grades.*' => 'enum:'.Grade::class,
+            'metadata.standards' => 'sometimes|array',
+            'metadata.standards.*' => 'enum:'.Standard::class,
+            'metadata.practices' => 'sometimes|array',
+            'metadata.practices.*' => 'enum:'.Practice::class,
+            'metadata.languages' => 'sometimes|array',
+            'metadata.languages.*' => 'enum:'.Language::class,
         ];
     }
 }

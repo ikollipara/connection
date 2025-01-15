@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use App\Enums\Grade;
+use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * \App\Models\UserProfile
+ *
  * @property int $id
  * @property string $user_id
  * @property Editor $bio
@@ -17,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $subject
  * @property-read string $short_title
  * @property \Illuminate\Support\Collection<\App\Enums\Grade> $grades
- * @property-read string $bio_text
  * @property string $gender
  * @property int $years_of_experience
  * @property \Illuminate\Support\Carbon $created_at
@@ -26,49 +29,61 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserProfile extends Model
 {
-    use HasFactory;
+    use HasFactory, Viewable;
 
     protected $guarded = [];
-    protected $with = ["user"];
+
     protected $casts = [
-        "bio" => "array",
-        "grades" => Grade::class . ":collection",
-        "is_preservice" => "boolean",
+        'bio' => 'array',
+        'grades' => Grade::class . ':collection',
+        'is_preservice' => 'boolean',
     ];
+
     protected $attributes = [
-        "bio" => '{"blocks": []}',
-        "grades" => "[]",
+        'bio' => '{"blocks": []}',
+        'grades' => '[]',
     ];
 
     // Accessors and Mutators
 
-    public function getShortTitleAttribute(): string
+    protected function shortTitle(): Attribute
     {
-        $year_str =
-            $this->years_of_experience < 2
-                ? "(First Year)"
-                : "({$this->years_of_experience} Years)";
-        $suffix = $this->is_preservice ? "Pre-Service Teacher" : "Teacher";
-        return "{$this->subject} {$suffix} {$year_str}";
+        $years = match ($this->years_of_experience) {
+            0 => 'First Year',
+            1 => 'Second Year',
+            default => "{$this->years_of_experience} Years",
+        };
+
+        return Attribute::make(
+            get: fn() => match ($this->is_preservice) {
+                true => "$this->subject Pre-Service Teacher ($years)",
+                false => "$this->subject Teacher ($years)",
+            },
+        );
     }
 
     protected function getBioAttribute($value): Editor
     {
+        if ($value[0] == '"') {
+            $value = json_decode($value);
+        }
         return Editor::fromJson($value);
     }
 
-    protected function setBioAttribute(Editor $editor): string
+    protected function setBioAttribute(Editor $value): void
     {
-        return $this->attributes["bio"] = $editor->toJson();
+        $this->attributes['bio'] = $value->toJson();
     }
+
 
     // Relationships
 
     /**
      * Get the user that owns the profile.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

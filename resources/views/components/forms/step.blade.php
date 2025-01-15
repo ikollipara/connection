@@ -1,21 +1,26 @@
 @props(['step', 'currentStep', 'isFinal' => false])
 
 <section {{ $attributes->except(['step', 'isFinal', 'currentStep']) }}
-  x-show="{{ $currentStep }} == {{ $step }}">
+         x-show="{{ $currentStep }} == {{ $step }}">
   {{ $slot }}
   <div class="field is-group is-grouped-centered">
     <div class="control">
       @if ($step > 0)
-        <button type="button" x-on:click="{{ $currentStep }}--" class="button is-primary is-outlined">
+        <button class="button is-primary is-outlined"
+                type="button"
+                x-on:click="{{ $currentStep }}--">
           Back
         </button>
       @endif
       @if ($isFinal)
-        <button type="submit" class="button is-primary">
+        <button class="button is-primary"
+                type="submit">
           Submit
         </button>
       @else
-        <button type="button" x-on:click="{{ $currentStep }}++" class="button is-primary">
+        <button class="button is-primary"
+                type="button"
+                x-on:click="{{ $currentStep }}++">
           Next
         </button>
       @endif

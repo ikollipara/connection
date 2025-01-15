@@ -14,7 +14,7 @@ class ViewTest extends TestCase
     public function test_a_view_can_be_created()
     {
         $view = View::factory()->create();
-        $this->assertDatabaseCount("views", 1);
+        $this->assertDatabaseCount('views', 1);
         $this->assertTrue($view->is(View::sole()));
     }
 

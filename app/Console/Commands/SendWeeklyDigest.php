@@ -15,14 +15,14 @@ class SendWeeklyDigest extends Command
      *
      * @var string
      */
-    protected $signature = "app:send-weekly-digest {post?} {--post-of-the-week : A markdown file describing the post of the week.} {--E|extra= : A markdown file to include with the weekly digest.}";
+    protected $signature = 'app:send-weekly-digest {post?} {--post-of-the-week : A markdown file describing the post of the week.} {--E|extra= : A markdown file to include with the weekly digest.}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Send the weekly digest to all users who have opted in to receive it.";
+    protected $description = 'Send the weekly digest to all users who have opted in to receive it.';
 
     /**
      * Create a new command instance.
@@ -42,19 +42,19 @@ class SendWeeklyDigest extends Command
     public function handle()
     {
         $postId =
-            $this->argument("post") ??
+            $this->argument('post') ??
             $this->choice(
-                "What Post?",
-                Post::all(["id", "title"])
-                    ->pluck("title", "id")
+                'What Post?',
+                Post::all(['id', 'title'])
+                    ->pluck('title', 'id')
                     ->toArray(),
             );
-        $postOfTheWeek = file_get_contents($this->option("post-of-the-week"));
-        $extra = ($extra_filepath = $this->option("extra"))
+        $postOfTheWeek = file_get_contents($this->option('post-of-the-week'));
+        $extra = ($extra_filepath = $this->option('extra'))
             ? file_get_contents($extra_filepath)
-            : "";
+            : '';
         User::query()
-            ->where("receive_weekly_digest", true)
+            ->where('receive_weekly_digest', true)
             ->each(function (User $user) use ($postId, $postOfTheWeek, $extra) {
                 Mail::to($user)->send(
                     new WeeklyDigest(
@@ -65,6 +65,7 @@ class SendWeeklyDigest extends Command
                 );
                 $this->info("Sent weekly digest to {$user->email}.");
             });
+
         return 0;
     }
 }

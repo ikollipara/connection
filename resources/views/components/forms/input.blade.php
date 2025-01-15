@@ -13,16 +13,21 @@ description: This file contains the HTML for an input field.
 
 <section @class(['field', 'has-addons' => $hasAddons, ...$fieldClasses])>
   @unless ($withoutLabel)
-    <label for="{{ $name }}" class="label">{{ $label }}</label>
+    <label class="label"
+           for="{{ $name }}">{{ $label }}</label>
   @endunless
   @if ($attributes->wire('loading')->hasModifier('class'))
-    <span class="control is-expanded" {{ $attributes->wire('loading') }} {{ $attributes->wire('target') }}>
-      <input id="{{ $name }}" name="{{ $name }}"
-        {{ $attributes->except(['wire:loading', 'wire:target'])->class(['input', 'is-danger' => $errors->has($name)]) }}>
+    <span class="control is-expanded"
+          {{ $attributes->wire('loading') }}
+          {{ $attributes->wire('target') }}>
+      <input id="{{ $name }}"
+             name="{{ $name }}"
+             {{ $attributes->except(['wire:loading', 'wire:target'])->class(['input', 'is-danger' => $errors->has($name)]) }}>
     @else
       <span class="control is-expanded">
-        <input id="{{ $name }}" name="{{ $name }}"
-          {{ $attributes->class(['input', 'is-danger' => $errors->has($name)])->merge(['value' => old($name) ?? '']) }}>
+        <input id="{{ $name }}"
+               name="{{ $name }}"
+               {{ $attributes->class(['input', 'is-danger' => $errors->has($name)])->merge(['value' => old($name) ?? '']) }}>
         @error($name)
           <p class="help mb-0">{{ $message }}</p>
         @enderror

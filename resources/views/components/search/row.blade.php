@@ -16,8 +16,9 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a data-turbo-preload href="{{ route('users.show', ['user' => $item->user['id']]) }}"
-            class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
+        <td><a class="link"
+             data-turbo-preload
+             href="{{ route('users.show', ['user' => $item->user['id']]) }}">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         </td>
       @else
         <td>[Deleted]</td>
@@ -26,7 +27,9 @@
     <td>
       <span class="icon-text">
         <span class="icon">
-          <x-lucide-eye class="icon" width="30" height="30" />
+          <x-lucide-eye class="icon"
+                        width="30"
+                        height="30" />
         </span>
         <span>{{ $item->views }}</span>
       </span>
@@ -34,7 +37,9 @@
     <td>
       <span class="icon-text">
         <span class="icon">
-          <x-lucide-heart class="icon" width="30" height="30" />
+          <x-lucide-heart class="icon"
+                          width="30"
+                          height="30" />
         </span>
         <span>{{ $item->likes_count }}</span>
       </span>
@@ -51,8 +56,9 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td><a data-turbo-preload href="{{ route('users.show', ['user' => $item->user['id']]) }}"
-            class="link">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
+        <td><a class="link"
+             data-turbo-preload
+             href="{{ route('users.show', ['user' => $item->user['id']]) }}">{{ $item->user['first_name'] . ' ' . $item->user['last_name'] }}</a>
         @else
         <td>[Deleted]</td>
       @endif
@@ -60,7 +66,9 @@
     <td>
       <span class="icon-text">
         <span class="icon">
-          <x-lucide-eye class="icon" width="30" height="30" />
+          <x-lucide-eye class="icon"
+                        width="30"
+                        height="30" />
         </span>
         <span>{{ $item->views }}</span>
       </span>
@@ -68,7 +76,9 @@
     <td>
       <span class="icon-text">
         <span class="icon">
-          <x-lucide-heart class="icon" width="30" height="30" />
+          <x-lucide-heart class="icon"
+                          width="30"
+                          height="30" />
         </span>
         <span>{{ $item->likes_count }}</span>
       </span>

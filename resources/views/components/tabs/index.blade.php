@@ -13,7 +13,9 @@ description: A tab component for Blade views. Based on Bulma's tabs.
 @endphp
 
 @if ($component)
-  <x-dynamic-component :component="$component" {{ $attributes }} x-data="{ tab: 0 }">
+  <x-dynamic-component :component="$component"
+                       {{ $attributes }}
+                       x-data="{ tab: 0 }">
     <section class="tabs is-centered">
       <ul>
         @foreach ($tabTitles as $tabTitle)
@@ -26,7 +28,8 @@ description: A tab component for Blade views. Based on Bulma's tabs.
     {{ $slot }}
   </x-dynamic-component>
 @else
-  <section {{ $attributes }} x-data="{ tab: 0 }">
+  <section {{ $attributes }}
+           x-data="{ tab: 0 }">
     <section class="tabs is-centered">
       <ul>
         @foreach ($tabTitles as $tabTitle)

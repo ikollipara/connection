@@ -10,16 +10,19 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Mail\Survey;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class SurveyService
 {
-    public const CT_CAST = "CT_CAST";
-    public const SCALES = "SCALES";
+    public const CT_CAST = 'CT_CAST';
+
+    public const SCALES = 'SCALES';
+
     public const ONCE = 1;
+
     public const YEARLY = 2;
 
     public User $user;
@@ -42,6 +45,7 @@ class SurveyService
         if ($frequency === static::YEARLY) {
             $this->handleYearly($urls);
         }
+
         return $this;
     }
 
@@ -70,13 +74,13 @@ class SurveyService
 
     private function validateArgs(array $survey_types, int $frequency)
     {
-        if (!in_array($frequency, [static::ONCE, static::YEARLY])) {
+        if (! in_array($frequency, [static::ONCE, static::YEARLY])) {
             throw new \InvalidArgumentException(
-                "Invalid frequency, must be one of: SurveyService::ONCE, SurveyService::YEARLY, SurveyService::BIYEARLY",
+                'Invalid frequency, must be one of: SurveyService::ONCE, SurveyService::YEARLY, SurveyService::BIYEARLY',
             );
         }
         if (
-            !collect($survey_types)
+            ! collect($survey_types)
                 ->map(
                     fn($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
@@ -86,14 +90,17 @@ class SurveyService
                 ->reduce(fn($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
-                "Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES",
+                'Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES',
             );
         }
     }
 
     private function buildUrl(string $survey_type): string
     {
-        return env("APP_QUALTRICS_{$survey_type}_LINK") .
-            "?userId={$this->user->id}";
+        if ($survey_type == static::CT_CAST) {
+            return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}";
+        } elseif ($survey_type == static::SCALES) {
+            return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}";
+        }
     }
 }

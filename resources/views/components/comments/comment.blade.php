@@ -24,7 +24,8 @@ description: Comment component for displaying a comment
 <article @class(['media', ...$mediaClass])>
   <figure @class(['media-left', ...$figureClass])>
     <p class="image is-64x64">
-      <img src="{{ $comment->user->avatar }}" alt="{{ $full_name }}">
+      <img src="{{ $comment->user->avatar }}"
+           alt="{{ $full_name }}">
     </p>
   </figure>
   <section @class(['media-content', ...$contentClass])>

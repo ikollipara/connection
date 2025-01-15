@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * \App\Models\Likes\ContentLike
+ *
  * @property int $id
  * @property string $user_id
  * @property string $content_id
@@ -20,27 +21,31 @@ use Illuminate\Database\Eloquent\Model;
 class ContentLike extends Model
 {
     use HasFactory;
-    protected $table = "content_likes";
+
+    protected $table = 'content_likes';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
-    protected $fillable = ["user_id", "content_id"];
+    protected $fillable = ['user_id', 'content_id'];
 
     /**
      * The attributes that should be cast.
+     *
      * @var array<string, string>
      */
     protected $casts = [
-        "created_at" => "datetime",
-        "updated_at" => "datetime",
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Relationships
 
     /**
      * Get the content that the like belongs to.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Content>
      */
     public function content()
@@ -50,6 +55,7 @@ class ContentLike extends Model
 
     /**
      * Get the user that liked the content.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
      */
     public function user()
@@ -61,27 +67,28 @@ class ContentLike extends Model
 
     public function scopeThisMonth($query)
     {
-        return $query->where("created_at", ">", now()->startOfMonth());
+        return $query->where('created_at', '>', now()->startOfMonth());
     }
 
     /**
      * Scope the query to only include likes from the last month.
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeLastMonth($query)
     {
         return $query
             ->where(
-                "created_at",
-                ">",
+                'created_at',
+                '>',
                 now()
                     ->subMonth()
                     ->startOfMonth(),
             )
             ->where(
-                "created_at",
-                "<",
+                'created_at',
+                '<',
                 now()
                     ->subMonth()
                     ->endOfMonth(),

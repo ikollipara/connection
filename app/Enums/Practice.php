@@ -35,7 +35,7 @@ class Practice extends Enum
 {
     protected static function values(): Closure
     {
-        return fn(string $practice) => Str::of($practice)->substr(8)->replace('_', '.')->__toString();
+        return fn (string $practice) => Str::of($practice)->substr(8)->replace('_', '.')->__toString();
     }
 
     protected static function labels()

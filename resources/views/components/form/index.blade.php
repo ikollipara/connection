@@ -8,19 +8,24 @@ description: |
     token and method spoofing for non-GET requests.
  --}}
 
-@props(['formName', 'action', 'method' => 'post', 'model' => null])
+@props(['action', 'method' => 'post', 'model' => null])
 
 @php
-  $isGet = str($method)->lower() === 'get';
+  $isGet = str($method)->lower()->__toString() === 'get';
 @endphp
 
-<form id="{{ $formName }}"
-      action="{{ $action }}"
-      {{ $attributes->class(['tw-flex', 'tw-flex-col', 'tw-gap-1']) }}
+<form action="{{ $action }}"
+      {{ $attributes }}
       method="{{ $isGet ? 'get' : 'post' }}">
-  @csrf
   @unless ($isGet)
-    @method($method)
+    <input name="_token"
+           type="hidden"
+           value="{{ csrf_token() }}"
+           x-ref="csrf" />
+    <input name="_method"
+           type="hidden"
+           value="{{ $method }}"
+           x-ref="method">
   @endunless
   {{ $slot }}
 </form>

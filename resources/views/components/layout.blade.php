@@ -29,12 +29,7 @@
         content="computer, science, education, cs, ed, resources, air@ne, unl, csta, nebraska, connection">
   @stack('meta')
   @routes
-  <link href="{{ mix('css/app.css') }}"
-        rel="stylesheet">
-  <x-style href="{{ mix('css/animate.css') }}" />
-  <x-style href="{{ mix('css/slim-select.css') }}" />
-  <script defer
-          src="{{ mix('js/app.js') }}"></script>
+  @vite(['resources/js/app.js', 'resources/css/slim-select.css', 'resources/css/animate.css', 'resources/scss/app.scss'])
   @stack('styles')
   @stack('scripts')
   <title>{{ $title }}</title>
