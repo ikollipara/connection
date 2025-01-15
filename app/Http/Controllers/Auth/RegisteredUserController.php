@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
             'consented.full_name' => 'nullable|string',
         ]);
 
-        data_set($validated, 'bio', Editor::fromJson(json_decode($validated['bio'])));
+        data_set($validated, 'bio', Editor::fromJson($validated['bio']));
         data_set($validated, 'consented', data_get($validated, 'consented.full_name'));
         data_set($validated, 'is_preservice', isset($validated['is_preservice']));
         data_set($validated, 'gender', '');

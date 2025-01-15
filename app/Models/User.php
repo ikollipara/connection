@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = ['first_name', 'last_name', 'avatar', 'email'];
+    protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -106,7 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRouteKey()
     {
-        return '@'.Str::slug($this->full_name, '-').'--'.$this->getAttribute($this->getRouteKeyName());
+        return '@' . Str::slug($this->full_name, '-') . '--' . $this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -138,7 +138,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarAttribute(): Avatar
     {
-        $avatar = new Avatar(/* $this->attributes['avatar'] */ '');
+        $avatar = new Avatar(/* $this->attributes['avatar'] */'');
         $full_name = trim(str_replace(' ', '+', $this->full_name));
         $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
 
@@ -283,7 +283,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'subject' => $data['subject'],
             'bio' => Editor::fromJson($data['bio']),
             'grades' => collect($data['grades'])
-                ->map(fn ($grade) => Grade::from($grade))
+                ->map(fn($grade) => Grade::from($grade))
                 ->toArray(),
             'gender' => '',
         ];

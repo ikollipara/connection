@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 
 class EventController extends Controller
 {
@@ -35,6 +36,8 @@ class EventController extends Controller
 
     public static function middleware(): array
     {
-        return [];
+        return [
+            new Middleware('auth', only: ['index']),
+        ];
     }
 }
