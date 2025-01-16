@@ -12,9 +12,22 @@ arch('Laravel Preset')
         'App\Enums',
     ]);
 arch('Security Preset')->preset()->security();
-// arch('Strict Preset')
-//     ->preset()
-//     ->strict()
-//     ->ignoring([
-//         'App\Http\Controllers\Controller',
-//     ])->markTestSkipped('Build Coverage First');
+
+arch('(My) Strict Preset')->preset()->custom('myStrict', function (array $userNamespaces) {
+    $expectations = [];
+    foreach ($userNamespaces as $namespace) {
+        $expectations[] = expect($namespace)->classes()->not->toHaveProtectedMethodsBesides(['booted']);
+        $expectations[] = expect($namespace)->classes()->not->toBeAbstract();
+        $expectations[] = expect($namespace)->toUseStrictTypes();
+        $expectations[] = expect($namespace)->toUseStrictEquality();
+    }
+
+    $expectations[] = expect([
+        'sleep',
+        'usleep',
+    ])->not->toBeUsed();
+
+    return $expectations;
+});
+
+arch()->preset()->myStrict();
