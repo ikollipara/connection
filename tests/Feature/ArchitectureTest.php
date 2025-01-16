@@ -27,6 +27,4 @@ arch('(My) Strict Preset')->preset()->custom('myStrict', function (array $userNa
     ])->not->toBeUsed();
 
     return $expectations;
-});
-
-arch()->preset()->myStrict();
+})->myStrict();
