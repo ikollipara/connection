@@ -9,7 +9,7 @@ use App\ValueObjects\Editor;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class UserContentCollectionController extends Controller
+final class UserContentCollectionController extends Controller
 {
     public function index(Request $request, User $user)
     {

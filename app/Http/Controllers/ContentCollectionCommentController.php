@@ -7,7 +7,7 @@ use App\Models\ContentCollection;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 
-class ContentCollectionCommentController extends Controller
+final class ContentCollectionCommentController extends Controller
 {
     /**
      * Display a listing of the resource.

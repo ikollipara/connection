@@ -14,7 +14,7 @@ use App\ValueObjects\Metadata;
 use Closure;
 use Illuminate\Http\Request;
 
-class UserContentCollectionPublishController extends Controller
+final class UserContentCollectionPublishController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -22,16 +22,16 @@ class UserContentCollectionPublishController extends Controller
     public function __invoke(Request $request, User $user, ContentCollection $collection)
     {
         $validated = $request->validate([
-            'audience' => 'enum:'.Audience::class,
-            'category' => 'enum:'.Category::class,
+            'audience' => 'enum:' . Audience::class,
+            'category' => 'enum:' . Category::class,
             'grades' => 'sometimes|array',
-            'grades.*' => 'enum:'.Grade::class,
+            'grades.*' => 'enum:' . Grade::class,
             'standards' => 'sometimes|array',
-            'standards.*' => 'enum:'.Standard::class,
+            'standards.*' => 'enum:' . Standard::class,
             'practices' => 'sometimes|array',
-            'practices.*' => 'enum:'.Practice::class,
+            'practices.*' => 'enum:' . Practice::class,
             'languages' => 'sometimes|array',
-            'languages.*' => 'enum:'.Language::class,
+            'languages.*' => 'enum:' . Language::class,
         ]);
 
         $collection->metadata = new Metadata($validated);

@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Process\Process;
 
-class RestoreFromBackup extends Command
+class RestoreFromBackupCommand extends Command
 {
     /**
      * The name and signature of the console command.

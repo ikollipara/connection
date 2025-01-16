@@ -7,7 +7,7 @@ use App\Models\Content;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ContentContentCollectionController extends Controller
+final class ContentContentCollectionController extends Controller
 {
     /**
      * Handle the incoming request.

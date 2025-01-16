@@ -7,7 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 
-class PostCommentController extends Controller
+final class PostCommentController extends Controller
 {
     /**
      * Display a listing of the resource.

@@ -9,7 +9,7 @@ use App\Models\UserSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class UserSettingsController extends Controller
+final class UserSettingsController extends Controller
 {
     public function edit(User $user): View
     {

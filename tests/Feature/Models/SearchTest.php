@@ -20,11 +20,12 @@ class SearchTest extends TestCase
 
     public function test_search_belongs_to_a_user()
     {
+        /** @var Search */
         $search = Search::create([
             'user_id' => User::factory()->create()->id,
             'search_params' => ['q' => 'test'],
         ]);
-        $this->assertNotNull($search->user);
+        $this->assertNotNull($search->user->id);
         $this->assertTrue($search->user()->exists());
     }
 }

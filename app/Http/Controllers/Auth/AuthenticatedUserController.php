@@ -9,7 +9,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class AuthenticatedUserController extends Controller
+final class AuthenticatedUserController extends Controller
 {
     public function create()
     {

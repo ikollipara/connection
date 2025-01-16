@@ -28,13 +28,13 @@ class FileUploadControllerTest extends TestCase
             'image' => UploadedFile::fake()->image('image.jpg'),
         ];
 
-        $response = $this->actingAs($this->user)->post(route('upload.store'), $data);
+        $response = $this->actingAs($this->user)->post(route('api.upload.store'), $data);
         $response->assertJsonStructure(['success', 'file' => ['url']]);
         $response->assertJsonFragment([
             'success' => 1,
         ]);
 
-        Storage::disk('public')->assertExists('files/'.$data['image']->hashName());
+        Storage::disk('public')->assertExists('files/' . $data['image']->hashName());
     }
 
     public function test_store_url()
@@ -47,12 +47,12 @@ class FileUploadControllerTest extends TestCase
             )}",
         ];
 
-        $response = $this->actingAs($this->user)->post(route('upload.store'), $data);
+        $response = $this->actingAs($this->user)->post(route('api.upload.store'), $data);
         $response->assertJsonStructure(['success', 'file' => ['url']]);
         $response->assertJsonFragment([
             'success' => 1,
         ]);
-        Storage::disk('public')->assertExists('files/'.str($response->json('file')['url'])->afterLast('/'));
+        Storage::disk('public')->assertExists('files/' . str($response->json('file')['url'])->afterLast('/'));
     }
 
     public function test_delete_upload()
@@ -61,7 +61,7 @@ class FileUploadControllerTest extends TestCase
         $file = UploadedFile::fake()->image('image.jpg');
         $path = $file->store('files', 'public');
 
-        $response = $this->actingAs($this->user)->delete(route('upload.destroy'), ['path' => $path]);
+        $response = $this->actingAs($this->user)->delete(route('api.upload.destroy'), ['path' => $path]);
         Storage::disk('public')->assertMissing($path);
     }
 
@@ -71,7 +71,7 @@ class FileUploadControllerTest extends TestCase
         $file = UploadedFile::fake()->image('image.jpg');
         $path = Storage::url($file->store('files', 'public'));
 
-        $response = $this->actingAs($this->user)->delete(route('upload.destroy'), ['path' => $path]);
+        $response = $this->actingAs($this->user)->delete(route('api.upload.destroy'), ['path' => $path]);
         Storage::disk('public')->assertMissing($path);
     }
 }

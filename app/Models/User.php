@@ -34,7 +34,7 @@ use Mail;
  * @property string $first_name
  * @property string $last_name
  * @property-read string $full_name
- * @property Avatar $avatar
+ * @property \App\ValueObjects\Avatar $avatar
  * @property string $email
  * @property bool $consented
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -125,7 +125,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarAttribute(): Avatar
     {
-        $avatar = new Avatar(/* $this->attributes['avatar'] */'');
+        $avatar = new Avatar(Arr::get($this->attributes, 'avatar', ''));
         $full_name = trim(str_replace(' ', '+', $this->full_name));
         $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
 

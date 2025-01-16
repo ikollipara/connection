@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ContactRequest;
 use Illuminate\Routing\Controllers\Middleware;
 
-class ContactController extends Controller
+final class ContactController extends Controller
 {
     public function create()
     {

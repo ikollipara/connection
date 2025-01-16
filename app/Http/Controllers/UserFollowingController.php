@@ -6,7 +6,7 @@ use App\Models\Follower;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserFollowingController extends Controller
+final class UserFollowingController extends Controller
 {
     public function __invoke(Request $request, User $user)
     {

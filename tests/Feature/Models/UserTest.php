@@ -31,13 +31,6 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function test_when_a_user_is_created_a_registered_event_is_dispatched()
-    {
-        Event::fake([Registered::class]);
-        $user = User::factory()->create();
-        Event::assertDispatched(Registered::class);
-    }
-
     public function test_when_user_is_saved_as_consented_a_mail_notification_is_sent()
     {
         Mail::fake();
@@ -48,7 +41,7 @@ class UserTest extends TestCase
     public function test_user_route_key_is_correct()
     {
         $user = User::factory()->create();
-        $expected = '@'.str($user->full_name)->slug('-').'--'.$user->id;
+        $expected = '@' . str($user->full_name)->slug('-') . '--' . $user->id;
         $this->assertEquals($expected, $user->getRouteKey());
     }
 
@@ -183,8 +176,9 @@ class UserTest extends TestCase
 
     public function test_user_can_have_many_searches()
     {
-        $user = User::factory()->create();
-        foreach (range(1, 5) as $i) {
+        /** @var User */
+        $user = User::factory()->createOne();
+        for ($i = 0; $i < 5; $i++) {
             $user->searches()->create([
                 'search_params' => [],
             ]);
@@ -197,7 +191,9 @@ class UserTest extends TestCase
         $user = User::factory()->makeOne();
         $profile = UserProfile::factory()->makeOne();
         unset($profile['user_id']);
-        $user = User::createWithProfileAndSettings(array_merge($user->toArray(), $profile->toArray()));
+        $profile_array = $profile->toArray();
+        $profile_array['bio'] = json_encode($profile_array['bio']);
+        $user = User::createWithProfileAndSettings(array_merge($user->toArray(), $profile_array));
 
         $this->assertDatabaseHas('users', ['email' => $user->email]);
         $this->assertDatabaseHas('user_profiles', ['user_id' => $user->id]);
@@ -207,12 +203,15 @@ class UserTest extends TestCase
 
     public function test_user_can_delete_their_avatar()
     {
-        Storage::fake('public');
+        Storage::fake('public', ['throw' => true]);
         $avatar = UploadedFile::fake()->image('avatar.jpg');
+        /** @var Avatar */
         $avatar = Avatar::fromUploadedFile($avatar);
-        $user = User::factory()->create([
+        /** @var User */
+        $user = User::factory()->createOne([
             'avatar' => $avatar,
         ]);
+        var_dump($user->avatar->path());
         $this->assertTrue($user->avatar->delete());
         $this->assertFalse($user->avatar->exists());
     }

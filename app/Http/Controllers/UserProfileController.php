@@ -11,7 +11,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
-class UserProfileController extends Controller
+final class UserProfileController extends Controller
 {
     /**
      * Display the resource.
@@ -20,8 +20,8 @@ class UserProfileController extends Controller
     {
         $profile = $user->profile;
         $user = $user->loadCount([
-            'posts' => fn($query) => $query->areSearchable(),
-            'collections' => fn($query) => $query->areSearchable(),
+            'posts' => fn($query) => $query->shouldBeSearchable(),
+            'collections' => fn($query) => $query->shouldBeSearchable(),
             'followers',
             'following',
         ]);

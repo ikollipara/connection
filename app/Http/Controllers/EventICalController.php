@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class EventICalController extends Controller
+final class EventICalController extends Controller
 {
     public function __invoke(Request $request, ?User $user)
     {

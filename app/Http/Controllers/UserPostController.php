@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Js;
 
-class UserPostController extends Controller
+final class UserPostController extends Controller
 {
     /**
      * Display a listing of the resource.

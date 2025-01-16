@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Js;
 
-class UserContentCollectionController extends Controller
+final class UserContentCollectionController extends Controller
 {
     /**
      * Display a listing of the resource.

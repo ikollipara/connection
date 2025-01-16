@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 
-class RegisteredUserController extends Controller
+final class RegisteredUserController extends Controller
 {
     public function create(Request $request)
     {

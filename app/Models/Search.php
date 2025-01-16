@@ -5,6 +5,7 @@ namespace App\Models;
 use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
@@ -24,10 +25,18 @@ class Search extends Model
         'search_params' => 'array',
     ];
 
+    /**
+     * @return BelongsTo<User, covariant self>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected static function booted()
     {
         static::creating(function (Search $search) {
-            $search->user_id = Auth::user()->id ?? request()->ip();
+            $search->user_id = $search->user_id ?? (Auth::user()->id ?? request()->ip());
         });
     }
 

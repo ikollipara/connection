@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
-class EmailVerificationController extends Controller
+final class EmailVerificationController extends Controller
 {
     /**
      * Display a listing of the resource.

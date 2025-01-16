@@ -6,7 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class EventAttendeeController extends Controller
+final class EventAttendeeController extends Controller
 {
     /**
      * Store a newly created resource in storage.

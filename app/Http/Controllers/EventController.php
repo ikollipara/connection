@@ -6,17 +6,8 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 
-class EventController extends Controller
+final class EventController extends Controller
 {
-    // public function index()
-    // {
-    //     $events = Event::query()->with('user')->get();
-    //     return view("events.index", compact("events"));
-    // }
-    // public function show(Event $event)
-    // {
-    //     return view('events.show', compact('event'));
-    // }
 
     public function index(Request $request)
     {

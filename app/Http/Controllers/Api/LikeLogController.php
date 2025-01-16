@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class LikeLogController extends Controller
+final class LikeLogController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -33,7 +33,6 @@ class LikeLogController extends Controller
                 ],
                 status: Response::HTTP_OK
             );
-
         } catch (\Throwable $th) {
             $message = $th->getMessage();
             logger()->error($message, ['request' => $request->all()]);

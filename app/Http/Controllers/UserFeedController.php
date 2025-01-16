@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Cache;
 
-class UserFeedController extends Controller
+final class UserFeedController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -19,7 +19,7 @@ class UserFeedController extends Controller
             key: "$user->id--feed",
             ttl: now()->addMinutes(5),
             callback: fn() =>
-            Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->areSearchable()->latest()->get()
+            Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->shouldBeSearchable()->latest()->get()
         );
 
         return view('users.feed', [

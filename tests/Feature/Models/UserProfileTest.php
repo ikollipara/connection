@@ -13,12 +13,14 @@ class UserProfileTest extends TestCase
 
     public function test_can_create_user_profile()
     {
-        $userProfile = UserProfile::factory()->create();
+        /** @var UserProfile */
+        $userProfile = UserProfile::factory()->createOne();
+
         $this->assertDatabaseHas('user_profiles', [
             'user_id' => $userProfile->user_id,
         ]);
         $this->assertDatabaseCount('user_profiles', 1);
-        $this->assertContainsOnly(Grade::class, $userProfile->grades);
+        $this->assertContainsOnlyInstancesOf(Grade::class, $userProfile->grades);
     }
 
     public function test_can_get_short_title()
@@ -46,7 +48,7 @@ class UserProfileTest extends TestCase
         $userProfile = UserProfile::factory()->create([
             'subject' => 'English',
             'is_preservice' => false,
-            'years_of_experience' => 1,
+            'years_of_experience' => 0,
         ]);
         $this->assertEquals(
             'English Teacher (First Year)',

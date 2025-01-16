@@ -7,7 +7,7 @@ use App\Models\ContentCollection;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserContentCollectionStatusController extends Controller
+final class UserContentCollectionStatusController extends Controller
 {
     /**
      * Handle the incoming request.

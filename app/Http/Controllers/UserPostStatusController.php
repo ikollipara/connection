@@ -7,7 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserPostStatusController extends Controller
+final class UserPostStatusController extends Controller
 {
     /**
      * Handle the incoming request.

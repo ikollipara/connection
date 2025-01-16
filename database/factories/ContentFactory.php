@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\ValueObjects\Editor;
 use App\ValueObjects\Metadata;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class ContentFactory extends Factory
         return [
             'title' => $this->faker->word(),
             'metadata' => Metadata::fromFaker($this->faker),
-            'body' => json_encode(['blocks' => []]),
+            'body' => Editor::fromJson(json_encode(['blocks' => []])),
             'user_id' => User::factory(),
             'published' => $this->faker->boolean(),
             'type' => $this->faker->randomElement(['post', 'collection']),

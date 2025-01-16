@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\Middleware;
 
-class UserFollowerController extends Controller
+final class UserFollowerController extends Controller
 {
     public function index(Request $request, User $user)
     {

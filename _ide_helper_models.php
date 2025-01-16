@@ -60,7 +60,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
  * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
  * @property string|null $user_id
  * @property string $metadata
@@ -69,6 +68,7 @@ namespace App\Models{
  * @property string|null $type
  * @property-read \App\Models\Entry|null $pivot
  * @property-read int|null $collections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read mixed $was_recently_published
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content areSearchable()
@@ -98,7 +98,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereViews($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Content withSearchConstraints(array $constraints)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content withoutTrashed()
  */
@@ -158,7 +157,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereViews($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withHasEntry($content = null)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withSearchConstraints(array $constraints)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withoutTrashed()
  */
@@ -340,7 +338,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereViews($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withSearchConstraints(array $constraints)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withoutTrashed()
  */
@@ -377,7 +374,7 @@ namespace App\Models{
  * @property string $first_name
  * @property string $last_name
  * @property-read string $full_name
- * @property Avatar $avatar
+ * @property \App\ValueObjects\Avatar $avatar
  * @property string $email
  * @property bool $consented
  * @property \Illuminate\Support\Carbon|null $email_verified_at

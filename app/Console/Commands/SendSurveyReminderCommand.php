@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Notifications\SurveyReminder;
 use Illuminate\Console\Command;
 
-class SendSurveyReminder extends Command
+class SendSurveyReminderCommand extends Command
 {
     /**
      * The name and signature of the console command.

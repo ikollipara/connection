@@ -9,7 +9,7 @@ use App\ValueObjects\Editor;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class UserPostController extends Controller
+final class UserPostController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -36,7 +36,6 @@ class UserPostController extends Controller
                 ],
                 status: Response::HTTP_CREATED,
             );
-
         } catch (\Throwable $th) {
             $message = $th->getMessage();
             logger()->error('Post creation failed', ['user' => $user, 'error' => $message]);

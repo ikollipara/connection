@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class FileUploadController extends Controller
+final class FileUploadController extends Controller
 {
     public function store(Request $request)
     {

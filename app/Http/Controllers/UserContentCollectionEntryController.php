@@ -7,7 +7,7 @@ use App\Models\Entry;
 use App\Models\User;
 use Illuminate\Http\Response;
 
-class UserContentCollectionEntryController extends Controller
+final class UserContentCollectionEntryController extends Controller
 {
     public function destroy(User $user, ContentCollection $collection, Entry $entry)
     {
