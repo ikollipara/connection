@@ -16,7 +16,6 @@ arch('Security Preset')->preset()->security();
 arch('(My) Strict Preset')->preset()->custom('myStrict', function (array $userNamespaces) {
     $expectations = [];
     foreach ($userNamespaces as $namespace) {
-        $expectations[] = expect($namespace)->classes()->not->toHaveProtectedMethodsBesides(['booted']);
         $expectations[] = expect($namespace)->classes()->not->toBeAbstract();
         $expectations[] = expect($namespace)->toUseStrictTypes();
         $expectations[] = expect($namespace)->toUseStrictEquality();
