@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /*|=============================================================================|
   | Metadata.php
   | Ian Kollipara <ikollipara2@huskers.unl.edu>
   |-----------------------------------------------------------------------------|
   | This file defines a rich object for handling Metadata around the application.
   |=============================================================================| */
-
 namespace App\ValueObjects;
 
 use App\Enums\Audience;

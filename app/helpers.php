@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /*|==================================================================================|
   | helpers.php                                                                      |
   | Ian Kollipara <ikollipara2@huskers.unl.edu>                                      |
   |----------------------------------------------------------------------------------|
   | This file contains helper functions that can be used throughout the application. |
   |==================================================================================| */
-
 if (! function_exists('session_back')) {
     /**
      * Redirects the user back to the previous page

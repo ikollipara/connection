@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /*|=============================================================================|
   | StandardGroup.php
   | Ian Kollipara <ikollipara2@huskers.unl.edu>
   |-----------------------------------------------------------------------------|
   | This file contains the StandardGroup class, which is an enumeration.
   |=============================================================================| */
-
 namespace App\Enums;
 
 use Closure;

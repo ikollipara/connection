@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*|=============================================================================|
   | HasMetadata.php
   | Ian Kollipara <ikollipara2@huskers.unl.edu>
@@ -7,7 +9,6 @@
   | This file defines the `HasMetadata` Concern for models that enables fluid
   | integration of Metadata for models
   |=============================================================================| */
-
 namespace App\Models\Concerns;
 
 use App\ValueObjects\Metadata;

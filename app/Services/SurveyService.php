@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * |=============================================================================|
  * | SurveyService.php                                                           |
@@ -7,7 +9,6 @@
  * | This file contains the SurveyService class. This class is used to provide   |
  * | methods sending surveys.                                                    |
  * |=============================================================================| */
-
 namespace App\Services;
 
 use App\Mail\Survey;
