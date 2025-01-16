@@ -98,7 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function resolveRouteBinding($value, $field = null)
     {
-        if ($value == 'me') {
+        if ($value === 'me') {
             return auth()->user();
         }
         $id = last(explode('--', $value));

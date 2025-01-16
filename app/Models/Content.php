@@ -95,7 +95,7 @@ class Content extends Model
         // Some of the content is "doubly" stringified, so we need to
         // decode it twice. This is a temporary fix until we can
         // properly migrate the data.
-        if ($value[0] == '"') {
+        if ($value[0] === '"') {
             $value = json_decode($value);
         }
 

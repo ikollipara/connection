@@ -98,9 +98,9 @@ class SurveyService
 
     private function buildUrl(string $survey_type): string
     {
-        if ($survey_type == static::CT_CAST) {
+        if ($survey_type === static::CT_CAST) {
             return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}";
-        } elseif ($survey_type == static::SCALES) {
+        } elseif ($survey_type === static::SCALES) {
             return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}";
         } else {
             throw new InvalidArgumentException("$survey_type is not one of " . static::CT_CAST . " or " . static::SCALES);

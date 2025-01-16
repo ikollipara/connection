@@ -64,7 +64,7 @@ class UserProfile extends Model
 
     protected function getBioAttribute($value): Editor
     {
-        if ($value[0] == '"') {
+        if ($value[0] === '"') {
             $value = json_decode($value);
         }
         return Editor::fromJson($value);
