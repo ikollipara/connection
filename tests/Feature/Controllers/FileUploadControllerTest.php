@@ -34,7 +34,7 @@ class FileUploadControllerTest extends TestCase
             'success' => 1,
         ]);
 
-        Storage::disk('public')->assertExists('files/' . $data['image']->hashName());
+        Storage::disk('public')->assertExists('files/'.$data['image']->hashName());
     }
 
     public function test_store_url()
@@ -52,7 +52,7 @@ class FileUploadControllerTest extends TestCase
         $response->assertJsonFragment([
             'success' => 1,
         ]);
-        Storage::disk('public')->assertExists('files/' . str($response->json('file')['url'])->afterLast('/'));
+        Storage::disk('public')->assertExists('files/'.str($response->json('file')['url'])->afterLast('/'));
     }
 
     public function test_delete_upload()

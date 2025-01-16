@@ -95,7 +95,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRouteKey()
     {
-        return '@' . Str::slug($this->full_name, '-') . '--' . $this->getAttribute($this->getRouteKeyName());
+        return '@'.Str::slug($this->full_name, '-').'--'.$this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -171,6 +171,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * What events the user is attending.
+     *
      * @return BelongsToMany<Event, covariant self>
      */
     public function attending(): BelongsToMany
@@ -276,7 +277,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'subject' => $data['subject'],
             'bio' => Editor::fromJson($data['bio']),
             'grades' => collect($data['grades'])
-                ->map(fn($grade) => Grade::from($grade))
+                ->map(fn ($grade) => Grade::from($grade))
                 ->toArray(),
             'gender' => '',
         ];

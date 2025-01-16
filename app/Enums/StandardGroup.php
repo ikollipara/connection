@@ -8,6 +8,7 @@ declare(strict_types=1);
   |-----------------------------------------------------------------------------|
   | This file contains the StandardGroup class, which is an enumeration.
   |=============================================================================| */
+
 namespace App\Enums;
 
 use Closure;

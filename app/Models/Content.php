@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Standard;
-use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\Likeable;
@@ -21,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
 use Parental\HasChildren;
 
 /**

@@ -1,7 +1,6 @@
 <?php
 
 // @php-stan-ignore-next-line
-use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------

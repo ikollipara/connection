@@ -9,6 +9,7 @@ declare(strict_types=1);
   | This file defines the `HasMetadata` Concern for models that enables fluid
   | integration of Metadata for models
   |=============================================================================| */
+
 namespace App\Models\Concerns;
 
 use App\ValueObjects\Metadata;

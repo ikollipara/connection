@@ -14,7 +14,6 @@ class UsersControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-
     public function test_create_user()
     {
         $this->markTestSkipped('Needs to be moved to RegisteredUserControllerTest');
@@ -44,7 +43,7 @@ class UsersControllerTest extends TestCase
 
     public function test_delete_user()
     {
-        $this->markTestSkipped("Delete needs to be reimplmented");
+        $this->markTestSkipped('Delete needs to be reimplmented');
         $user = User::factory()
             ->hasProfile()
             ->hasSettings()
@@ -58,7 +57,7 @@ class UsersControllerTest extends TestCase
 
     public function test_delete_user_fail()
     {
-        $this->markTestSkipped("Delete needs to be reimplmented");
+        $this->markTestSkipped('Delete needs to be reimplmented');
         $user = User::factory()
             ->hasProfile()
             ->hasSettings()

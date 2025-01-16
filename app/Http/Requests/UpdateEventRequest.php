@@ -42,16 +42,16 @@ class UpdateEventRequest extends FormRequest
             'start_time' => 'required_without:is_all_day|after_or_equal:today',
             'end_time' => 'required_without:is_all_day|after:start_time',
             'metadata' => 'array',
-            'metadata.audience' => 'enum:' . Audience::class,
-            'metadata.category' => 'enum:' . Category::class,
+            'metadata.audience' => 'enum:'.Audience::class,
+            'metadata.category' => 'enum:'.Category::class,
             'metadata.grades' => 'sometimes|array',
-            'metadata.grades.*' => 'enum:' . Grade::class,
+            'metadata.grades.*' => 'enum:'.Grade::class,
             'metadata.standards' => 'sometimes|array',
-            'metadata.standards.*' => 'enum:' . Standard::class,
+            'metadata.standards.*' => 'enum:'.Standard::class,
             'metadata.practices' => 'sometimes|array',
-            'metadata.practices.*' => 'enum:' . Practice::class,
+            'metadata.practices.*' => 'enum:'.Practice::class,
             'metadata.languages' => 'sometimes|array',
-            'metadata.languages.*' => 'enum:' . Language::class,
+            'metadata.languages.*' => 'enum:'.Language::class,
         ];
     }
 }

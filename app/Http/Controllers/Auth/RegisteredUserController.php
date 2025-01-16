@@ -27,7 +27,7 @@ final class RegisteredUserController extends Controller
             'last_name' => 'required|string',
             'bio' => 'json',
             'grades' => 'array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'school' => 'required|string',
             'subject' => 'required|string',
             'years_of_experience' => 'required_without:is_preservice|integer|min:0',

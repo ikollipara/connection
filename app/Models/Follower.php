@@ -8,6 +8,7 @@ declare(strict_types=1);
  * |-----------------------------------------------------------------------------|
  * | Defines the Follower model.                                                 |
  * |=============================================================================| */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

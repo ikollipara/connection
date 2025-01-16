@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserSettingsRequest;
 use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Models\User;
-use App\Models\UserSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 

@@ -6,11 +6,9 @@ use App\Mail\Survey;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\ValueObjects\Avatar;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -41,7 +39,7 @@ class UserTest extends TestCase
     public function test_user_route_key_is_correct()
     {
         $user = User::factory()->create();
-        $expected = '@' . str($user->full_name)->slug('-') . '--' . $user->id;
+        $expected = '@'.str($user->full_name)->slug('-').'--'.$user->id;
         $this->assertEquals($expected, $user->getRouteKey());
     }
 

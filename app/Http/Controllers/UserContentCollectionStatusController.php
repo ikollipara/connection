@@ -17,7 +17,7 @@ final class UserContentCollectionStatusController extends Controller
     public function __invoke(Request $request, User $user, ContentCollection $collection)
     {
         $status = Status::from($request->validate([
-            'status' => 'required|enum:' . Status::class,
+            'status' => 'required|enum:'.Status::class,
         ])['status']);
 
         if ($status->equals(Status::draft())) {

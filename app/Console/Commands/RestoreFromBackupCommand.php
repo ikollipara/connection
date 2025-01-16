@@ -50,18 +50,18 @@ class RestoreFromBackupCommand extends Command
             if ($password = $config['password']) {
                 $process = new Process([
                     'mysql',
-                    '-h' . $config['host'],
-                    '-u' . $config['username'],
-                    '-p' . $password,
-                    '-P' . $config['port'],
+                    '-h'.$config['host'],
+                    '-u'.$config['username'],
+                    '-p'.$password,
+                    '-P'.$config['port'],
                     $config['database'],
                 ]);
             } else {
                 $process = new Process([
                     'mysql',
-                    '-h' . $config['host'],
-                    '-u' . $config['username'],
-                    '-P' . $config['port'],
+                    '-h'.$config['host'],
+                    '-u'.$config['username'],
+                    '-P'.$config['port'],
                     $config['database'],
                 ]);
             }
@@ -74,15 +74,15 @@ class RestoreFromBackupCommand extends Command
                         $this->info($buffer);
                     }
                 });
-                $this->info('Database restored from ' . $file);
+                $this->info('Database restored from '.$file);
 
                 return 0;
             } catch (\Throwable $th) {
                 $this->error(
-                    'Failed to restore database from ' .
-                        $file .
-                        '. Error:' .
-                        PHP_EOL .
+                    'Failed to restore database from '.
+                        $file.
+                        '. Error:'.
+                        PHP_EOL.
                         $th->getMessage(),
                 );
 

@@ -10,7 +10,6 @@ use Illuminate\Routing\Controllers\Middleware;
 
 final class EventController extends Controller
 {
-
     public function index(Request $request)
     {
         return view('events.index', [

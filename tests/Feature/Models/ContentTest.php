@@ -36,7 +36,7 @@ class ContentTest extends TestCase
     public function test_content_should_get_the_correct_route_key()
     {
         $content = Content::factory()->create();
-        $expected = str($content->title)->slug() . '--' . $content->id;
+        $expected = str($content->title)->slug().'--'.$content->id;
         $this->assertEquals($expected, $content->getRouteKey());
     }
 
@@ -75,7 +75,6 @@ class ContentTest extends TestCase
         $content = Content::factory()->create();
         $this->assertInstanceOf(User::class, $content->user);
     }
-
 
     public function test_content_can_belong_to_many_collections()
     {

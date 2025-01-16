@@ -9,6 +9,7 @@ declare(strict_types=1);
   | This file contains the Searchable interface. This interface is responsible for
   | providing a common interface for the search service to use.
   |=============================================================================| */
+
 namespace App\Contracts;
 
 /**

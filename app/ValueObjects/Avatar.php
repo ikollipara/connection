@@ -40,8 +40,9 @@ class Avatar
      */
     public static function fromUploadedFile($file, $disk = 'public'): self
     {
-        if (is_null($file)) return new self('');
-
+        if (is_null($file)) {
+            return new self('');
+        }
 
         $path = $file->store('avatars', $disk);
 

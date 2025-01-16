@@ -45,7 +45,7 @@ trait Viewable
         return $query->orderBySub(
             DB::table('views_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', self::class),
             $direction
         );
@@ -55,7 +55,7 @@ trait Viewable
     {
         return $query->where(
             DB::table('views_log')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', self::class)
                 ->distinct()
                 ->selectRaw('count(user_id) as views_count'),

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * | This file contains the SurveyService class. This class is used to provide   |
  * | methods sending surveys.                                                    |
  * |=============================================================================| */
+
 namespace App\Services;
 
 use App\Mail\Survey;
@@ -38,7 +39,7 @@ class SurveyService
     {
         $this->validateArgs($survey_types, $frequency);
         $urls = collect($survey_types)->map(
-            fn($survey_type) => $this->buildUrl($survey_type),
+            fn ($survey_type) => $this->buildUrl($survey_type),
         );
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
@@ -56,7 +57,7 @@ class SurveyService
         if ($this->user->sent_week_one_survey) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->sent_week_one_survey = true;
         $this->user->save();
     }
@@ -64,12 +65,12 @@ class SurveyService
     private function handleYearly(Collection $urls)
     {
         if (
-            !is_null($this->user->yearly_survey_sent_at) and
+            ! is_null($this->user->yearly_survey_sent_at) and
             $this->user->yearly_survey_sent_at->diffInYears(now()) < 1
         ) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->yearly_survey_sent_at = now();
         $this->user->save();
     }
@@ -84,12 +85,12 @@ class SurveyService
         if (
             ! collect($survey_types)
                 ->map(
-                    fn($survey_type) => in_array($survey_type, [
+                    fn ($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
                         static::SCALES,
                     ]),
                 )
-                ->reduce(fn($carry, $item) => $carry && $item, true)
+                ->reduce(fn ($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
                 'Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES',
@@ -104,7 +105,7 @@ class SurveyService
         } elseif ($survey_type === static::SCALES) {
             return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}";
         } else {
-            throw new InvalidArgumentException("$survey_type is not one of " . static::CT_CAST . " or " . static::SCALES);
+            throw new InvalidArgumentException("$survey_type is not one of ".static::CT_CAST.' or '.static::SCALES);
         }
     }
 }
