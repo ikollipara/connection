@@ -37,7 +37,7 @@ class UserProfile extends Model
 
     protected $casts = [
         'bio' => 'array',
-        'grades' => Grade::class.':collection',
+        'grades' => Grade::class . ':collection',
         'is_preservice' => 'boolean',
     ];
 
@@ -57,7 +57,7 @@ class UserProfile extends Model
         };
 
         return Attribute::make(
-            get: fn () => match ($this->is_preservice) {
+            get: fn() => match ($this->is_preservice) {
                 true => "$this->subject Pre-Service Teacher ($years)",
                 false => "$this->subject Teacher ($years)",
             },
@@ -66,9 +66,11 @@ class UserProfile extends Model
 
     protected function getBioAttribute($value): Editor
     {
+        // @codeCoverageIgnoreStart
         if ($value[0] === '"') {
             $value = json_decode($value);
         }
+        // @codeCoverageIgnoreEnd
 
         return Editor::fromJson($value);
     }

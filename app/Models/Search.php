@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 
 /**
  * @property int $id
@@ -55,7 +56,7 @@ class Search extends Model
             ->get();
     }
 
-    protected function normalizeParams(array &$params)
+    private function normalizeParams(array &$params)
     {
         data_fill($params, 'views', 0);
         data_fill($params, 'likes', 0);
@@ -81,8 +82,7 @@ class Search extends Model
             'post' => $params['type'] = Post::class,
             'collection' => $params['type'] = ContentCollection::class,
             'event' => $params['type'] = Event::class,
-            'user' => $params['type'] = UserProfile::class,
-            default => null,
+            default => throw new InvalidArgumentException("type is invalid: {$params['type']}"),
         };
     }
 }

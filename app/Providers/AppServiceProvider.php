@@ -30,9 +30,5 @@ class AppServiceProvider extends ServiceProvider
         Blueprint::macro('metadata', function () {
             $this->jsonb('metadata');
         });
-
-        Blade::if('session', function ($key) {
-            return session()->has($key);
-        });
     }
 }

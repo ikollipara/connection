@@ -39,7 +39,7 @@ class SurveyService
     {
         $this->validateArgs($survey_types, $frequency);
         $urls = collect($survey_types)->map(
-            fn ($survey_type) => $this->buildUrl($survey_type),
+            fn($survey_type) => $this->buildUrl($survey_type),
         );
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
@@ -57,7 +57,7 @@ class SurveyService
         if ($this->user->sent_week_one_survey) {
             return;
         }
-        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->sent_week_one_survey = true;
         $this->user->save();
     }
@@ -70,7 +70,7 @@ class SurveyService
         ) {
             return;
         }
-        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->yearly_survey_sent_at = now();
         $this->user->save();
     }
@@ -85,12 +85,12 @@ class SurveyService
         if (
             ! collect($survey_types)
                 ->map(
-                    fn ($survey_type) => in_array($survey_type, [
+                    fn($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
                         static::SCALES,
                     ]),
                 )
-                ->reduce(fn ($carry, $item) => $carry && $item, true)
+                ->reduce(fn($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
                 'Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES',
@@ -98,14 +98,16 @@ class SurveyService
         }
     }
 
-    private function buildUrl(string $survey_type): string
+    /**
+     *
+     * @param self::CT_CAST|self::SCALES $survey_type
+     * @return string
+     */
+    private function buildUrl($survey_type): string
     {
-        if ($survey_type === static::CT_CAST) {
-            return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}";
-        } elseif ($survey_type === static::SCALES) {
-            return "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}";
-        } else {
-            throw new InvalidArgumentException("$survey_type is not one of ".static::CT_CAST.' or '.static::SCALES);
-        }
+        return match ($survey_type) {
+            self::SCALES => "https://unlcorexmuw.qualtrics.com/jfe/form/SV_9srNvEgI4qtTNYO?userId={$this->user->id}",
+            self::CT_CAST => "https://unlcorexmuw.qualtrics.com/jfe/form/SV_77fiKxeee2WFRVs?userId={$this->user->id}",
+        };
     }
 }

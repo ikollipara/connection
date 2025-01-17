@@ -164,8 +164,8 @@ class Standard extends Enum
 {
     public static function getGroup(StandardGroup $group)
     {
-        return collect(static::toValues())
-            ->filter(fn ($value) => str_starts_with($value, $group))
+        return collect(self::toValues())
+            ->filter(fn($value) => str_starts_with($value, $group->value))
             ->values();
     }
 

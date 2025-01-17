@@ -50,7 +50,7 @@ trait Likeable
         return $query->orderBy(
             DB::table('likes_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', $model_type)
                 ->toSql(),
             $direction
@@ -64,11 +64,10 @@ trait Likeable
 
         return $query->where(
             DB::table('likes_log')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', $model_type)
                 ->distinct()
-                ->selectRaw('count(user_id) as likes_count')
-                ->toSql(),
+                ->selectRaw('count(user_id) as likes_count'),
             '>=',
             $count
         );

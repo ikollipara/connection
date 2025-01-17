@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Models;
 
+use App\Mail\Login;
 use App\Mail\Survey;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -39,7 +40,7 @@ class UserTest extends TestCase
     public function test_user_route_key_is_correct()
     {
         $user = User::factory()->create();
-        $expected = '@'.str($user->full_name)->slug('-').'--'.$user->id;
+        $expected = '@' . str($user->full_name)->slug('-') . '--' . $user->id;
         $this->assertEquals($expected, $user->getRouteKey());
     }
 
@@ -216,10 +217,41 @@ class UserTest extends TestCase
 
     public function test_user_can_follow_another_user()
     {
+        /** @var User */
         $user = User::factory()->create();
         $another_user = User::factory()->create();
         $user->followers()->attach($another_user);
         $this->assertTrue($user->followers->contains($another_user));
         $this->assertTrue($another_user->following->contains($user));
+        $this->assertTrue($another_user->isFollowing($user));
+    }
+
+    public function test_user_has_attending_events()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        $this->assertEquals(0, $user->attending()->count());
+    }
+
+    public function test_user_has_events()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        $this->assertEquals(0, $user->events()->count());
+    }
+
+    public function test_user_sendLoginLink()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        Mail::fake();
+
+        $user->sendLoginLink();
+
+        Mail::assertQueuedCount(1);
+        Mail::assertQueued(Login::class);
     }
 }
