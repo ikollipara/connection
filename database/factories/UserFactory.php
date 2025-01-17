@@ -18,12 +18,12 @@ class UserFactory extends Factory
     {
         return [
             'id' => null,
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
-            'avatar' => $this->faker->imageUrl(),
+            'avatar' => fake()->imageUrl(),
         ];
     }
 

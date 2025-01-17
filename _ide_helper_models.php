@@ -71,7 +71,6 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read mixed $was_recently_published
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Content areSearchable()
  * @method static \Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content hasLikesCount($count)
@@ -85,7 +84,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content search(?string $q)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content shouldBeSearchable()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content status(\App\Enums\Status $status)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Content topLastMonth()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content whereDeletedAt($value)
@@ -130,7 +128,7 @@ namespace App\Models{
  * @property-read mixed $status
  * @property-read mixed $was_recently_published
  * @property-read \App\Models\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection areSearchable()
+ * @method static \Database\Factories\ContentCollectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection hasLikesCount($count)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection hasViewsCount($count)
@@ -143,7 +141,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection search(?string $q)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection shouldBeSearchable()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection status(\App\Enums\Status $status)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection topLastMonth()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereDeletedAt($value)
@@ -230,8 +227,8 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Day> $days
  * @property-read int|null $days_count
- * @property-read mixed $is_cloned_attribute
- * @property-read mixed $is_source_attribute
+ * @property-read mixed $is_cloned
+ * @property-read mixed $is_source
  * @property-read Event|null $source
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\EventFactory factory($count = null, $state = [])
@@ -311,7 +308,6 @@ namespace App\Models{
  * @property-read mixed $status
  * @property-read mixed $was_recently_published
  * @property-read \App\Models\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Post areSearchable()
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post hasLikesCount($count)
@@ -325,7 +321,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post search(?string $q)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post shouldBeSearchable()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post status(\App\Enums\Status $status)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Post topLastMonth()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereDeletedAt($value)
@@ -494,31 +489,5 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserSettings whereUserId($value)
  */
 	class UserSettings extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * \App\Models\View
- *
- * @property int $id
- * @property string $user_id
- * @property string $content_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\Content $content
- * @property \App\Models\User $user
- * @method static \Database\Factories\ViewFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View lastMonth()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View thisMonth()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View whereContentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|View whereUserId($value)
- */
-	class View extends \Eloquent {}
 }
 
