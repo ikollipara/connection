@@ -41,7 +41,7 @@ class UserSettings extends Model
     /**
      * Get the user that owns the settings.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

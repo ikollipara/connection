@@ -28,7 +28,7 @@ class Search extends Model
     ];
 
     /**
-     * @return BelongsTo<User, covariant self>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

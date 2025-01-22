@@ -41,6 +41,13 @@ trait Likeable
         Cache::forget("$this->id--likes_count");
     }
 
+    /**
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param 'asc'|'desc' $direction
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws InvalidArgumentException
+     */
     protected function scopeOrderByLikes(Builder $query, $direction = 'desc')
     {
 
@@ -51,8 +58,7 @@ trait Likeable
             DB::table('likes_log')
                 ->selectRaw('count(user_id)')
                 ->whereColumn('model_id', $this->getTable() . '.id')
-                ->where('model_type', $model_type)
-                ->toSql(),
+                ->where('model_type', $model_type),
             $direction
         );
     }

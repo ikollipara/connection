@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,7 @@ use Mail;
  * @property UserSettings $settings
  * @property UserProfile $profile
  */
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, AuthContract
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
@@ -150,7 +151,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's followers
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, $this>
      *
      * @see \App\Models\User::followers()
      */
@@ -162,7 +163,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the users who the users is following
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, $this>
      */
     public function following(): BelongsToMany
     {
@@ -172,7 +173,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * What events the user is attending.
      *
-     * @return BelongsToMany<Event, covariant self>
+     * @return BelongsToMany<Event, $this>
      */
     public function attending(): BelongsToMany
     {
@@ -182,7 +183,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's settings
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserSettings, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserSettings, $this>
      */
     public function settings(): HasOne
     {
@@ -192,7 +193,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's profile
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserProfile, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<UserProfile, $this>
      */
     public function profile(): HasOne
     {
@@ -202,7 +203,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's content
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Content, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Content, $this>
      */
     public function content(): HasMany
     {
@@ -212,7 +213,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's posts
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Post, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Post, $this>
      */
     public function posts(): HasMany
     {
@@ -222,7 +223,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's post collections
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ContentCollection, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ContentCollection, $this>
      */
     public function collections(): HasMany
     {
@@ -232,7 +233,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's Events
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Event, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Event, $this>
      */
     public function events(): HasMany
     {
@@ -242,7 +243,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's comments
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Comment, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Comment, $this>
      */
     public function comments(): HasMany
     {
@@ -252,7 +253,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the user's searches
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Search, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Search, $this>
      */
     public function searches(): HasMany
     {

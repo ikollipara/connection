@@ -34,7 +34,7 @@ class Day extends Model
     /**
      * The event the day belongs to.
      *
-     * @return BelongsTo<Event, covariant self>
+     * @return BelongsTo<Event, $this>
      */
     public function event(): BelongsTo
     {
@@ -44,7 +44,6 @@ class Day extends Model
     public function toIcalEvent(): ICalEvent
     {
         return ICalEvent::create($this->event->title)
-            ->description($this->event->description->toHtml())
             ->address($this->event->location)
             ->startsAt($this->date->setTimeFromTimeString($this->event->start->format('H:i')))
             ->endsAt($this->date->setTimeFromTimeString($this->event->end?->format('H:i')))

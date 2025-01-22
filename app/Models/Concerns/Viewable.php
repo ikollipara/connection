@@ -7,6 +7,7 @@ namespace App\Models\Concerns;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 trait Viewable
 {
@@ -40,12 +41,19 @@ trait Viewable
         Cache::forget("$this->id--views_count");
     }
 
+    /**
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param 'asc'|'desc' $direction
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws InvalidArgumentException
+     */
     protected function scopeOrderByViews($query, $direction = 'desc')
     {
-        return $query->orderBySub(
+        return $query->orderBy(
             DB::table('views_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', self::class),
             $direction
         );
@@ -55,7 +63,7 @@ trait Viewable
     {
         return $query->where(
             DB::table('views_log')
-                ->whereColumn('model_id', $this->getTable().'.id')
+                ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', self::class)
                 ->distinct()
                 ->selectRaw('count(user_id) as views_count'),

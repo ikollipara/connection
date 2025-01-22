@@ -85,7 +85,7 @@ class UserProfile extends Model
     /**
      * Get the user that owns the profile.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, covariant self>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

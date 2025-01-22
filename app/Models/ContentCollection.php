@@ -21,7 +21,7 @@ class ContentCollection extends Content
     /**
      * Get all the entries for the post collection.
      *
-     * @return BelongsToMany<Content, covariant self>
+     * @return BelongsToMany<Content, $this>
      */
     public function entries(): BelongsToMany
     {
@@ -43,7 +43,7 @@ class ContentCollection extends Content
     /**
      * Check if a content is an entry of the post collection.
      *
-     * @param  \App\Models\Content|string  $content
+     * @param  Content|string  $content
      */
     public function hasEntry($content): bool
     {

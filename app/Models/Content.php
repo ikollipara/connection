@@ -21,20 +21,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Parental\HasChildren;
 
-/**
- * \App\Models\Content
- *
- * @property string $id
- * @property string $title
- * @property Editor $body
- * @property-read Status $status
- * @property bool $published
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
- */
 class Content extends Model
 {
     use HasChildren, HasFactory, HasMetadata, HasUuids, Likeable, Searchable, Sluggable, SoftDeletes, Viewable;
@@ -94,9 +80,11 @@ class Content extends Model
         // Some of the content is "doubly" stringified, so we need to
         // decode it twice. This is a temporary fix until we can
         // properly migrate the data.
+        // @codeCoverageIgnoreStart
         if ($value[0] === '"') {
             $value = json_decode($value);
         }
+        // @codeCoverageIgnoreEnd
 
         return Editor::fromJson($value);
     }
@@ -111,7 +99,7 @@ class Content extends Model
     /**
      * Get the user that owns the content.
      *
-     * @return BelongsTo<User, covariant self>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -120,7 +108,7 @@ class Content extends Model
     }
 
     /**
-     * @return BelongsToMany<ContentCollection, covariant self>
+     * @return BelongsToMany<ContentCollection, $this>
      */
     public function collections(): BelongsToMany
     {
@@ -134,7 +122,7 @@ class Content extends Model
     /**
      * Get all of the comments for the model.
      *
-     * @return MorphMany<Comment, covariant self>
+     * @return MorphMany<Comment, $this>
      */
     public function comments(): MorphMany
     {
@@ -147,6 +135,7 @@ class Content extends Model
      * Filter the query by status.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param Status $status
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeStatus($query, Status $status)
@@ -160,8 +149,6 @@ class Content extends Model
         } elseif ($status->equals(Status::draft())) {
             return $query->where('published', false);
         }
-
-        return $query;
     }
 
     /**

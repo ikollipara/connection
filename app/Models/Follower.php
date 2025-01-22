@@ -40,7 +40,7 @@ class Follower extends Model
     /**
      * Get the user that the followed belongs to.
      *
-     * @return BelongsTo<User, covariant self>
+     * @return BelongsTo<User, $this>
      */
     public function followed(): BelongsTo
     {
@@ -50,7 +50,7 @@ class Follower extends Model
     /**
      * Get the user that the follower belongs to.
      *
-     * @return BelongsTo<User, covariant self>
+     * @return BelongsTo<User, $this>
      */
     public function follower(): BelongsTo
     {

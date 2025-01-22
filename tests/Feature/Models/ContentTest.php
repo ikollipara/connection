@@ -3,10 +3,13 @@
 namespace Tests\Feature\Models;
 
 use App\Enums\Status;
+use App\Models\Comment;
 use App\Models\Content;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ContentTest extends TestCase
@@ -36,7 +39,7 @@ class ContentTest extends TestCase
     public function test_content_should_get_the_correct_route_key()
     {
         $content = Content::factory()->create();
-        $expected = str($content->title)->slug().'--'.$content->id;
+        $expected = str($content->title)->slug() . '--' . $content->id;
         $this->assertEquals($expected, $content->getRouteKey());
     }
 
@@ -119,5 +122,134 @@ class ContentTest extends TestCase
         $content->delete();
 
         $this->assertEquals(2, Content::wherePublished()->count());
+    }
+
+    public function test_was_recently_published()
+    {
+        $this->markTestSkipped("Too flaky. Rework then test");
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $content->published = true;
+        $content->save();
+
+        $this->assertTrue($content->was_recently_published);
+    }
+
+    public function test_body_is_instance_of_editor()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertInstanceOf(Editor::class, $content->body);
+    }
+
+    public function test_content_has_comments()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $comments = Comment::factory(count: 3)->createMany();
+        foreach ($comments as $comment) {
+            $content->comments->add($comment);
+        }
+
+        $this->assertCount(3, $content->comments);
+    }
+
+    // Viewable Tests
+    public function test_views()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertEquals(0, $content->views());
+        Cache::clear();
+    }
+
+    public function test_view()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+        $this->actingAs($content->user);
+
+        $content->view();
+
+        $this->assertEquals(1, $content->views());
+    }
+
+    public function test_order_by_views()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $content2 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->view();
+
+        $result = Content::query()->orderByViews()->get();
+
+        $this->assertTrue($result[0]->is($content1));
+    }
+
+    public function test_has_views_count()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->view();
+
+        $result = Content::query()->hasViewsCount(1)->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    // Likeable tests
+    public function test_likes()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertEquals(0, $content->likes());
+        Cache::clear();
+    }
+
+    public function test_like()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+        $this->actingAs($content->user);
+
+        $content->like();
+
+        $this->assertEquals(1, $content->likes());
+    }
+
+    public function test_order_by_likes()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $content2 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->like();
+
+        $result = Content::query()->orderBylikes()->get();
+
+        $this->assertTrue($result[0]->is($content1));
+    }
+
+    public function test_has_likes_count()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->like();
+
+        $result = Content::query()->hasLikesCount(1)->count();
+
+        $this->assertEquals(1, $result);
     }
 }

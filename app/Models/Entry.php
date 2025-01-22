@@ -44,7 +44,7 @@ class Entry extends Model
     /**
      * Get the content that the entry belongs to.
      *
-     * @return BelongsTo<Content, covariant self>
+     * @return BelongsTo<Content, $this>
      */
     public function content(): BelongsTo
     {
@@ -54,7 +54,7 @@ class Entry extends Model
     /**
      * Get the collection that the entry belongs to.
      *
-     * @return BelongsTo<ContentCollection, covariant self>
+     * @return BelongsTo<ContentCollection, $this>
      */
     public function collection(): BelongsTo
     {

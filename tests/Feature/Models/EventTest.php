@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Models;
 
+use App\Models\Day;
 use App\Models\Event;
 use App\Models\User;
 use App\ValueObjects\Editor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Tests\TestCase;
+use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
 
 class EventTest extends TestCase
 {
@@ -19,7 +21,7 @@ class EventTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->event = Event::factory()->createOne();
+        $this->event = Event::factory()->has(Day::factory(3))->createOne();
     }
 
     public function test_event_can_be_created()
@@ -48,7 +50,7 @@ class EventTest extends TestCase
 
     public function test_event_has_days()
     {
-        $this->assertCount(0, $this->event->days);
+        $this->assertCount(3, $this->event->days);
     }
 
     public function test_event_has_comments()
@@ -84,7 +86,7 @@ class EventTest extends TestCase
 
     public function test_is_multiday()
     {
-        $this->assertFalse($this->event->isMultiDay());
+        $this->assertTrue($this->event->isMultiDay());
     }
 
     public function test_replicate()
@@ -104,5 +106,12 @@ class EventTest extends TestCase
     public function test_attended_by()
     {
         $this->assertFalse($this->event->attendedBy(User::factory()->createOne()));
+    }
+
+    public function test_to_ical_event()
+    {
+        $result = $this->event->toIcalEvent();
+        $this->assertCount(3, $result);
+        $result->each(fn($r) => $this->assertInstanceOf(ICalEvent::class, $r));
     }
 }
