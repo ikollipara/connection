@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+// @codeCoverageIgnoreStart
+// Covered in UserProfileControllerTest
 class UserIsOwner
 {
     /**
@@ -41,3 +43,4 @@ class UserIsOwner
         return $next($request);
     }
 }
+// @codeCoverageIgnoreEnd

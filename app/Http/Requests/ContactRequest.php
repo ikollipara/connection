@@ -6,8 +6,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+// @codeCoverageIgnoreStart
+// Covered in endpoint test, but can't be inferred
 class ContactRequest extends FormRequest
 {
+
+    protected $redirectRoute = "contact";
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,3 +35,4 @@ class ContactRequest extends FormRequest
         ];
     }
 }
+// @codeCoverageIgnoreEnd

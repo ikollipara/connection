@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Arr;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Process;
 
-class RestoreFromBackupCommand extends Command
+class RestoreFromBackupCommand extends Command implements PromptsForMissingInput
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:restore {file} {--wipe}';
+    protected $signature = 'db:restore {file : The file to restore from} {--wipe}';
 
     /**
      * The console command description.
@@ -41,56 +43,35 @@ class RestoreFromBackupCommand extends Command
      */
     public function handle()
     {
-        if ($this->option('wipe')) {
-            Artisan::call('db:wipe');
-        }
-        if ($file = $this->argument('file')) {
-            $stream = fopen($file, 'r');
-            $config = config('database.connections.mysql');
-            if ($password = $config['password']) {
-                $process = new Process([
-                    'mysql',
-                    '-h'.$config['host'],
-                    '-u'.$config['username'],
-                    '-p'.$password,
-                    '-P'.$config['port'],
-                    $config['database'],
-                ]);
-            } else {
-                $process = new Process([
-                    'mysql',
-                    '-h'.$config['host'],
-                    '-u'.$config['username'],
-                    '-P'.$config['port'],
-                    $config['database'],
-                ]);
-            }
-            $process->setInput($stream);
-            try {
-                $process->mustRun(function ($type, $buffer) {
-                    if ($type === Process::ERR) {
-                        $this->error($buffer);
-                    } else {
-                        $this->info($buffer);
-                    }
-                });
-                $this->info('Database restored from '.$file);
+        if ($this->option('wipe')) Artisan::call('db:wipe');
 
-                return 0;
-            } catch (\Throwable $th) {
-                $this->error(
-                    'Failed to restore database from '.
-                        $file.
-                        '. Error:'.
-                        PHP_EOL.
-                        $th->getMessage(),
-                );
+        /** @var string */
+        $file = $this->argument('file');
 
-                return 1;
-            }
-        }
-        $this->error('No file specified');
+        $contents = Arr::join(file($file) ?? [], "\n");
 
-        return 1;
+        /** @var array{host: string, port: string, password: string|'', database: string, username: string} */
+        $dbConfig = config('database.connections.mysql');
+
+        $processArgs = [
+            '-h' . $dbConfig['host'],
+            '-u' . $dbConfig['username'],
+            '-P' . $dbConfig['port']
+        ];
+
+        if (filled($dbConfig['password'])) $processArgs[] = '-p' . $dbConfig['password'];
+
+        $result = Process::input($contents)->run(['mysql', ...$processArgs]);
+
+        if ($result->failed()) {
+            $this->error($result->errorOutput());
+            $this->error("Failed to restore database.");
+            return 1;
+        };
+        if ($result->successful()) {
+            $this->info($result->output());
+            $this->info("Successfully restored database");
+            return 0;
+        };
     }
 }

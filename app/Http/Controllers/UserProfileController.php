@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\Grade;
+use App\Http\Middleware\UserIsOwner;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
@@ -22,8 +23,8 @@ final class UserProfileController extends Controller
     {
         $profile = $user->profile;
         $user = $user->loadCount([
-            'posts' => fn ($query) => $query->shouldBeSearchable(),
-            'collections' => fn ($query) => $query->shouldBeSearchable(),
+            'posts' => fn($query) => $query->shouldBeSearchable(),
+            'collections' => fn($query) => $query->shouldBeSearchable(),
             'followers',
             'following',
         ]);
@@ -65,7 +66,7 @@ final class UserProfileController extends Controller
             'subject' => 'string',
             'years_of_experience' => 'sometimes|integer|min:0',
             'grades' => 'array',
-            'grades.*' => 'enum:'.Grade::class,
+            'grades.*' => 'enum:' . Grade::class,
             'bio' => 'json',
             'consented.full_name' => 'nullable|string',
         ]);
@@ -83,7 +84,7 @@ final class UserProfileController extends Controller
     {
         return [
             new Middleware('auth', only: ['edit', 'update']),
-            new Middleware('owner', only: ['edit', 'update']),
+            new Middleware(UserIsOwner::class, only: ['edit', 'update']),
         ];
     }
 }

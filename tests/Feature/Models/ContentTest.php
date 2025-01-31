@@ -126,7 +126,7 @@ class ContentTest extends TestCase
 
     public function test_was_recently_published()
     {
-        $this->markTestSkipped("Too flaky. Rework then test");
+        $this->markTestSkipped("Flaky");
         /** @var Content */
         $content = Content::factory()->createOne();
 
@@ -249,6 +249,17 @@ class ContentTest extends TestCase
         $content1->like();
 
         $result = Content::query()->hasLikesCount(1)->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    // Searchable Tests
+    public function test_filter_by()
+    {
+        /** @var Content */
+        $content = Content::factory()->published()->createOne();
+
+        $result = Content::query()->shouldBeSearchable()->search($content->title)->filterBy(['metadata->category' => $content->metadata->category->value, 'views' => 0, 'likes' => 0])->count();
 
         $this->assertEquals(1, $result);
     }

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
+use App\Mail\Contact;
 use Illuminate\Routing\Controllers\Middleware;
+use Mail;
 
 final class ContactController extends Controller
 {
@@ -18,13 +20,8 @@ final class ContactController extends Controller
     {
         $validated = $request->validated();
 
-        $successful = mail(config('mail.maintainer'), $validated['subject'], $validated['message'], 'From: '.$validated['email']);
-
-        if ($successful) {
-            return to_route('contact')->with('success');
-        }
-
-        return to_route('contact')->with('error');
+        Mail::to(config('mail.maintainer'))->queue(new Contact($validated['email'], $validated['subject'], $validated['message']));
+        return to_route('contact')->with('success');
     }
 
     public static function middleware(): array

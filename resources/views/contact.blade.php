@@ -8,7 +8,7 @@ description: This is the contact page for the website.
 <x-guest-layout title="Contact">
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-      @session('success')
+      @if (session()->has('success'))
         <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
              role="alert">
           <svg class="flex-shrink-0 inline w-4 h-4 me-3"
@@ -24,29 +24,7 @@ description: This is the contact page for the website.
             <span class="font-medium">Email Sent!</span>
           </div>
         </div>
-      @endsession
-      @session('error')
-        <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
-             role="alert">
-          <svg class="flex-shrink-0 inline w-4 h-4 me-3"
-               aria-hidden="true"
-               xmlns="http://www.w3.org/2000/svg"
-               fill="currentColor"
-               viewBox="0 0 20 20">
-            <path
-                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <span class="sr-only">Info</span>
-          <div>
-            <span class="font-medium">Error, Email not sent!</span>
-            <ul class="mt-1.5 list-disc list-inside">
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        </div>
-      @endsession
+      @endif
       <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Contact Us</h2>
       <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
         Got a technical issue?

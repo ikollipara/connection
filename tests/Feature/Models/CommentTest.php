@@ -34,4 +34,36 @@ class CommentTest extends TestCase
         $this->assertNotNull($comment->commentable);
         $this->assertTrue($comment->commentable()->exists());
     }
+
+    public function test_comment_has_parent()
+    {
+        /** @var Comment */
+        $parent = Comment::factory()->createOne();
+
+        /** @var Comment */
+        $comment = Comment::factory()->createOne(['parent_id' => $parent->id]);
+
+        $this->assertNotNull($comment->parent);
+        $this->assertInstanceOf(Comment::class, $comment->parent);
+    }
+
+    public function test_comment_is_root()
+    {
+        Comment::factory()->createOne();
+
+        $result = Comment::query()->root()->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function test_comment_is_reply()
+    {
+        /** @var Comment */
+        $parent = Comment::factory()->createOne();
+
+        /** @var Comment */
+        $comment = Comment::factory()->createOne(['parent_id' => $parent->id]);
+
+        $this->assertTrue($comment->isReply());
+    }
 }

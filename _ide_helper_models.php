@@ -26,6 +26,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $children
  * @property-read int|null $children_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $commentable
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read Comment|null $parent
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
@@ -49,28 +50,29 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * \App\Models\Content
+ * 
  *
  * @property string $id
  * @property string $title
- * @property Editor $body
- * @property-read Status $status
+ * @property array<array-key, mixed> $body
+ * @property string|null $user_id
+ * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $views
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
- * @property string|null $user_id
- * @property string $metadata
- * @property int $views
  * @property int $likes_count
  * @property string|null $type
  * @property-read \App\Models\Entry|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ContentCollection> $collections
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
+ * @property-read mixed $status
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read mixed $was_recently_published
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content hasLikesCount($count)
@@ -112,7 +114,7 @@ namespace App\Models{
  * @property string $title
  * @property array<array-key, mixed> $body
  * @property string|null $user_id
- * @property string $metadata
+ * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property int $views
@@ -126,6 +128,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read mixed $status
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read mixed $was_recently_published
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentCollectionFactory factory($count = null, $state = [])
@@ -170,6 +173,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Event $event
+ * @property-read \App\Models\TFactory|null $use_factory
+ * @method static \Database\Factories\DayFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day query()
@@ -193,6 +198,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \App\Models\Content $content
  * @property \App\Models\ContentCollection $collection
+ * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\EntryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newQuery()
@@ -218,7 +224,7 @@ namespace App\Models{
  * @property int|null $cloned_from
  * @property \Illuminate\Support\Carbon $start
  * @property \Illuminate\Support\Carbon|null $end
- * @property string $metadata
+ * @property \App\ValueObjects\Metadata $metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $attendees
@@ -227,6 +233,7 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Day> $days
  * @property-read int|null $days_count
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read mixed $is_cloned
  * @property-read mixed $is_source
  * @property-read Event|null $source
@@ -271,6 +278,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $updated_at
  * @property-read \App\Models\User $followed
  * @property-read \App\Models\User $follower
+ * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\FollowerFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follower newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follower newQuery()
@@ -292,7 +300,7 @@ namespace App\Models{
  * @property string $title
  * @property array<array-key, mixed> $body
  * @property string|null $user_id
- * @property string $metadata
+ * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property int $views
@@ -306,6 +314,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read mixed $status
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read mixed $was_recently_published
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
@@ -398,6 +407,7 @@ namespace App\Models{
  * @property-read \App\Models\Follower|null $pivot
  * @property-read int|null $followers_count
  * @property-read int|null $following_count
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read int|null $posts_count
@@ -441,6 +451,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  * @property-read \App\Models\User $user
+ * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\UserProfileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile hasViewsCount($count)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile newModelQuery()
@@ -475,6 +486,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  * @property \App\Models\User $user
+ * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\UserSettingsFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserSettings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserSettings newQuery()

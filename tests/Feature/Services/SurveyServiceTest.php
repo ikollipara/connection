@@ -14,6 +14,14 @@ class SurveyServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_survey_can_successfully_be_built()
+    {
+        $survey = new Survey(fake()->url());
+        $survey->build();
+
+        $this->assertNotNull($survey->markdown);
+    }
+
     public function test_send_survey_once()
     {
         Mail::fake();
