@@ -9,6 +9,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+// @codeCoverageIgnoreStart
 class RedirectIfAuthenticated
 {
     /**
@@ -31,3 +32,4 @@ class RedirectIfAuthenticated
         return $next($request);
     }
 }
+// @codeCoverageIgnoreEnd

@@ -11,8 +11,6 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-// @codeCoverageIgnoreStart
-// Covered in endpoint test, but can't be inferred
 class Contact extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -56,4 +54,3 @@ class Contact extends Mailable implements ShouldQueue
         return [];
     }
 }
-// @codeCoverageIgnoreEnd

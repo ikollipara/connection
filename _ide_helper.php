@@ -22565,6 +22565,27 @@ namespace Illuminate\Console\Scheduling {
         }
 
             }
+    /**
+     * 
+     *
+     * @mixin \Illuminate\Console\Scheduling\PendingEventAttributes
+     */
+    class Schedule {
+        /**
+         * 
+         *
+         * @see \App\Providers\AppServiceProvider::boot()
+         * @param string $command
+         * @param string $expression
+         * @return bool 
+         * @static 
+         */
+        public static function hasCommand($command, $expression)
+        {
+            return \Illuminate\Console\Scheduling\Schedule::hasCommand($command, $expression);
+        }
+
+            }
     }
 
 namespace Illuminate\Routing {

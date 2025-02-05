@@ -12,6 +12,7 @@ use App\Models\Concerns\Sluggable;
 use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -141,14 +142,16 @@ class Content extends Model
     public function scopeStatus($query, Status $status)
     {
         if ($status->equals(Status::archived())) {
-            return $query->onlyTrashed();
+            $query->onlyTrashed();
         } elseif (
             $status->equals(Status::published())
         ) {
-            return $query->where('published', true);
+            $query->where('published', true);
         } elseif ($status->equals(Status::draft())) {
-            return $query->where('published', false);
+            $query->where('published', false);
         }
+
+        return $query;
     }
 
     /**

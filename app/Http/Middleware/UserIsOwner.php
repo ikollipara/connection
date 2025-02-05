@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 // @codeCoverageIgnoreStart
-// Covered in UserProfileControllerTest
+// covered but isn't detected.
 class UserIsOwner
 {
     /**

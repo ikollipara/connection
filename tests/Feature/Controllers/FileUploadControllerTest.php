@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers;
 
 use App\Models\User;
+use Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -34,7 +35,7 @@ class FileUploadControllerTest extends TestCase
             'success' => 1,
         ]);
 
-        Storage::disk('public')->assertExists('files/'.$data['image']->hashName());
+        Storage::disk('public')->assertExists('files/' . $data['image']->hashName());
     }
 
     public function test_store_url()
@@ -52,7 +53,26 @@ class FileUploadControllerTest extends TestCase
         $response->assertJsonFragment([
             'success' => 1,
         ]);
-        Storage::disk('public')->assertExists('files/'.str($response->json('file')['url'])->afterLast('/'));
+        Storage::disk('public')->assertExists('files/' . str($response->json('file')['url'])->afterLast('/'));
+    }
+
+    public function test_store_url__failure()
+    {
+        $data = [
+            'url' => "https://picsum.photos/{$this->faker->numberBetween(200, 300)}/{$this->faker->numberBetween(
+                200,
+                300,
+            )}",
+        ];
+        Storage::fake('public');
+        \Http::fake([
+            '*' => 400
+        ]);
+
+        $response = $this->actingAs($this->user)->post(route('api.upload.store'), $data);
+        $response->assertJsonStructure(['success', 'file' => ['url']]);
+        $response->assertJsonFragment(['success' => 0]);
+        Storage::disk('public')->assertDirectoryEmpty('files');
     }
 
     public function test_delete_upload()

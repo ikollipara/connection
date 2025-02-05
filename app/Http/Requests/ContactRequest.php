@@ -6,8 +6,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-// @codeCoverageIgnoreStart
-// Covered in endpoint test, but can't be inferred
 class ContactRequest extends FormRequest
 {
 
@@ -35,4 +33,3 @@ class ContactRequest extends FormRequest
         ];
     }
 }
-// @codeCoverageIgnoreEnd

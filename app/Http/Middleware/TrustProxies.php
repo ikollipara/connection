@@ -8,7 +8,6 @@ use Illuminate\Http\Middleware\TrustProxies as Middleware;
 use Illuminate\Http\Request;
 
 // @codeCoverageIgnoreStart
-// Handled by Laravel; Tested by Them
 class TrustProxies extends Middleware
 {
     /**

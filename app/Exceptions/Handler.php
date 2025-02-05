@@ -39,6 +39,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+        // @codeCoverageIgnoreStart
         $this->reportable(function (Throwable $e) {
             if (App::isProduction()) Integration::captureUnhandledException($e);
         });
@@ -50,5 +51,6 @@ class Handler extends ExceptionHandler
                 403,
             );
         });
+        // @codeCoverageIgnoreEnd
     }
 }

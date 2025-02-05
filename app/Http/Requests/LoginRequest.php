@@ -6,9 +6,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-// @codeCoverageIgnoreStart
-// We ignore the coverage since its tested by AuthenticatedUserControllerTest.php
-// But Pest's coverage can't detect that.
 class LoginRequest extends FormRequest
 {
     protected $redirectRoute = 'login';
@@ -29,4 +26,3 @@ class LoginRequest extends FormRequest
         ];
     }
 }
-// @codeCoverageIgnoreEnd

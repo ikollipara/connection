@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Content;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -21,17 +22,8 @@ final class ContentContentCollectionController extends Controller
             'collections.*' => 'string|exists:content,id',
         ])['collections'];
 
-        try {
-            $content->collections()->sync($collections);
+        $content->collections()->sync($collections);
 
-            return response()->noContent();
-        } catch (\Throwable $th) {
-            $message = $th->getMessage();
-
-            return response(
-                content: ['message' => $message],
-                status: Response::HTTP_INTERNAL_SERVER_ERROR,
-            );
-        }
+        return response()->noContent();
     }
 }

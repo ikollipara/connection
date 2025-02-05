@@ -126,9 +126,8 @@ class ContentTest extends TestCase
 
     public function test_was_recently_published()
     {
-        $this->markTestSkipped("Flaky");
         /** @var Content */
-        $content = Content::factory()->createOne();
+        $content = Content::factory()->draft()->createOne();
 
         $content->published = true;
         $content->save();

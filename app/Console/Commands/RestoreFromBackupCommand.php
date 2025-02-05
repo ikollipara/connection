@@ -48,7 +48,8 @@ class RestoreFromBackupCommand extends Command implements PromptsForMissingInput
         /** @var string */
         $file = $this->argument('file');
 
-        $contents = Arr::join(file($file) ?? [], "\n");
+        if ($file = file($file)) $contents = Arr::join($file, "\n");
+        else $contents = '';
 
         /** @var array{host: string, port: string, password: string|'', database: string, username: string} */
         $dbConfig = config('database.connections.mysql');
@@ -63,15 +64,13 @@ class RestoreFromBackupCommand extends Command implements PromptsForMissingInput
 
         $result = Process::input($contents)->run(['mysql', ...$processArgs]);
 
-        if ($result->failed()) {
-            $this->error($result->errorOutput());
-            $this->error("Failed to restore database.");
-            return 1;
-        };
         if ($result->successful()) {
             $this->info($result->output());
             $this->info("Successfully restored database");
             return 0;
         };
+        $this->error($result->errorOutput());
+        $this->error("Failed to restore database.");
+        return 1;
     }
 }

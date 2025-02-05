@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Concerns;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,7 @@ trait Likeable
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param 'asc'|'desc' $direction
      * @return \Illuminate\Database\Eloquent\Builder
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function scopeOrderByLikes(Builder $query, $direction = 'desc')
     {
@@ -69,6 +70,7 @@ trait Likeable
         $model_type = $model::class;
 
         return $query->where(
+            // @phpstan-ignore-next-line
             DB::table('likes_log')
                 ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', $model_type)

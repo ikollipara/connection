@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Http;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 
 final class FileUploadController extends Controller
 {
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -21,18 +21,17 @@ final class FileUploadController extends Controller
             'url' => 'url|required_without_all:image,file',
         ]);
 
-        $path = match (true) {
-            isset($validated['url']) => $this->saveUrl($validated['url']),
-            isset($validated['file']) => $validated['file']->store('files', 'public'),
-            isset($validated['image']) => $validated['image']->store('files', 'public'),
-            default => throw new InvalidArgumentException('Missing url, file, or image'),
-        };
+        $path = false;
+        if (isset($validated['url'])) $path = $this->saveUrl($validated['url']);
+        if (isset($validated['file'])) $path = $validated['file']->store('files', 'public');
+        if (isset($validated['image'])) $path = $validated['image']->store('files', 'public');
+
 
         return response(
             content: [
-                'success' => filled($path) ? 1 : 0,
+                'success' => $path ? 1 : 0,
                 'file' => [
-                    'url' => filled($path) ? Storage::url($path) : '',
+                    'url' => $path ? Storage::url($path) : '',
                 ],
             ],
             status: Response::HTTP_OK,
@@ -54,10 +53,8 @@ final class FileUploadController extends Controller
 
     protected function saveUrl(string $url)
     {
-        $response = Http::get($url);
-        if ($response->failed()) {
-            return $response->failed();
-        }
+        $response = \Http::get($url);
+        if ($response->failed()) return false;
 
         $ext = str($response->header('content-type'))
             ->split("/\//")

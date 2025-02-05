@@ -41,21 +41,19 @@ final class UserPostController extends Controller
 
     public function store(Request $request, User $user)
     {
-        $body = $request->input('body', '');
-        $title = $request->input('title', '');
+        $body = $request->input('body') ?? '{"blocks": []}';
+        $title = $request->input('title') ?? '';
 
-        try {
-            $post = $user->posts()->create([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
+        $post = $user->posts()->make([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
+        $result = $post->save();
+        if (!$result) return session_back()->with('error', 'Post creation failed');
 
-            info('Post created', ['post' => $post, 'user' => $user]);
+        info('Post created', ['post' => $post, 'user' => $user]);
 
-            return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
-        } catch (\Throwable $th) {
-            return session_back()->with('error', 'Post creation failed');
-        }
+        return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
     }
 
     /**
@@ -68,23 +66,18 @@ final class UserPostController extends Controller
 
     public function update(Request $request, User $user, Post $post)
     {
-        $body = $request->input('body', Js::encode($post->body));
-        $title = $request->input('title', $post->title);
+        $body = $request->input('body') ?? Js::encode($post->body);
+        $title = $request->input('title') ?? $post->title;
 
-        try {
-            $post->update([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
+        $result = $post->update([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
+        if (!$result) return session_back()->with('error', 'Post update failed');
 
-            info('Post updated', ['post' => $post, 'user' => $user]);
+        info('Post updated', ['post' => $post, 'user' => $user]);
 
-            return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
-        } catch (\Throwable $th) {
-            logger()->error('Post update failed', ['user' => $user, 'post' => $post, 'error' => $th->getMessage()]);
-
-            return session_back()->with('error', 'Post update failed');
-        }
+        return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
     }
 
     public static function middleware(): array
