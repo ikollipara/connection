@@ -42,22 +42,6 @@ final class ContentCollectionCommentController extends Controller
         return session_back()->with('success', $successful ? 'Comment created successfully' : 'Failed to create comment');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ContentCollection $collection, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ContentCollection $collection, Comment $comment)
-    {
-        //
-    }
-
     public static function middleware(): array
     {
         return [
