@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -13,7 +14,7 @@ final class LikeLogController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         $model_id = $request->input('model_id');
         $model_type = $request->input('model_type');
@@ -29,8 +30,8 @@ final class LikeLogController extends Controller
                 'likes' => $model->likes(),
             ]);
 
-            return response(
-                content: [
+            return new JsonResponse(
+                data: [
                     'likes' => $model->likes(),
                 ],
                 status: Response::HTTP_OK
@@ -39,8 +40,8 @@ final class LikeLogController extends Controller
             $message = $th->getMessage();
             logger()->error($message, ['request' => $request->all()]);
 
-            return response(
-                content: [
+            return new JsonResponse(
+                data: [
                     'message' => 'Something went wrong',
                 ],
                 status: Response::HTTP_INTERNAL_SERVER_ERROR

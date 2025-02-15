@@ -27,6 +27,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * |=============================================================================| */
 trait HasMetadata
 {
+    /**
+     *
+     * @return Attribute<Metadata, Metadata>
+     */
     public function metadata(): Attribute
     {
         return Attribute::make(
@@ -35,7 +39,7 @@ trait HasMetadata
         );
     }
 
-    public static function bootHasMetadata()
+    public static function bootHasMetadata(): void
     {
         static::saving(function ($model) {
             $model->attributes['metadata'] = $model->metadata->__toString();

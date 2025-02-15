@@ -54,7 +54,7 @@ namespace App\Models{
  *
  * @property string $id
  * @property string $title
- * @property array<array-key, mixed> $body
+ * @property \App\ValueObjects\Editor $body
  * @property string|null $user_id
  * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
@@ -69,9 +69,9 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
- * @property-read mixed $status
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read mixed $was_recently_published
+ * @property-read bool $was_recently_published
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content filterBy(array $params)
@@ -112,7 +112,7 @@ namespace App\Models{
  * @property-read int $entries_count
  * @property string $id
  * @property string $title
- * @property array<array-key, mixed> $body
+ * @property \App\ValueObjects\Editor $body
  * @property string|null $user_id
  * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
@@ -127,9 +127,9 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
- * @property-read mixed $status
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read mixed $was_recently_published
+ * @property-read bool $was_recently_published
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentCollectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection filterBy(array $params)
@@ -298,7 +298,7 @@ namespace App\Models{
  *
  * @property string $id
  * @property string $title
- * @property array<array-key, mixed> $body
+ * @property \App\ValueObjects\Editor $body
  * @property string|null $user_id
  * @property \App\ValueObjects\Metadata $metadata
  * @property bool $published
@@ -313,9 +313,9 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
- * @property-read mixed $status
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read mixed $was_recently_published
+ * @property-read bool $was_recently_published
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post filterBy(array $params)
@@ -354,10 +354,10 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $user_id
- * @property array $search_params
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\User $user
+ * @property array<array-key, mixed> $search_params
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Search newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Search newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Search query()
@@ -372,46 +372,45 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\User
+ * 
  *
  * @property string $id
  * @property string $first_name
  * @property string $last_name
- * @property-read string $full_name
  * @property \App\ValueObjects\Avatar $avatar
  * @property string $email
- * @property bool $consented
  * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $consented
  * @property bool $sent_week_one_survey
  * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
- * @property-read Collection<\App\Models\Comment> $comments
- * @property-read Collection<\App\Models\ContentCollection> $collections
- * @property-read Collection<\App\Models\Post> $posts
- *  @property-read Collection<\App\Models\Event> $events
- * @property-read Collection<\App\Models\User> $followers
- * @property-read Collection<\App\Models\User> $following
- * @property-read Collection<\App\Models\Search> $searches
- * @property UserSettings $settings
- * @property UserProfile $profile
- * @property string|null $remember_token
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Event> $attending
  * @property-read int|null $attending_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ContentCollection> $collections
  * @property-read int|null $collections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Content> $content
  * @property-read int|null $content_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Event> $events
  * @property-read int|null $events_count
  * @property-read \App\Models\Follower|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $followers
  * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $following
  * @property-read int|null $following_count
+ * @property-read string $full_name
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $posts
  * @property-read int|null $posts_count
+ * @property-read \App\Models\UserProfile|null $profile
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Search> $searches
  * @property-read int|null $searches_count
+ * @property-read \App\Models\UserSettings|null $settings
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -436,22 +435,22 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * \App\Models\UserProfile
+ * 
  *
  * @property int $id
  * @property string $user_id
- * @property Editor $bio
+ * @property \App\ValueObjects\Editor $bio
  * @property bool $is_preservice
  * @property string $school
  * @property string $subject
- * @property-read string $short_title
- * @property \Illuminate\Support\Collection<\App\Enums\Grade> $grades
+ * @property \Spatie\Enum\Enum[] $grades
  * @property string $gender
  * @property int $years_of_experience
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \App\Models\User $user
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TFactory|null $use_factory
+ * @property-read mixed $short_title
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\UserProfileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile hasViewsCount($count)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile newModelQuery()

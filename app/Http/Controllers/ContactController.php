@@ -6,17 +6,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
 use App\Mail\Contact;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 use Mail;
 
 final class ContactController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('contact');
     }
 
-    public function store(ContactRequest $request)
+    public function store(ContactRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 

@@ -24,10 +24,23 @@ use Parental\HasChildren;
 
 class Content extends Model
 {
-    use HasChildren, HasFactory, HasMetadata, HasUuids, Likeable, Searchable, Sluggable, SoftDeletes, Viewable;
+    use HasChildren;
+
+    /** @use HasFactory<\Database\Factories\ContentFactory> */
+    use HasFactory;
+
+    use HasMetadata, HasUuids;
+    /** @use Likeable<self> */
+    use Likeable;
+    /** @use Searchable<self> */
+    use Searchable;
+    use Sluggable, SoftDeletes;
+    /** @use Viewable<self> */
+    use Viewable;
 
     protected $table = 'content';
 
+    /** @phpstan-ignore-next-line */
     protected $childTypes = [
         'post' => Post::class,
         'collection' => ContentCollection::class,
@@ -47,23 +60,25 @@ class Content extends Model
         'title' => '',
     ];
 
-    protected $searchableColumns = ['title', 'body'];
+    /** @var list<string> */
+    protected array $searchableColumns = ['title', 'body'];
 
-    protected $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
+    /** @var list<string> */
+    protected array $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
 
-    protected function scopeShouldBeSearchable(Builder $query)
+    protected function scopeShouldBeSearchable(Builder $query): Builder
     {
         return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
 
     // Accessors and Mutators
 
-    public function getWasRecentlyPublishedAttribute()
+    public function getWasRecentlyPublishedAttribute(): bool
     {
         return $this->published and $this->wasChanged('published');
     }
 
-    public function getStatusAttribute()
+    public function getStatusAttribute(): Status
     {
         if ($this->trashed()) {
             return Status::archived();
@@ -75,7 +90,12 @@ class Content extends Model
         return Status::draft();
     }
 
-    protected function getBodyAttribute($value)
+    /**
+     *
+     * @param string $value
+     * @return Editor
+     */
+    protected function getBodyAttribute($value): Editor
     {
         // TODO: Fix this hack
         // Some of the content is "doubly" stringified, so we need to
@@ -90,7 +110,7 @@ class Content extends Model
         return Editor::fromJson($value);
     }
 
-    protected function setBodyAttribute(Editor $value)
+    protected function setBodyAttribute(Editor $value): void
     {
         $this->attributes['body'] = $value->toJson();
     }

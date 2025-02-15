@@ -15,14 +15,16 @@ use App\Models\User;
 use App\ValueObjects\Editor;
 use App\ValueObjects\Metadata;
 use DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\View\View;
 
 final class UserEventController extends Controller
 {
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $q = $request->query('q', '');
         $events = $user->events()->search($q)->withCount(['days', 'attendees'])->paginate(15);
@@ -32,7 +34,7 @@ final class UserEventController extends Controller
         ]);
     }
 
-    public function create(Request $request, User $user)
+    public function create(Request $request, User $user): View
     {
         return view('users.events.create', [
             'user' => $user,
@@ -40,7 +42,7 @@ final class UserEventController extends Controller
         ]);
     }
 
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string',
@@ -79,7 +81,7 @@ final class UserEventController extends Controller
         return session_back()->with('error', _('An error occured when saving the event.'));
     }
 
-    public function edit(Request $request, User $user, Event $event)
+    public function edit(Request $request, User $user, Event $event): View
     {
         return view('users.events.edit', [
             'user' => $user,
@@ -87,7 +89,7 @@ final class UserEventController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user, Event $event)
+    public function update(Request $request, User $user, Event $event): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string',
@@ -124,7 +126,7 @@ final class UserEventController extends Controller
         return to_route('users.events.edit', ['me', $event]);
     }
 
-    public function destroy(User $user, Event $event)
+    public function destroy(User $user, Event $event): RedirectResponse
     {
         if ($event->attendees()->count() > 0) {
             return session_back()->with('error', __('Event has attendees'));

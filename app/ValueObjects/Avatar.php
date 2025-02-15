@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ValueObjects;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,6 +20,9 @@ class Avatar
 
     private ?string $default;
 
+    /**
+     * @var FilesystemAdapter
+     */
     private $storage;
 
     public function __construct(string $path, string $disk = 'public')
@@ -38,7 +42,7 @@ class Avatar
      *
      * @param  ?UploadedFile  $file  The uploaded file
      */
-    public static function fromUploadedFile($file, $disk = 'public'): self
+    public static function fromUploadedFile($file, string $disk = 'public'): self
     {
         if (is_null($file)) {
             return new self('');
@@ -47,11 +51,6 @@ class Avatar
         $path = $file->store('avatars', $disk);
 
         return new self($path, $disk);
-    }
-
-    public static function is($value): bool
-    {
-        return $value instanceof self;
     }
 
     public function path(): string
@@ -64,7 +63,7 @@ class Avatar
         return $this->storage->delete($this->path);
     }
 
-    public function url()
+    public function url(): string
     {
         // return $this->exists()
         // ? $this->storage->url($this->path)

@@ -8,28 +8,33 @@ use App\Http\Controllers\Controller;
 use App\Models\ContentCollection;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 final class UserContentCollectionController extends Controller
 {
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): JsonResponse
     {
-        return response(
-            content: [
+
+        /** @var \Closure(ContentCollection): array{id: mixed, title: mixed, hasEntry: mixed} */
+        // @phpstan-ignore varTag.nativeType
+        $transformer = function (ContentCollection $collection): array {
+            return [
+                'id' => $collection->id,
+                'title' => $collection->title,
+                /** @phpstan-ignore-next-line */
+                'hasEntry' => $collection->has_entry,
+            ];
+        };
+
+        return new JsonResponse(
+            data: [
                 'collections' => $user
                     ->collections()
                     ->withHasEntry($request->input('content_id'))
                     ->get()
-                    /** @phpstan-ignore-next-line */
-                    ->map(function ($collection) {
-                        return [
-                            'id' => $collection->id,
-                            'title' => $collection->title,
-                            /** @phpstan-ignore-next-line */
-                            'hasEntry' => $collection->has_entry,
-                        ];
-                    }),
+                    ->map($transformer),
             ],
             status: Response::HTTP_OK,
         );

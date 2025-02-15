@@ -6,4 +6,4 @@ parameters:
     paths:
         - app
         - routes
-    level: 5
+    level: 6

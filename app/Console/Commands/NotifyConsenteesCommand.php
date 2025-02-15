@@ -27,7 +27,7 @@ final class NotifyConsenteesCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $users = User::query()->whereConsented(true)->get();
         foreach ($users as $user) {
@@ -35,5 +35,7 @@ final class NotifyConsenteesCommand extends Command
                 ->sendSurvey([SurveyService::CT_CAST], SurveyService::ONCE)
                 ->sendSurvey([SurveyService::CT_CAST, SurveyService::SCALES], SurveyService::YEARLY);
         }
+
+        return 0;
     }
 }

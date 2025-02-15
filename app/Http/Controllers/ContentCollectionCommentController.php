@@ -6,15 +6,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\ContentCollection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
 final class ContentCollectionCommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(ContentCollection $collection)
+    public function index(ContentCollection $collection): View
     {
         $comments = $collection->comments()->root()->get();
 
@@ -28,7 +30,7 @@ final class ContentCollectionCommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, ContentCollection $collection)
+    public function store(Request $request, ContentCollection $collection): RedirectResponse
     {
         $validated = $request->validate([
             'body' => 'required|string',

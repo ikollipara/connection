@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template T of Model
+ */
 trait Viewable
 {
     /**
@@ -16,7 +20,7 @@ trait Viewable
      *
      * @return int
      */
-    public function views()
+    public function views(): int
     {
         return Cache::remember("$this->id--views_count", now()->addSeconds(30), function () {
             return DB::table('views_log')
@@ -28,7 +32,7 @@ trait Viewable
         });
     }
 
-    public function view()
+    public function view(): void
     {
         DB::table('views_log')->insert([
             'model_type' => self::class,
@@ -43,9 +47,9 @@ trait Viewable
 
     /**
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder<T> $query
      * @param 'asc'|'desc' $direction
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<T>
      * @throws InvalidArgumentException
      */
     protected function scopeOrderByViews($query, $direction = 'desc')
@@ -59,9 +63,15 @@ trait Viewable
         );
     }
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder<T> $query
+     * @param 0|positive-int $count
+     * @return \Illuminate\Database\Eloquent\Builder<T>
+     */
     protected function scopeHasViewsCount($query, $count)
     {
         return $query->where(
+            /** @phpstan-ignore-next-line */
             DB::table('views_log')
                 ->whereColumn('model_id', $this->getTable() . '.id')
                 ->where('model_type', self::class)

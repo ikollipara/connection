@@ -7,17 +7,18 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
 final class EventController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         return view('events.index', [
             'mine' => $request->has('attending'),
         ]);
     }
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         $event->view();
 

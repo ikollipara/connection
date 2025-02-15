@@ -11,6 +11,7 @@ use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
 
 class Day extends Model
 {
+    /** @use HasFactory<\Database\Factories\DayFactory> */
     use HasFactory;
 
     protected $fillable = [

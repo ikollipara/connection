@@ -8,16 +8,18 @@ use App\Enums\Status;
 use App\Models\Post;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Js;
+use Illuminate\View\View;
 
 final class UserPostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
@@ -34,12 +36,12 @@ final class UserPostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(User $user)
+    public function create(User $user): View
     {
         return view('users.posts.create', ['user' => $user, 'post' => new Post]);
     }
 
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $user): RedirectResponse
     {
         $body = $request->input('body') ?? '{"blocks": []}';
         $title = $request->input('title') ?? '';
@@ -59,12 +61,12 @@ final class UserPostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user, Post $post)
+    public function edit(User $user, Post $post): View
     {
         return view('users.posts.edit', ['user' => $user, 'post' => $post]);
     }
 
-    public function update(Request $request, User $user, Post $post)
+    public function update(Request $request, User $user, Post $post): RedirectResponse
     {
         $body = $request->input('body') ?? Js::encode($post->body);
         $title = $request->input('title') ?? $post->title;

@@ -17,7 +17,10 @@ use App\Enums\Grade;
 use App\Enums\Language;
 use App\Enums\Practice;
 use App\Enums\Standard;
+use Arr;
+use Faker\Generator;
 use Illuminate\Support\Collection;
+use Spatie\Enum\Laravel\Enum;
 
 /**
  * |=============================================================================|
@@ -28,27 +31,42 @@ use Illuminate\Support\Collection;
  * | metadata.
  * |-----------------------------------------------------------------------------|
  *
- * @property Collection<\App\Enums\Grade> $grades
- * @property Collection<\App\Enums\Standard> $standards
- * @property Collection<\App\Enums\Practice> $practices
- * @property Collection<\App\Enums\Language> $languages
+ * @property Collection<int, \App\Enums\Grade> $grades
+ * @property Collection<int, \App\Enums\Standard> $standards
+ * @property Collection<int,\App\Enums\Practice> $practices
+ * @property Collection<int, \App\Enums\Language> $languages
  * @property \App\Enums\Category $category
  * @property \App\Enums\Audience $audience
  * |=============================================================================| */
 class Metadata
 {
+    /**
+     * @var Collection<int, \App\Enums\Grade>
+     */
     public Collection $grades;
 
+    /**
+     * @var Collection<int, \App\Enums\Standard>
+     */
     public Collection $standards;
 
+    /**
+     * @var Collection<int, \App\Enums\Practice>
+     */
     public Collection $practices;
 
+    /**
+     * @var Collection<int, \App\Enums\Language>
+     */
     public Collection $languages;
 
     public Category $category;
 
     public Audience $audience;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->grades = $this->parseDataByKey('grades', $data, Grade::class);
@@ -79,47 +97,51 @@ class Metadata
             : Audience::students();
     }
 
-    public function toArray()
+    /**
+     *
+     * @return array{grades: list<string>, languages: list<string>, practices: list<string>, standards: list<string>, category: string, audience: string}
+     */
+    public function toArray(): array
     {
         return [
             'grades' => $this->grades
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode([
             'grades' => $this->grades
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn ($value) => $value->value)
+                ->map(fn($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
         ]);
     }
 
-    public static function fromFaker($faker): self
+    public static function fromFaker(Generator $faker): self
     {
         $data = [
             'grades' => $faker->randomElements(
@@ -148,14 +170,17 @@ class Metadata
     /**
      * Parse the provided key data or return an empty array.
      *
-     * @param  class-string  $enum
+     * @template T of Enum
+     * @param  class-string<T> $enum
+     * @param array<string, array<mixed>> $data
+     * @return Collection<int, T>
      */
-    private function parseDataByKey(string $key, array $data, $enum)
+    private function parseDataByKey(string $key, array $data, $enum): Collection
     {
         return array_key_exists($key, $data)
             ? collect($data[$key])
-                ->map(fn (string $value) => $enum::tryFrom($value))
-                ->filter(fn ($value) => ! is_null($value))
-            : collect([]);
+            ->map(fn(string $value) => $enum::tryFrom($value))
+            ->filter(fn($value) => ! is_null($value))
+            : collect();
     }
 }

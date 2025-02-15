@@ -14,10 +14,16 @@ namespace App\Services;
 
 use App\Mail\Survey;
 use App\Models\User;
+use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
 
+/**
+ *
+ * @phpstan-type SurveyTypes self::CT_CAST|self::SCALES
+ * @phpstan-type SurveyIntervals self::ONCE|self::YEARLY
+ */
 class SurveyService
 {
     public const CT_CAST = 'CT_CAST';
@@ -35,7 +41,14 @@ class SurveyService
         $this->user = $user;
     }
 
-    public function sendSurvey(array $survey_types, int $frequency)
+    /**
+     *
+     * @param array<SurveyTypes> $survey_types
+     * @param SurveyIntervals $frequency
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function sendSurvey(array $survey_types, $frequency)
     {
         $this->validateArgs($survey_types, $frequency);
         $urls = collect($survey_types)->map(
@@ -52,7 +65,13 @@ class SurveyService
         return $this;
     }
 
-    private function handleOnce(Collection $urls)
+    /**
+     * @param Collection<int, string> $urls
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidCastException
+     */
+    private function handleOnce(Collection $urls): void
     {
         if ($this->user->sent_week_one_survey) {
             return;
@@ -62,7 +81,13 @@ class SurveyService
         $this->user->save();
     }
 
-    private function handleYearly(Collection $urls)
+    /**
+     * @param Collection<int, string> $urls
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidCastException
+     */
+    private function handleYearly(Collection $urls): void
     {
         if (
             ! is_null($this->user->yearly_survey_sent_at) and
@@ -75,7 +100,15 @@ class SurveyService
         $this->user->save();
     }
 
-    private function validateArgs(array $survey_types, int $frequency)
+    /**
+     * @param array<string|mixed> $survey_types
+     * @param int $frequency
+     * @return void
+     * @throws InvalidArgumentException
+     * @phpstan-assert list<SurveyTypes> $survey_types
+     * @phpstan-assert SurveyIntervals $frequency
+     */
+    private function validateArgs(array $survey_types, int $frequency): void
     {
         if (! in_array($frequency, [static::ONCE, static::YEARLY])) {
             throw new \InvalidArgumentException(
@@ -100,7 +133,7 @@ class SurveyService
 
     /**
      *
-     * @param self::CT_CAST|self::SCALES $survey_type
+     * @param SurveyTypes $survey_type
      * @return string
      */
     private function buildUrl($survey_type): string

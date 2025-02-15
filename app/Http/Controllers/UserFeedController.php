@@ -9,18 +9,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 final class UserFeedController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, User $user)
+    public function __invoke(Request $request, User $user): View
     {
         $feed = Cache::remember(
             key: "$user->id--feed",
             ttl: now()->addMinutes(5),
-            callback: fn () => Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->shouldBeSearchable()->latest()->get()
+            callback: fn() => Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->shouldBeSearchable()->latest()->get()
         );
 
         return view('users.feed', [

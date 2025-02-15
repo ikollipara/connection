@@ -8,18 +8,20 @@ use App\Enums\Grade;
 use App\Http\Middleware\UserIsOwner;
 use App\Models\User;
 use DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 final class UserProfileController extends Controller
 {
     /**
      * Display the resource.
      */
-    public function show(User $user)
+    public function show(User $user): View
     {
         $profile = $user->profile;
         $user = $user->loadCount([
@@ -46,7 +48,7 @@ final class UserProfileController extends Controller
     /**
      * Show the form for editing the resource.
      */
-    public function edit(User $user)
+    public function edit(User $user): View
     {
         $profile = $user->profile;
 
@@ -59,7 +61,7 @@ final class UserProfileController extends Controller
     /**
      * Update the resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'school' => 'string',

@@ -8,18 +8,21 @@ use App\Enums\Grade;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
+use Illuminate\View\View;
 
 final class RegisteredUserController extends Controller
 {
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         return view('auth.register.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'email' => 'required|email|unique:users,email',
@@ -40,8 +43,10 @@ final class RegisteredUserController extends Controller
         data_set($validated, 'is_preservice', isset($validated['is_preservice']));
         data_set($validated, 'gender', '');
 
-        $user = User::create(Arr::only($validated, ['email', 'first_name', 'last_name', 'consented']));
-        $user->profile()->create(Arr::except($validated, ['email', 'first_name', 'last_name', 'consented']));
+        DB::transaction(function () use ($validated) {
+            $user = User::create(Arr::only($validated, ['email', 'first_name', 'last_name', 'consented']));
+            $user->profile()->create(Arr::except($validated, ['email', 'first_name', 'last_name', 'consented']));
+        });
 
         return to_route('login')->with('success', 'Please login to continue.');
     }

@@ -15,7 +15,7 @@ final class ContentContentCollectionController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Content $content)
+    public function __invoke(Request $request, Content $content): Response
     {
         $collections = $request->validate([
             'collections' => 'required|array',

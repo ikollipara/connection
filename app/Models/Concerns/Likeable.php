@@ -9,15 +9,17 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template T of Model
+ */
 trait Likeable
 {
     /**
      * Get the likes count for the model.
-     *
-     * @return int
      */
-    public function likes()
+    public function likes(): int
     {
         return Cache::remember("$this->id--likes_count", now()->addSeconds(30), function () {
             return DB::table('likes_log')
@@ -29,7 +31,7 @@ trait Likeable
         });
     }
 
-    public function like()
+    public function like(): void
     {
         DB::table('likes_log')->insert([
             'model_type' => self::class,
@@ -44,9 +46,9 @@ trait Likeable
 
     /**
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder<T> $query
      * @param 'asc'|'desc' $direction
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<T>
      * @throws \InvalidArgumentException
      */
     protected function scopeOrderByLikes(Builder $query, $direction = 'desc')
@@ -64,6 +66,13 @@ trait Likeable
         );
     }
 
+    /**
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<T> $query
+     * @param 0|positive-int $count
+     * @return \Illuminate\Database\Eloquent\Builder<T>
+     * @throws \InvalidArgumentException
+     */
     protected function scopeHasLikesCount(Builder $query, $count)
     {
         $model = $query->getModel();

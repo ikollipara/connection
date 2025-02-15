@@ -13,5 +13,7 @@ use Parental\HasParent;
  */
 class Post extends Content implements Commentable
 {
-    use HasFactory, HasParent;
+    /** @use HasFactory<\Database\Factories\PostFactory> */
+    use HasFactory;
+    use HasParent;
 }

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class UserSettings extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserSettingsFactory> */
     use HasFactory;
 
     protected $guarded = [];

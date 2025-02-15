@@ -8,22 +8,40 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use JsonException;
+use Override;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class Editor implements Arrayable
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $data;
 
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
+    #[Override]
     public function toArray()
     {
         return $this->data;
     }
 
+    /**
+     *
+     * @param bool $parse
+     * @return ($parse is true ? Js : string)
+     * @throws JsonException
+     */
     public function toJson(bool $parse = false)
     {
         if ($parse) {
@@ -33,7 +51,7 @@ class Editor implements Arrayable
         return Js::encode($this->data);
     }
 
-    public static function fromJson(string $json)
+    public static function fromJson(string $json): self
     {
         return new self(json_decode($json, associative: true));
     }

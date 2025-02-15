@@ -7,11 +7,12 @@ namespace App\Http\Controllers;
 use App\Models\ContentCollection;
 use App\Models\Entry;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
 final class UserContentCollectionEntryController extends Controller
 {
-    public function destroy(User $user, ContentCollection $collection, Entry $entry)
+    public function destroy(User $user, ContentCollection $collection, Entry $entry): RedirectResponse
     {
         $entry->delete();
 

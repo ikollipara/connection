@@ -10,14 +10,20 @@ class LoginRequest extends FormRequest
 {
     protected $redirectRoute = 'login';
 
-    public function rules()
+    /**
+     * @return array<string, string|list<string>>
+     */
+    public function rules(): array
     {
         return [
             'email' => 'email|required|exists:users,email',
         ];
     }
 
-    public function messages()
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
     {
         return [
             'email.exists' => 'The email you entered does not exist.',

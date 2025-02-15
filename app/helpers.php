@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\RedirectResponse;
+
 /*|==================================================================================|
   | helpers.php                                                                      |
   | Ian Kollipara <ikollipara2@huskers.unl.edu>                                      |
@@ -14,8 +16,9 @@ if (! function_exists('session_back')) {
     /**
      * Redirects the user back to the previous page
      * using the cached session previous url.
+     * @param array<string, string> $headers
      */
-    function session_back($fallback = false, $status = 302, $headers = [], $secure = null)
+    function session_back(string|false $fallback = false, int $status = 302, array $headers = [], ?bool $secure = null): RedirectResponse
     {
         $url = session()->previousUrl();
 

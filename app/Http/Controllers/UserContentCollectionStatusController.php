@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Models\ContentCollection;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 final class UserContentCollectionStatusController extends Controller
@@ -14,7 +15,7 @@ final class UserContentCollectionStatusController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, User $user, ContentCollection $collection)
+    public function __invoke(Request $request, User $user, ContentCollection $collection): RedirectResponse
     {
         $status = Status::from($request->validate([
             'status' => 'required|enum:' . Status::class,

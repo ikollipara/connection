@@ -9,20 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
-/**
- * \App\Models\Entry
- *
- * @property int $id
- * @property string $content_id
- * @property string $collection_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\Content $content
- * @property \App\Models\ContentCollection $collection
- */
 class Entry extends Model
 {
-    use AsPivot, HasFactory;
+    use AsPivot;
+    /** @use HasFactory<\Database\Factories\EntryFactory> */
+    use HasFactory;
 
     protected $table = 'entries';
 

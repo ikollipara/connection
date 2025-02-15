@@ -185,21 +185,6 @@ class UserTest extends TestCase
         $this->assertEquals(5, $user->searches->count());
     }
 
-    public function test_user_can_be_created_with_profile_and_settings()
-    {
-        $user = User::factory()->makeOne();
-        $profile = UserProfile::factory()->makeOne();
-        unset($profile['user_id']);
-        $profile_array = $profile->toArray();
-        $profile_array['bio'] = json_encode($profile_array['bio']);
-        $user = User::createWithProfileAndSettings(array_merge($user->toArray(), $profile_array));
-
-        $this->assertDatabaseHas('users', ['email' => $user->email]);
-        $this->assertDatabaseHas('user_profiles', ['user_id' => $user->id]);
-        $this->assertDatabaseHas('user_settings', ['user_id' => $user->id]);
-        $this->assertEquals($user->profile->user_id, $user->id);
-    }
-
     public function test_user_can_delete_their_avatar()
     {
         Storage::fake('public', ['throw' => true]);

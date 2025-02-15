@@ -6,10 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 final class PostController extends Controller
 {
-    public function show(Request $request, Post $post)
+    public function show(Request $request, Post $post): View
     {
 
         $post->view();

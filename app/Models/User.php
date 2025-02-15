@@ -30,34 +30,11 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Mail;
 
-/**
- * App\Models\User
- *
- * @property string $id
- * @property string $first_name
- * @property string $last_name
- * @property-read string $full_name
- * @property \App\ValueObjects\Avatar $avatar
- * @property string $email
- * @property bool $consented
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $sent_week_one_survey
- * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
- * @property-read Collection<\App\Models\Comment> $comments
- * @property-read Collection<\App\Models\ContentCollection> $collections
- * @property-read Collection<\App\Models\Post> $posts
- *  @property-read Collection<\App\Models\Event> $events
- * @property-read Collection<\App\Models\User> $followers
- * @property-read Collection<\App\Models\User> $following
- * @property-read Collection<\App\Models\Search> $searches
- * @property UserSettings $settings
- * @property UserProfile $profile
- */
 class User extends Authenticatable implements MustVerifyEmail, AuthContract
 {
-    use HasApiTokens, HasFactory, HasUuids, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
+    use HasApiTokens, HasUuids, Notifiable;
 
     protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
@@ -85,7 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
         });
     }
 
-    private function notifyIfConsented()
+    private function notifyIfConsented(): void
     {
         if ($this->consented and ($this->wasChanged('consented') or $this->wasRecentlyCreated)) {
             (new SurveyService($this))->sendSurvey(Arr::wrap(SurveyService::SCALES), SurveyService::ONCE);
@@ -102,7 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     public function resolveRouteBinding($value, $field = null)
     {
         if ($value === 'me') {
-            return auth()->user();
+            return auth('web')->user();
         }
         $id = last(explode('--', $value));
 
@@ -262,48 +239,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
 
     // Scopes
 
-    // Methods
-
-    /**
-     * Create a User with their profile and settings
-     *
-     * @param  array<string, mixed>  $data  The user's data
-     */
-    public static function createWithProfileAndSettings(array $data): User
-    {
-        $profile = [
-            'school' => $data['school'],
-            'is_preservice' => isset($data['is_preservice']),
-            'years_of_experience' => data_get($data, 'years_of_experience', 0),
-            'subject' => $data['subject'],
-            'bio' => Editor::fromJson($data['bio']),
-            'grades' => collect($data['grades'])
-                ->map(fn($grade) => Grade::from($grade))
-                ->toArray(),
-            'gender' => '',
-        ];
-
-        return DB::transaction(function () use ($data, $profile) {
-            $user = User::create([
-                'id' => Str::uuid()->toString(),
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
-                'avatar' => Avatar::is($data['avatar']) ? $data['avatar'] : Avatar::fromUploadedFile($data['avatar']),
-            ]);
-            $user->profile()->create($profile);
-            $user->settings()->create([
-                'receive_weekly_digest' => true,
-                'receive_comment_notifications' => true,
-                'receive_new_follower_notifications' => true,
-                'receive_follower_notifications' => true,
-            ]);
-
-            return $user;
-        });
-    }
-
-    public function sendLoginLink()
+    public function sendLoginLink(): void
     {
         Mail::to($this)->queue(new Login($this));
     }

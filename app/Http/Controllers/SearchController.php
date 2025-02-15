@@ -12,6 +12,7 @@ use App\Enums\Practice;
 use App\Enums\Standard;
 use App\Models\Search;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 final class SearchController extends Controller
 {
@@ -23,7 +24,7 @@ final class SearchController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): View
     {
         $validated = $request->validate([
             'q' => 'sometimes|nullable|string',
@@ -31,17 +32,17 @@ final class SearchController extends Controller
             'views' => 'sometimes|integer|min:0',
             'likes' => 'sometimes|integer|min:0',
             'audiences' => 'sometimes|array',
-            'audiences.*' => 'enum:'.Audience::class,
+            'audiences.*' => 'enum:' . Audience::class,
             'categories' => 'sometimes|array',
-            'categories.*' => 'enum:'.Category::class,
+            'categories.*' => 'enum:' . Category::class,
             'grades' => 'sometimes|array',
-            'grades.*' => 'enum:'.Grade::class,
+            'grades.*' => 'enum:' . Grade::class,
             'standards' => 'sometimes|array',
-            'standards.*' => 'enum:'.Standard::class,
+            'standards.*' => 'enum:' . Standard::class,
             'practices' => 'sometimes|array',
-            'practices.*' => 'enum:'.Practice::class,
+            'practices.*' => 'enum:' . Practice::class,
             'languages' => 'sometimes|array',
-            'languages.*' => 'enum:'.Language::class,
+            'languages.*' => 'enum:' . Language::class,
         ]);
 
         $results = match (true) {

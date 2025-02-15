@@ -12,26 +12,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * \App\Models\UserProfile
- *
- * @property int $id
- * @property string $user_id
- * @property Editor $bio
- * @property bool $is_preservice
- * @property string $school
- * @property string $subject
- * @property-read string $short_title
- * @property \Illuminate\Support\Collection<\App\Enums\Grade> $grades
- * @property string $gender
- * @property int $years_of_experience
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \App\Models\User $user
- */
 class UserProfile extends Model
 {
-    use HasFactory, Viewable;
+    /** @use HasFactory<\Database\Factories\UserProfileFactory> */
+    use HasFactory;
+    /** @use Viewable<self> */
+    use Viewable;
 
     protected $guarded = [];
 
@@ -48,6 +34,10 @@ class UserProfile extends Model
 
     // Accessors and Mutators
 
+    /**
+     *
+     * @return Attribute<string, null>
+     */
     protected function shortTitle(): Attribute
     {
         $years = match ($this->years_of_experience) {
@@ -64,6 +54,10 @@ class UserProfile extends Model
         );
     }
 
+    /**
+     * @param mixed $value
+     * @return Editor
+     */
     protected function getBioAttribute($value): Editor
     {
         // @codeCoverageIgnoreStart

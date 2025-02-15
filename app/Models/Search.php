@@ -6,19 +6,12 @@ namespace App\Models;
 
 use Auth;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
-/**
- * @property int $id
- * @property string $user_id
- * @property array $search_params
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\User $user
- */
 class Search extends Model
 {
     protected $fillable = ['user_id', 'search_params'];
@@ -42,13 +35,23 @@ class Search extends Model
         });
     }
 
+    /**
+     *
+     * @param array<mixed> $params
+     * @return Collection<int, \Illuminate\Database\Eloquent\Model>
+     * @throws InvalidArgumentException
+     * @throws InvalidCastException
+     */
     public function search(array $params): Collection
     {
         $this->normalizeParams($params);
+        /** @var array{type: Post|ContentCollection|Event, views: int, likes: int, metadata: array<string, list<string>>, q: string} $params */
 
         $this->search_params = $params;
         $this->save();
 
+        // The following works, but because of how Laravel sets up typing, it fails PHPStan
+        /** @phpstan-ignore-next-line */
         return $params['type']::query()
             ->search($params['q'])
             ->filterBy(Arr::except($params, ['type', 'q']))
@@ -56,6 +59,12 @@ class Search extends Model
             ->get();
     }
 
+    /**
+     * @param array<mixed> &$params
+     * @return void
+     * @throws InvalidArgumentException
+     * @phpstan-assert array{type: Post|ContentCollection|Event, views: int, likes: int, metadata: array<string, list<string>>, q: string} $params
+     */
     private function normalizeParams(array &$params)
     {
         data_fill($params, 'views', 0);

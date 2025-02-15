@@ -5,6 +5,7 @@ namespace Tests\Feature\Models;
 use App\Enums\Grade;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\ValueObjects\Editor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,6 +31,17 @@ class UserProfileTest extends TestCase
         $userProfile = UserProfile::factory()->createOne();
 
         $this->assertInstanceOf(User::class, $userProfile->user);
+    }
+
+    public function test_can_get_bio()
+    {
+        $userProfile = UserProfile::factory()->create([
+            'subject' => 'Math',
+            'is_preservice' => false,
+            'years_of_experience' => 3,
+        ]);
+
+        $this->assertInstanceOf(Editor::class, $userProfile->bio);
     }
 
     public function test_can_get_short_title()

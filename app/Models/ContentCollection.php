@@ -10,13 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 
-/**
- * @property-read \Illuminate\Database\Eloquent\Collection<Content> $entries
- * @property-read int $entries_count
- */
 class ContentCollection extends Content
 {
-    use HasFactory, HasParent;
+    /** @use HasFactory<\Database\Factories\ContentCollectionFactory> */
+    use HasFactory;
+    use HasParent;
 
     /**
      * Get all the entries for the post collection.
@@ -54,7 +52,7 @@ class ContentCollection extends Content
             ->exists();
     }
 
-    protected function scopeWithHasEntry(Builder $query, $content = null)
+    protected function scopeWithHasEntry(Builder $query, string|Content|null $content = null): Builder
     {
         if (is_null($content)) {
             return $query;

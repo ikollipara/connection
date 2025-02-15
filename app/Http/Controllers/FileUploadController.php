@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use Http;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 final class FileUploadController extends Controller
 {
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'file' => 'file|required_without_all:image,url',
@@ -26,9 +27,8 @@ final class FileUploadController extends Controller
         if (isset($validated['file'])) $path = $validated['file']->store('files', 'public');
         if (isset($validated['image'])) $path = $validated['image']->store('files', 'public');
 
-
-        return response(
-            content: [
+        return new JsonResponse(
+            data: [
                 'success' => $path ? 1 : 0,
                 'file' => [
                     'url' => $path ? Storage::url($path) : '',
@@ -38,7 +38,7 @@ final class FileUploadController extends Controller
         );
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): void
     {
         $validated = $request->validate([
             'path' => 'required|string',
@@ -51,7 +51,7 @@ final class FileUploadController extends Controller
         Storage::disk('public')->delete($validated['path']);
     }
 
-    protected function saveUrl(string $url)
+    protected function saveUrl(string $url): string|false
     {
         $response = \Http::get($url);
         if ($response->failed()) return false;

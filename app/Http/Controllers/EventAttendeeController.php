@@ -19,14 +19,14 @@ final class EventAttendeeController extends Controller
 
         $event->attendees()->attach($request->user_id);
 
-        return session_back(303)->with('success', __('You are now attending.'));
+        return session_back(status: 303)->with('success', __('You are now attending.'));
     }
 
     public function destroy(Event $event, User $attendee): RedirectResponse
     {
         $event->attendees()->detach($attendee);
 
-        return session_back(303)->with('success', __('You are no longer attending.'));
+        return session_back(status: 303)->with('success', __('You are no longer attending.'));
     }
 
     public static function middleware(): array
