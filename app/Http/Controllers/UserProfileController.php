@@ -24,6 +24,9 @@ final class UserProfileController extends Controller
     public function show(User $user): View
     {
         $profile = $user->profile;
+        abort_if(is_null($profile), Response::HTTP_INTERNAL_SERVER_ERROR, 'Profile is missing on the user.');
+        /** @var \App\Models\UserProfile $profile */
+
         $user = $user->loadCount([
             'posts' => fn($query) => $query->shouldBeSearchable(),
             'collections' => fn($query) => $query->shouldBeSearchable(),

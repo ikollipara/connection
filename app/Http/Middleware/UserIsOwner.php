@@ -22,21 +22,22 @@ class UserIsOwner
      */
     public function handle(Request $request, Closure $next, ?string $resource = null): Response
     {
-        $requestUser = $request->route()->parameter('user');
+        $requestUser = $request->route()?->parameter('user');
+        $requestRoute = $request->route()?->getName() ?? "";
         if (! $requestUser instanceof User) {
-            return to_route($request->route()->getName(), ['me']);
+            return to_route($requestRoute, ['me']);
         }
         if (! $requestUser->is(Auth::user())) {
-            return to_route($request->route()->getName(), ['me']);
+            return to_route($requestRoute, ['me']);
         }
 
         if ($resource) {
-            $requestResource = $request->route()->parameter($resource);
+            $requestResource = $request->route()?->parameter($resource);
             if (! ($requestResource instanceof Model && is_callable([$requestResource, 'user']))) {
-                return to_route($request->route()->getName(), ['me']);
+                return to_route($requestRoute, ['me']);
             }
             if (! $requestResource->user()->is($requestUser)) {
-                return to_route($request->route()->getName(), ['me']);
+                return to_route($requestRoute, ['me']);
             }
         }
 

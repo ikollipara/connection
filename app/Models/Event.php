@@ -168,8 +168,10 @@ class Event extends Model
      * @param User $user
      * @return Builder
      */
-    protected function scopeIsAttending($query, User $user)
+    protected function scopeIsAttending($query, ?User $user)
     {
+        if (is_null($user)) return $query;
+
         return $query->whereHas('attendees', fn(Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
     }
 
@@ -216,7 +218,7 @@ class Event extends Model
             $user => Calendar::create("$user->name's conneCTION Calendar"),
             default => Calendar::create('conneCTION Calendar'),
         };
-        $events = Event::query()->when(filled($user), fn($q) => $q->isAttending($user))->with('days')->get();
+        $events = Event::query()->isAttending($user)->with('days')->get();
         foreach ($events as $event) {
             $event->days->each->setRelation('event', $event);
             foreach ($event->days as $day) {

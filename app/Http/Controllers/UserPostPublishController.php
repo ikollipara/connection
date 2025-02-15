@@ -52,7 +52,7 @@ final class UserPostPublishController extends Controller
             'auth',
             'verified',
             function (Request $request, Closure $next) {
-                if (($requestUser = $request->route('user')) && $requestUser instanceof Model && (! $request->user()->is($requestUser))) {
+                if (($requestUser = $request->route('user')) && $requestUser instanceof Model && (! $request->user()?->is($requestUser))) {
                     return session_back()->with('error', 'You are not authorized to perform this action.');
                 }
 

@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Schedule::macro('hasCommand', function (string $command, string $expression): bool {
             $event = Arr::first(
                 $this->events(),
-                fn(Event $item): bool => Str::after($item->command, "'artisan' ") === $command && $item->expression === $expression
+                fn(Event $item): bool => Str::after($item->command ?? "", "'artisan' ") === $command && $item->expression === $expression
             );
 
             return ! is_null($event);

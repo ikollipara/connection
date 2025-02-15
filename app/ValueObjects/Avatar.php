@@ -64,7 +64,7 @@ class Avatar
         return $this->storage->delete($this->path);
     }
 
-    public function url(): string
+    public function url(): ?string
     {
         // return $this->exists()
         // ? $this->storage->url($this->path)
@@ -79,6 +79,6 @@ class Avatar
 
     public function __toString(): string
     {
-        return $this->url();
+        return $this->url() ?? '';
     }
 }

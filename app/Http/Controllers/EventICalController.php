@@ -12,7 +12,7 @@ use Illuminate\Http\Response;
 
 final class EventICalController extends Controller
 {
-    public function __invoke(Request $request, ?User $user): JsonResponse
+    public function __invoke(Request $request, User $user): JsonResponse
     {
         $calendar = Event::toICalCalendar($user->exists ? $user : null);
 
