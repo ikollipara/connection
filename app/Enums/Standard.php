@@ -175,7 +175,7 @@ class Standard extends Enum
     public static function getGroup(StandardGroup $group): Collection
     {
         return collect(self::toValues())
-            ->filter(fn($value) => str_starts_with($value, $group->value))
+            ->filter(fn($value) => str((string) $value)->startsWith((string) $group->value))
             ->values();
     }
 

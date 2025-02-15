@@ -99,7 +99,7 @@ class Metadata
 
     /**
      *
-     * @return array{grades: list<string>, languages: list<string>, practices: list<string>, standards: list<string>, category: string, audience: string}
+     * @return array{grades: array<mixed>, languages: array<mixed>, practices: array<mixed>, standards: array<mixed>, category: string|int, audience: string|int}
      */
     public function toArray(): array
     {
@@ -123,7 +123,7 @@ class Metadata
 
     public function __toString(): string
     {
-        return json_encode([
+        $result = json_encode([
             'grades' => $this->grades
                 ->map(fn($value) => $value->value)
                 ->toArray(),
@@ -139,6 +139,8 @@ class Metadata
             'category' => $this->category->value,
             'audience' => $this->audience->value,
         ]);
+
+        return $result ? $result : "";
     }
 
     public static function fromFaker(Generator $faker): self

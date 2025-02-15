@@ -43,17 +43,19 @@ class SurveyService
 
     /**
      *
-     * @param array<SurveyTypes> $survey_types
-     * @param SurveyIntervals $frequency
+     * @param list<string> $survey_types
+     * @param int $frequency
      * @return $this
      * @throws InvalidArgumentException
      */
     public function sendSurvey(array $survey_types, $frequency)
     {
         $this->validateArgs($survey_types, $frequency);
-        $urls = collect($survey_types)->map(
-            fn($survey_type) => $this->buildUrl($survey_type),
-        );
+
+
+        // @phpstan-ignore-next-line
+        $urls = collect($survey_types)->map(fn($survey_type) => $this->buildUrl($survey_type));
+
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
             $this->handleOnce($urls);

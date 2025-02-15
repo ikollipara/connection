@@ -8,6 +8,7 @@ use App\Enums\Status;
 use App\Models\Post;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use Arr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
@@ -23,6 +24,7 @@ final class UserPostController extends Controller
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
+        if (is_array($q)) $q = (string) Arr::first($q);
 
         $posts = $user->posts()->search($q)->status($status)->latest()->paginate(15)->withQueryString();
 
@@ -55,7 +57,7 @@ final class UserPostController extends Controller
 
         info('Post created', ['post' => $post, 'user' => $user]);
 
-        return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
+        return to_route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
     }
 
     /**
@@ -79,7 +81,7 @@ final class UserPostController extends Controller
 
         info('Post updated', ['post' => $post, 'user' => $user]);
 
-        return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
+        return to_route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
     }
 
     public static function middleware(): array

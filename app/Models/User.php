@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     private function notifyIfConsented(): void
     {
         if ($this->consented and ($this->wasChanged('consented') or $this->wasRecentlyCreated)) {
-            (new SurveyService($this))->sendSurvey(Arr::wrap(SurveyService::SCALES), SurveyService::ONCE);
+            (new SurveyService($this))->sendSurvey([SurveyService::SCALES], SurveyService::ONCE);
         }
     }
 

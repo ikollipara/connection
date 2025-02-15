@@ -8,6 +8,7 @@ use App\Enums\Status;
 use App\Models\ContentCollection;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use Arr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
@@ -23,6 +24,7 @@ final class UserContentCollectionController extends Controller
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
+        if (is_array($q)) $q = (string) Arr::first($q);
 
         $collections = $user->collections()->search($q)->status($status)->latest()->paginate(15)->withQueryString();
 

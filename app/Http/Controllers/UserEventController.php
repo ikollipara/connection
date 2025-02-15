@@ -26,7 +26,8 @@ final class UserEventController extends Controller
 {
     public function index(Request $request, User $user): View
     {
-        $q = $request->query('q', '');
+        $q = $request->query('q');
+        if (is_array($q)) $q = (string) Arr::first($q);
         $events = $user->events()->search($q)->withCount(['days', 'attendees'])->paginate(15);
 
         return view('users.events.index', [

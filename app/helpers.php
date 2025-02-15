@@ -18,10 +18,10 @@ if (! function_exists('session_back')) {
      * using the cached session previous url.
      * @param array<string, string> $headers
      */
-    function session_back(string|false $fallback = false, int $status = 302, array $headers = [], ?bool $secure = null): RedirectResponse
+    function session_back(int $status = 302, array $headers = [], ?bool $secure = null): RedirectResponse
     {
-        $url = session()->previousUrl();
+        $url = session()->previousUrl() ?? '/';
 
-        return redirect($url ?? $fallback, $status, $headers, $secure);
+        return redirect($url, $status, $headers, $secure);
     }
 }

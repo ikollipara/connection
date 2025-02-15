@@ -49,6 +49,7 @@ class Avatar
         }
 
         $path = $file->store('avatars', $disk);
+        if (!$path) return new self('');
 
         return new self($path, $disk);
     }

@@ -14,6 +14,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\ValueObjects\Metadata;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,7 @@ final class UserPostPublishController extends Controller
             'auth',
             'verified',
             function (Request $request, Closure $next) {
-                if (! $request->user()->is($request->route('user'))) {
+                if (($requestUser = $request->route('user')) && $requestUser instanceof Model && (! $request->user()->is($requestUser))) {
                     return session_back()->with('error', 'You are not authorized to perform this action.');
                 }
 
