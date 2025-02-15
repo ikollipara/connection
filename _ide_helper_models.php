@@ -25,7 +25,7 @@ namespace App\Models{
  * @property string|null $parent_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $children
  * @property-read int|null $children_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $commentable
+ * @property-read \Illuminate\Database\Eloquent\Model|null $commentable
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read Comment|null $parent
  * @property-read \App\Models\User|null $user
@@ -108,8 +108,6 @@ namespace App\Models{
 /**
  * 
  *
- * @property-read \Illuminate\Database\Eloquent\Collection<Content> $entries
- * @property-read int $entries_count
  * @property string $id
  * @property string $title
  * @property \App\ValueObjects\Editor $body
@@ -127,6 +125,8 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Content> $entries
+ * @property-read int|null $entries_count
  * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read bool $was_recently_published
@@ -156,7 +156,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection whereViews($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withHasEntry($content = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withHasEntry(\App\Models\Content|string|null $content = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection withoutTrashed()
  */
@@ -189,15 +189,15 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * \App\Models\Entry
+ * 
  *
- * @property int $id
  * @property string $content_id
  * @property string $collection_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\Content $content
- * @property \App\Models\ContentCollection $collection
+ * @property int $id
+ * @property-read \App\Models\ContentCollection $collection
+ * @property-read \App\Models\Content $content
  * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\EntryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newModelQuery()
@@ -242,7 +242,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event hasLikesCount($count)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event hasViewsCount($count)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Event isAttending(\App\Models\User $user)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Event isAttending(?\App\Models\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event orderByLikes($direction = 'desc')
