@@ -71,8 +71,8 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read mixed $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read \App\Models\User|null $user
  * @property-read mixed $was_recently_published
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content hasLikesCount($count)
@@ -129,8 +129,8 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read mixed $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read \App\Models\User|null $user
  * @property-read mixed $was_recently_published
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ContentCollectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection hasLikesCount($count)
@@ -315,8 +315,8 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read mixed $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read \App\Models\User|null $user
  * @property-read mixed $was_recently_published
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post hasLikesCount($count)

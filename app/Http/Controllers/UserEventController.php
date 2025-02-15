@@ -14,6 +14,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\ValueObjects\Editor;
 use App\ValueObjects\Metadata;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
@@ -41,40 +42,41 @@ final class UserEventController extends Controller
 
     public function store(Request $request, User $user)
     {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string',
-                'description' => 'required|string',
-                'location' => 'nullable|string',
-                'audience' => 'enum:' . Audience::class,
-                'category' => 'enum:' . Category::class,
-                'grades' => 'sometimes|array',
-                'grades.*' => 'enum:' . Grade::class,
-                'standards' => 'sometimes|array',
-                'standards.*' => 'enum:' . Standard::class,
-                'practices' => 'sometimes|array',
-                'practices.*' => 'enum:' . Practice::class,
-                'languages' => 'sometimes|array',
-                'languages.*' => 'enum:' . Language::class,
-                'start' => 'required|date_format:H:i',
-                'end' => 'required|date_format:H:i',
-                'days' => 'required|array',
-                'days.*.date' => 'required|date',
-            ]);
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'location' => 'nullable|string',
+            'audience' => 'enum:' . Audience::class,
+            'category' => 'enum:' . Category::class,
+            'grades' => 'sometimes|array',
+            'grades.*' => 'enum:' . Grade::class,
+            'standards' => 'sometimes|array',
+            'standards.*' => 'enum:' . Standard::class,
+            'practices' => 'sometimes|array',
+            'practices.*' => 'enum:' . Practice::class,
+            'languages' => 'sometimes|array',
+            'languages.*' => 'enum:' . Language::class,
+            'start' => 'required|date_format:H:i',
+            'end' => 'required|date_format:H:i',
+            'days' => 'required|array',
+            'days.*.date' => 'required|date',
+        ]);
 
-            data_fill($validated, 'days', [['date' => Carbon::today()]]);
-            $validated['description'] = Editor::fromJson($validated['description']);
-            $validated['metadata'] = new Metadata($validated);
 
-            $event = $user->events()->create(Arr::except($validated, 'days'));
+        data_fill($validated, 'days', [['date' => Carbon::today()]]);
+        $validated['description'] = Editor::fromJson($validated['description']);
+        $validated['metadata'] = new Metadata($validated);
+
+
+        [$result, $event] = DB::transaction(function () use ($validated, $user) {
+            $event = $user->events()->make(Arr::except($validated, 'days'));
+            $result = $event->save();
             $event->days()->createMany($validated['days']);
+            return [$result, $event];
+        });
 
-            return to_route('users.events.edit', ['me', $event]);
-        } catch (\Throwable $th) {
-            report($th);
-
-            return session_back()->with('error', _('An error occured when saving the event.'));
-        }
+        if ($result) return to_route('users.events.edit', ['me', $event]);
+        return session_back()->with('error', _('An error occured when saving the event.'));
     }
 
     public function edit(Request $request, User $user, Event $event)
@@ -111,17 +113,20 @@ final class UserEventController extends Controller
         $validated['description'] = Editor::fromJson($validated['description']);
         $validated['metadata'] = new Metadata($validated);
 
-        $event->update(Arr::except($validated, 'days'));
+        DB::transaction(function () use ($event, $validated) {
+            $event->update(Arr::except($validated, 'days'));
 
-        $event->days()->delete();
-        $event->days()->createMany($validated['days']);
+            $event->days()->delete();
+            $event->days()->createMany($validated['days']);
+        });
+
 
         return to_route('users.events.edit', ['me', $event]);
     }
 
     public function destroy(User $user, Event $event)
     {
-        if ($event->attendees_count > 0) {
+        if ($event->attendees()->count() > 0) {
             return session_back()->with('error', __('Event has attendees'));
         }
 

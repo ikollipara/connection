@@ -42,24 +42,19 @@ final class UserContentCollectionController extends Controller
     public function store(Request $request, User $user)
     {
 
-        $body = $request->input('body', '');
-        $title = $request->input('title', '');
+        $body = $request->input('body') ?? '{"blocks": []}';
+        $title = $request->input('title') ?? '';
 
-        try {
-            $collection = $user->collections()->create([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
+        $collection = $user->collections()->make([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
+        $result = $collection->save();
+        if (!$result) return session_back()->with('error', 'Collection creation failed');
 
-            info('Collection created', ['collection' => $collection, 'user' => $user]);
+        info('Collection created', ['collection' => $collection, 'user' => $user]);
 
-            return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection created successfully');
-        } catch (\Throwable $th) {
-            $message = $th->getMessage();
-            logger()->error('Collection creation failed', ['user' => $user, 'error' => $message]);
-
-            return session_back()->with('error', 'Collection creation failed');
-        }
+        return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection created successfully');
     }
 
     /**
@@ -72,24 +67,19 @@ final class UserContentCollectionController extends Controller
 
     public function update(Request $request, User $user, ContentCollection $collection)
     {
-        $body = $request->input('body', Js::encode($collection->body));
-        $title = $request->input('title', $collection->title);
+        $body = $request->input('body') ?? Js::encode($collection->body);
+        $title = $request->input('title') ?? $collection->title;
 
-        try {
-            $collection->update([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
+        $result = $collection->update([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
 
-            info('Collection updated', ['collection' => $collection, 'user' => $user]);
+        if (!$result) return session_back()->with('error', 'Collection update failed');
 
-            return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection updated successfully');
-        } catch (\Throwable $th) {
-            $message = $th->getMessage();
-            logger()->error('Collection update failed', ['user' => $user, 'error' => $message]);
+        info('Collection updated', ['collection' => $collection, 'user' => $user]);
 
-            return session_back()->with('error', 'Collection update failed');
-        }
+        return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection updated successfully');
     }
 
     public static function middleware(): array

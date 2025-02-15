@@ -210,7 +210,6 @@ class UserTest extends TestCase
         $user = User::factory()->createOne([
             'avatar' => $avatar,
         ]);
-        var_dump($user->avatar->path());
         $this->assertTrue($user->avatar->delete());
         $this->assertFalse($user->avatar->exists());
     }

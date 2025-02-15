@@ -6,16 +6,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 final class EventAttendeeController extends Controller
 {
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, Event $event)
+    public function store(Request $request, Event $event): RedirectResponse
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -26,12 +22,7 @@ final class EventAttendeeController extends Controller
         return session_back(303)->with('success', __('You are now attending.'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Event $event, User $attendee)
+    public function destroy(Event $event, User $attendee): RedirectResponse
     {
         $event->attendees()->detach($attendee);
 

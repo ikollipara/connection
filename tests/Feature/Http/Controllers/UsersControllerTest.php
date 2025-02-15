@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controllers;
+namespace Tests\Feature\Http\Controllers;
 
 use App\Enums\Grade;
 use App\Models\User;

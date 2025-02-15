@@ -35,6 +35,6 @@ class Editor implements Arrayable
 
     public static function fromJson(string $json)
     {
-        return new self(json_decode($json, true));
+        return new self(json_decode($json, associative: true));
     }
 }
