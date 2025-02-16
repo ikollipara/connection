@@ -69,10 +69,10 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
- * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read bool $was_recently_published
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\User|null $user
+ * @property-read bool $was_recently_published
  * @method static \Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Content hasLikesCount($count)
@@ -127,10 +127,10 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Content> $entries
  * @property-read int|null $entries_count
- * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read bool $was_recently_published
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\User|null $user
+ * @property-read bool $was_recently_published
  * @method static \Database\Factories\ContentCollectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentCollection hasLikesCount($count)
@@ -313,10 +313,10 @@ namespace App\Models{
  * @property-read int|null $collections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
- * @property-read \App\Enums\Status $status
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read bool $was_recently_published
+ * @property-read \App\Enums\Status $status
  * @property-read \App\Models\User|null $user
+ * @property-read bool $was_recently_published
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post filterBy(array $params)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post hasLikesCount($count)
@@ -449,7 +449,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read mixed $short_title
+ * @property-read string $short_title
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\UserProfileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile hasViewsCount($count)

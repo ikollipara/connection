@@ -9,6 +9,9 @@ use App\Models\User;
 use App\ValueObjects\Editor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ *  @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserProfile>
+ */
 class UserProfileFactory extends Factory
 {
     /**
@@ -18,22 +21,22 @@ class UserProfileFactory extends Factory
      */
     public function definition()
     {
-        $is_preservice = $this->faker->boolean();
+        $is_preservice = fake()->boolean();
 
         return [
             'user_id' => User::factory(),
             'bio' => Editor::fromJson(json_encode(['blocks' => []])),
             'is_preservice' => $is_preservice,
-            'school' => $this->faker->sentence(),
-            'subject' => $this->faker->sentence(),
+            'school' => fake()->sentence(),
+            'subject' => fake()->sentence(),
             'gender' => '',
-            'grades' => $this->faker->randomElements(
+            'grades' => fake()->randomElements(
                 Grade::toValues(),
-                $this->faker->numberBetween(1, 3),
+                fake()->numberBetween(1, 3),
             ),
             'years_of_experience' => $is_preservice
                 ? 0
-                : $this->faker->numberBetween(0, 10),
+                : fake()->numberBetween(0, 10),
         ];
     }
 
@@ -49,7 +52,7 @@ class UserProfileFactory extends Factory
     {
         return $this->state([
             'is_preservice' => false,
-            'years_of_experience' => $this->faker->numberBetween(0, 10),
+            'years_of_experience' => fake()->numberBetween(0, 10),
         ]);
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
+use Illuminate\Support\Carbon;
 
 class Day extends Model
 {
@@ -18,10 +19,6 @@ class Day extends Model
     protected $fillable = [
         'event_id',
         'date',
-    ];
-
-    protected $casts = [
-        'date' => 'date',
     ];
 
     protected static function boot()
@@ -52,5 +49,15 @@ class Day extends Model
             ->endsAt($this->date->setTimeFromTimeString($this->event->end?->format('H:i') ?? $this->event->start->addMinutes(30)->format("H:i")))
             ->uniqueIdentifier(strval($this->id))
             ->url(route('events.show', $this->event));
+    }
+    /**
+     *
+     * @return array{date: 'date'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+        ];
     }
 }

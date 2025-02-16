@@ -21,12 +21,6 @@ class UserProfile extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'bio' => 'array',
-        'grades' => Grade::class . ':collection',
-        'is_preservice' => 'boolean',
-    ];
-
     protected $attributes = [
         'bio' => '{"blocks": []}',
         'grades' => '[]',
@@ -47,7 +41,7 @@ class UserProfile extends Model
         };
 
         return Attribute::make(
-            get: fn() => match ($this->is_preservice) {
+            get: fn(): string => match ($this->is_preservice) {
                 true => "$this->subject Pre-Service Teacher ($years)",
                 false => "$this->subject Teacher ($years)",
             },
@@ -55,23 +49,21 @@ class UserProfile extends Model
     }
 
     /**
-     * @param mixed $value
-     * @return Editor
+     *
+     * @return Attribute<Editor, Editor>
      */
-    protected function getBioAttribute($value): Editor
+    protected function bio(): Attribute
     {
-        // @codeCoverageIgnoreStart
-        if ($value[0] === '"') {
-            $value = json_decode($value);
-        }
-        // @codeCoverageIgnoreEnd
-
-        return Editor::fromJson($value);
-    }
-
-    protected function setBioAttribute(Editor $value): void
-    {
-        $this->attributes['bio'] = $value->toJson();
+        return Attribute::make(get: function (string $value): Editor {
+            // @codeCoverageIgnoreStart
+            if ($value[0] === '"') {
+                $value = json_decode($value);
+            }
+            // @codeCoverageIgnoreEnd
+            return Editor::fromJson($value);
+        }, set: function (Editor $value): array {
+            return ['bio' => $value->toJson()];
+        })->withoutObjectCaching();
     }
 
     // Relationships
@@ -84,5 +76,17 @@ class UserProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    /**
+     *
+     * @return array{bio: 'array', grades: 'App\Enums\Grade:collection', is_preservice: 'boolean'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'bio' => 'array',
+            'grades' => Grade::class . ':collection',
+            'is_preservice' => 'boolean',
+        ];
     }
 }

@@ -23,12 +23,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Mail;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail, AuthContract
 {
@@ -39,13 +41,6 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
     protected $hidden = ['remember_token'];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'consented' => 'boolean',
-        'sent_week_one_survey' => 'boolean',
-        'yearly_survey_sent_at' => 'datetime',
-    ];
 
     protected static function booted()
     {
@@ -86,41 +81,32 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
         return parent::resolveRouteBinding($id, $field);
     }
 
-    // Accessors and Mutators
-
     /**
-     * Get the user's full name.
      *
-     * @return string The user's full name
+     * @return Attribute<string, null>
      */
-    protected function getFullNameAttribute(): string
+    protected function fullName(): Attribute
     {
-        return "{$this->first_name} {$this->last_name}";
+        return Attribute::make(get: function (): string {
+            return "{$this->first_name} {$this->last_name}";
+        });
     }
 
     /**
-     * Get the user's avatar
      *
-     * @return Avatar The user's avatar
+     * @return Attribute<Avatar, Avatar|string>
      */
-    public function getAvatarAttribute(): Avatar
+    protected function avatar(): Attribute
     {
-        $avatar = new Avatar(Arr::get($this->attributes, 'avatar', ''));
-        $full_name = trim(str_replace(' ', '+', $this->full_name));
-        $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
-
-        return $avatar;
-    }
-
-    /**
-     * Set the user's avatar
-     *
-     * @param  Avatar|string  $value  The new avatar object
-     */
-    public function setAvatarAttribute($value): void
-    {
-        $value = is_string($value) ? new Avatar($value) : $value;
-        $this->attributes['avatar'] = $value->path();
+        return Attribute::make(get: function (): Avatar {
+            $avatar = new Avatar(Arr::get($this->attributes, 'avatar', ''));
+            $full_name = trim(str_replace(' ', '+', $this->full_name));
+            $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
+            return $avatar;
+        }, set: function (string|Avatar $value): array {
+            $value = is_string($value) ? new Avatar($value) : $value;
+            return ['avatar' => $value->path()];
+        })->withoutObjectCaching();
     }
 
     // Relationships
@@ -247,5 +233,18 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     public function isFollowing(User $user): bool
     {
         return $this->following()->where('followed_id', $user->id)->exists();
+    }
+    /**
+     *
+     * @return array{email_verified_at: 'datetime', consented: 'boolean', sent_week_one_survey: 'boolean', yearly_survey_sent_at: 'datetime'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'consented' => 'boolean',
+            'sent_week_one_survey' => 'boolean',
+            'yearly_survey_sent_at' => 'datetime',
+        ];
     }
 }

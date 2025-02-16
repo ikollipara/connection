@@ -48,11 +48,6 @@ class Content extends Model
 
     protected $fillable = ['title', 'body', 'metadata', 'published', 'user_id', 'type'];
 
-    protected $casts = [
-        'published' => 'boolean',
-        'body' => 'array',
-    ];
-
     protected $attributes = [
         'published' => false,
         'metadata' => '{"category": "material", "audience": "Teachers"}',
@@ -70,49 +65,54 @@ class Content extends Model
     {
         return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
-
-    // Accessors and Mutators
-
-    public function getWasRecentlyPublishedAttribute(): bool
+    /**
+     *
+     * @return Attribute<bool, null>
+     */
+    protected function wasRecentlyPublished(): Attribute
     {
-        return $this->published and $this->wasChanged('published');
-    }
-
-    public function getStatusAttribute(): Status
-    {
-        if ($this->trashed()) {
-            return Status::archived();
-        }
-        if ($this->published) {
-            return Status::published();
-        }
-
-        return Status::draft();
+        return Attribute::make(get: function (): bool {
+            return $this->published and $this->wasChanged('published');
+        });
     }
 
     /**
      *
-     * @param string $value
-     * @return Editor
+     * @return Attribute<Status, null>
      */
-    protected function getBodyAttribute($value): Editor
+    protected function status(): Attribute
     {
-        // TODO: Fix this hack
-        // Some of the content is "doubly" stringified, so we need to
-        // decode it twice. This is a temporary fix until we can
-        // properly migrate the data.
-        // @codeCoverageIgnoreStart
-        if ($value[0] === '"') {
-            $value = json_decode($value);
-        }
-        // @codeCoverageIgnoreEnd
-
-        return Editor::fromJson($value);
+        return Attribute::make(get: function (): Status {
+            if ($this->trashed()) {
+                return Status::archived();
+            }
+            if ($this->published) {
+                return Status::published();
+            }
+            return Status::draft();
+        })->withoutObjectCaching();
     }
 
-    protected function setBodyAttribute(Editor $value): void
+    /**
+     *
+     * @return Attribute<Editor, Editor>
+     */
+    protected function body(): Attribute
     {
-        $this->attributes['body'] = $value->toJson();
+        return Attribute::make(get: function (string $value): Editor {
+            // TODO: Fix this hack
+            // Some of the content is "doubly" stringified, so we need to
+            // decode it twice. This is a temporary fix until we can
+            // properly migrate the data.
+            // @codeCoverageIgnoreStart
+            if ($value[0] === '"') {
+                $value = json_decode($value);
+            }
+            // @codeCoverageIgnoreEnd
+            return Editor::fromJson($value);
+        }, set: function (Editor $value): array {
+            return ['body' => $value->toJson()];
+        })->withoutObjectCaching();
     }
 
     // Relationships
@@ -183,5 +183,16 @@ class Content extends Model
     public function scopeWherePublished($query)
     {
         return $query->where('published', true);
+    }
+    /**
+     *
+     * @return array{published: 'boolean', body: 'array'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'published' => 'boolean',
+            'body' => 'array',
+        ];
     }
 }

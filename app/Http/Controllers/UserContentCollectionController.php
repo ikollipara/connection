@@ -58,7 +58,7 @@ final class UserContentCollectionController extends Controller
 
         info('Collection created', ['collection' => $collection, 'user' => $user]);
 
-        return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection created successfully');
+        return to_route('users.collections.edit', [$user, $collection])->with('success', 'Collection created successfully');
     }
 
     /**
@@ -83,7 +83,7 @@ final class UserContentCollectionController extends Controller
 
         info('Collection updated', ['collection' => $collection, 'user' => $user]);
 
-        return redirect()->route('users.collections.edit', [$user, $collection])->with('success', 'Collection updated successfully');
+        return to_route('users.collections.edit', [$user, $collection])->with('success', 'Collection updated successfully');
     }
 
     public static function middleware(): array

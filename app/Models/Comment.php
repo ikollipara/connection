@@ -26,8 +26,6 @@ class Comment extends Model
 
     protected $fillable = ['body', 'user_id', 'commentable_id', 'commentable_type', 'parent_id'];
 
-    protected $casts = [];
-
     protected $with = ['children'];
 
     /**
@@ -79,5 +77,9 @@ class Comment extends Model
     public function isReply(): bool
     {
         return filled($this->parent_id);
+    }
+    protected function casts(): array
+    {
+        return [];
     }
 }

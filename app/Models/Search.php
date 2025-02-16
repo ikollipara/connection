@@ -16,10 +16,6 @@ class Search extends Model
 {
     protected $fillable = ['user_id', 'search_params'];
 
-    protected $casts = [
-        'search_params' => 'array',
-    ];
-
     /**
      * @return BelongsTo<User, $this>
      */
@@ -93,5 +89,15 @@ class Search extends Model
             'event' => $params['type'] = Event::class,
             default => throw new InvalidArgumentException("type is invalid: {$params['type']}"),
         };
+    }
+    /**
+     *
+     * @return array{search_params: 'array'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'search_params' => 'array',
+        ];
     }
 }

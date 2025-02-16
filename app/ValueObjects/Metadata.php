@@ -38,7 +38,7 @@ use Spatie\Enum\Laravel\Enum;
  * @property \App\Enums\Category $category
  * @property \App\Enums\Audience $audience
  * |=============================================================================| */
-class Metadata
+class Metadata implements \Stringable
 {
     /**
      * @var Collection<int, \App\Enums\Grade>
@@ -182,7 +182,7 @@ class Metadata
         return array_key_exists($key, $data)
             ? collect($data[$key])
             ->map(fn(string $value) => $enum::tryFrom($value))
-            ->filter(fn($value) => ! is_null($value))
+            ->reject(fn($value): bool => is_null($value))
             : collect();
     }
 }

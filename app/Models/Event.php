@@ -64,12 +64,6 @@ class Event extends Model
         'description' => '{"blocks": []}',
     ];
 
-    protected $casts = [
-        'description' => 'array',
-        'start' => 'datetime',
-        'end' => 'datetime',
-    ];
-
     /** @var list<string> */
     protected array $searchableColumns = ['title', 'description'];
 
@@ -78,7 +72,7 @@ class Event extends Model
 
     protected function scopeShouldBeSearchable(Builder $query): Builder
     {
-        return $query->whereHas('days', fn($query) => $query->where('date', '>=', now()));
+        return $query->whereHas('days', fn(\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
     }
 
     /**
@@ -144,22 +138,21 @@ class Event extends Model
     protected function isSource(): Attribute
     {
         return Attribute::make(
-            get: fn() => empty($this->cloned_from),
+            get: fn() => blank($this->cloned_from),
         );
     }
 
     /**
-     * @param string $value
-     * @return Editor
+     *
+     * @return Attribute<Editor, Editor>
      */
-    protected function getDescriptionAttribute($value): Editor
+    protected function description(): Attribute
     {
-        return Editor::fromJson($value);
-    }
-
-    protected function setDescriptionAttribute(Editor $value): void
-    {
-        $this->attributes['description'] = $value->toJson();
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function ($value): Editor {
+            return Editor::fromJson($value);
+        }, set: function (Editor $value) {
+            return ['description' => $value->toJson()];
+        })->withoutObjectCaching();
     }
 
     /**
@@ -232,6 +225,18 @@ class Event extends Model
     public function attendedBy(User $user): bool
     {
         return $this->attendees()->where('user_id', $user->id)->exists();
+    }
+    /**
+     *
+     * @return array{description: 'array', start: 'datetime', end: 'datetime'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'description' => 'array',
+            'start' => 'datetime',
+            'end' => 'datetime',
+        ];
     }
 }
 

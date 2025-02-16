@@ -30,13 +30,6 @@ class UserSettings extends Model
 
     protected $with = ['user'];
 
-    protected $casts = [
-        'receive_weekly_digest' => 'boolean',
-        'receive_comment_notifications' => 'boolean',
-        'receive_new_follower_notifications' => 'boolean',
-        'receive_follower_notifications' => 'boolean',
-    ];
-
     // Relationships
 
     /**
@@ -47,5 +40,14 @@ class UserSettings extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    protected function casts(): array
+    {
+        return [
+            'receive_weekly_digest' => 'boolean',
+            'receive_comment_notifications' => 'boolean',
+            'receive_new_follower_notifications' => 'boolean',
+            'receive_follower_notifications' => 'boolean',
+        ];
     }
 }

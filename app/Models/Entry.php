@@ -25,11 +25,6 @@ class Entry extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
     // Relationships
 
     /**
@@ -50,5 +45,12 @@ class Entry extends Model
     public function collection(): BelongsTo
     {
         return $this->belongsTo(ContentCollection::class);
+    }
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
     }
 }

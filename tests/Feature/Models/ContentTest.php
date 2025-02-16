@@ -60,22 +60,24 @@ class ContentTest extends TestCase
 
     public function test_status_is_correct()
     {
+        /** @var Content */
         $content = Content::factory()
             ->draft()
-            ->create();
-        $this->assertTrue(Status::draft()->equals($content->status));
+            ->createOne();
+
+        $this->assertTrue($content->status->equals(Status::draft()));
 
         $content->published = true;
         $content->save();
-        $this->assertTrue(Status::published()->equals($content->status));
+        $this->assertTrue($content->status->equals(Status::published()));
 
         $content->delete();
-        $this->assertTrue(Status::archived()->equals($content->status));
+        $this->assertTrue($content->status->equals(Status::archived()));
     }
 
     public function test_content_has_a_user()
     {
-        $content = Content::factory()->create();
+        $content = Content::factory()->createOne();
         $this->assertInstanceOf(User::class, $content->user);
     }
 
@@ -103,9 +105,9 @@ class ContentTest extends TestCase
         $content = Content::factory()->create();
         $content->delete();
 
-        $this->assertEquals(3, Content::status(Status::draft())->count());
-        $this->assertEquals(2, Content::status(Status::published())->count());
-        $this->assertEquals(1, Content::status(Status::archived())->count());
+        $this->assertEquals(3, Content::query()->status(Status::draft())->count());
+        $this->assertEquals(2, Content::query()->status(Status::published())->count());
+        $this->assertEquals(1, Content::query()->status(Status::archived())->count());
     }
 
     public function test_where_published_scope()

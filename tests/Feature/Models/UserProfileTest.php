@@ -46,7 +46,7 @@ class UserProfileTest extends TestCase
 
     public function test_can_get_short_title()
     {
-        $userProfile = UserProfile::factory()->create([
+        $userProfile = UserProfile::factory()->createOne([
             'subject' => 'Math',
             'is_preservice' => false,
             'years_of_experience' => 3,
@@ -75,5 +75,12 @@ class UserProfileTest extends TestCase
             'English Teacher (Second Year)',
             $userProfile->short_title,
         );
+    }
+
+    public function test_bio()
+    {
+        $userProfile = UserProfile::factory()->createOne();
+
+        $this->assertInstanceOf(Editor::class, $userProfile->bio);
     }
 }

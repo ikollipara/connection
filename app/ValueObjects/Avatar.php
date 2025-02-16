@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
  * This class represents the Avatar value object. It wraps the avatar property of the user
  * into a rich object that can be used to perform operations on the avatar property.
  */
-class Avatar
+class Avatar implements \Stringable
 {
     private string $path;
 

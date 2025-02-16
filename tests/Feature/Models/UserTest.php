@@ -86,6 +86,7 @@ class UserTest extends TestCase
         $avatar = UploadedFile::fake()->image('avatar.jpg');
         $avatar = Avatar::fromUploadedFile($avatar);
         Storage::disk('public')->assertExists($avatar->path());
+        /** @var User */
         $user = User::factory()->create([
             'avatar' => $avatar,
         ]);
