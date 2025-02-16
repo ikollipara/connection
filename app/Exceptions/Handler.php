@@ -43,14 +43,6 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             if (App::isProduction()) Integration::captureUnhandledException($e);
         });
-
-        $this->renderable(function (InvalidSignatureException $e) {
-            return response()->view(
-                'errors.link-expired',
-                ['message' => $e->getMessage()],
-                403,
-            );
-        });
         // @codeCoverageIgnoreEnd
     }
 }

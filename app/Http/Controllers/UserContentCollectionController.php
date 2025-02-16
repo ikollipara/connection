@@ -12,7 +12,7 @@ use Arr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Js;
+use Js;
 use Illuminate\View\View;
 
 final class UserContentCollectionController extends Controller
