@@ -30,11 +30,15 @@ class Content extends Model
     use HasFactory;
 
     use HasMetadata, HasUuids;
+
     /** @use Likeable<self> */
     use Likeable;
+
     /** @use Searchable<self> */
     use Searchable;
+
     use Sluggable, SoftDeletes;
+
     /** @use Viewable<self> */
     use Viewable;
 
@@ -65,8 +69,8 @@ class Content extends Model
     {
         return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
+
     /**
-     *
      * @return Attribute<bool, null>
      */
     protected function wasRecentlyPublished(): Attribute
@@ -77,7 +81,6 @@ class Content extends Model
     }
 
     /**
-     *
      * @return Attribute<Status, null>
      */
     protected function status(): Attribute
@@ -89,12 +92,12 @@ class Content extends Model
             if ($this->published) {
                 return Status::published();
             }
+
             return Status::draft();
         })->withoutObjectCaching();
     }
 
     /**
-     *
      * @return Attribute<Editor, Editor>
      */
     protected function body(): Attribute
@@ -108,6 +111,7 @@ class Content extends Model
             if ($value[0] === '"') {
                 $value = json_decode($value);
             }
+
             // @codeCoverageIgnoreEnd
             return Editor::fromJson($value);
         }, set: function (Editor $value): array {
@@ -156,7 +160,6 @@ class Content extends Model
      * Filter the query by status.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @param Status $status
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeStatus($query, Status $status)
@@ -184,8 +187,8 @@ class Content extends Model
     {
         return $query->where('published', true);
     }
+
     /**
-     *
      * @return array{published: 'boolean', body: 'array'}
      */
     protected function casts(): array

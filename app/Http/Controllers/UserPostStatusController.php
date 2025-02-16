@@ -18,7 +18,7 @@ final class UserPostStatusController extends Controller
     public function __invoke(Request $request, User $user, Post $post): RedirectResponse
     {
         $status = Status::from($request->validate([
-            'status' => 'required|enum:' . Status::class,
+            'status' => 'required|enum:'.Status::class,
         ])['status']);
 
         if ($status->equals(Status::draft())) {
@@ -26,9 +26,11 @@ final class UserPostStatusController extends Controller
         }
 
         $successful = false;
-        if ($status->equals(Status::archived())) $successful = $post->delete();
-        elseif ($status->equals(Status::published())) $successful = $post->restore();
-
+        if ($status->equals(Status::archived())) {
+            $successful = $post->delete();
+        } elseif ($status->equals(Status::published())) {
+            $successful = $post->restore();
+        }
 
         return session_back()->with($successful ? 'success' : 'error', $successful ? 'Post status updated.' : 'Post status update failed.');
     }

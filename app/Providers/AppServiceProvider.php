@@ -8,7 +8,6 @@ use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -39,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Schedule::macro('hasCommand', function (string $command, string $expression): bool {
             $event = Arr::first(
                 $this->events(),
-                fn(Event $item): bool => Str::after($item->command ?? "", "'artisan' ") === $command && $item->expression === $expression
+                fn (Event $item): bool => Str::after($item->command ?? '', "'artisan' ") === $command && $item->expression === $expression
             );
 
             return ! is_null($event);

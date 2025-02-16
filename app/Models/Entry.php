@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 class Entry extends Model
 {
     use AsPivot;
+
     /** @use HasFactory<\Database\Factories\EntryFactory> */
     use HasFactory;
 
@@ -46,6 +47,7 @@ class Entry extends Model
     {
         return $this->belongsTo(ContentCollection::class);
     }
+
     protected function casts(): array
     {
         return [

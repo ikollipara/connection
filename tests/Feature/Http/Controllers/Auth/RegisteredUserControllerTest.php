@@ -10,7 +10,6 @@ use function Pest\Laravel\post;
 
 covers(RegisteredUserController::class);
 
-
 it('should get the correct view', function () {
     get(route('register'))
         ->assertOk()
@@ -25,13 +24,13 @@ it('should redirect if not guest', function () {
         ->assertRedirect();
 });
 
-it('should create a user with a profile', function ($consented) {;
+it('should create a user with a profile', function ($consented) {
     $data = array_merge(
         Arr::except(User::factory()->makeOne()->toArray(), ['avatar', 'id', 'email_verified_at']),
         Arr::except(UserProfile::factory()->makeOne()->toArray(), ['user_id', 'bio', 'is_preservice']),
         [
             'bio' => '{"blocks": []}',
-            'consented' => ['full_name' => $consented]
+            'consented' => ['full_name' => $consented],
         ]
     );
     post(route('register'), $data)

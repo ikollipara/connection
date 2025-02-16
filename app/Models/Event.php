@@ -39,12 +39,17 @@ class Event extends Model
 {
     /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
+
     use HasMetadata;
+
     /** @use Likeable<self> */
     use Likeable;
+
     /** @use Searchable<self> */
     use Searchable;
+
     use Sluggable;
+
     /** @use Viewable<self> */
     use Viewable;
 
@@ -72,11 +77,10 @@ class Event extends Model
 
     protected function scopeShouldBeSearchable(Builder $query): Builder
     {
-        return $query->whereHas('days', fn(\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
+        return $query->whereHas('days', fn (\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
     }
 
     /**
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -85,7 +89,6 @@ class Event extends Model
     }
 
     /**
-     *
      * @return BelongsTo<self, $this>
      */
     public function source(): BelongsTo
@@ -94,7 +97,6 @@ class Event extends Model
     }
 
     /**
-     *
      * @return BelongsToMany<User, $this>
      */
     public function attendees(): BelongsToMany
@@ -103,7 +105,6 @@ class Event extends Model
     }
 
     /**
-     *
      * @return HasMany<Day, $this>
      */
     public function days(): HasMany
@@ -112,7 +113,6 @@ class Event extends Model
     }
 
     /**
-     *
      * @return MorphMany<Comment, $this>
      */
     public function comments(): MorphMany
@@ -121,29 +121,26 @@ class Event extends Model
     }
 
     /**
-     *
      * @return Attribute<bool, null>
      */
     protected function isCloned(): Attribute
     {
         return Attribute::make(
-            get: fn() => filled($this->cloned_from),
+            get: fn () => filled($this->cloned_from),
         );
     }
 
     /**
-     *
      * @return Attribute<bool, null>
      */
     protected function isSource(): Attribute
     {
         return Attribute::make(
-            get: fn() => blank($this->cloned_from),
+            get: fn () => blank($this->cloned_from),
         );
     }
 
     /**
-     *
      * @return Attribute<Editor, Editor>
      */
     protected function description(): Attribute
@@ -156,16 +153,16 @@ class Event extends Model
     }
 
     /**
-     *
-     * @param Builder $query
-     * @param User $user
+     * @param  Builder  $query
      * @return Builder
      */
     protected function scopeIsAttending($query, ?User $user)
     {
-        if (is_null($user)) return $query;
+        if (is_null($user)) {
+            return $query;
+        }
 
-        return $query->whereHas('attendees', fn(Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
+        return $query->whereHas('attendees', fn (Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
     }
 
     public function isMultiDay(): bool
@@ -174,9 +171,9 @@ class Event extends Model
     }
 
     /**
-     *
-     * @param list<string>|null $except
+     * @param  list<string>|null  $except
      * @return static
+     *
      * @throws Throwable
      */
     #[Override]
@@ -226,8 +223,8 @@ class Event extends Model
     {
         return $this->attendees()->where('user_id', $user->id)->exists();
     }
+
     /**
-     *
      * @return array{description: 'array', start: 'datetime', end: 'datetime'}
      */
     protected function casts(): array

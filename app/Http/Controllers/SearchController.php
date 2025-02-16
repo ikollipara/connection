@@ -32,17 +32,17 @@ final class SearchController extends Controller
             'views' => 'sometimes|integer|min:0',
             'likes' => 'sometimes|integer|min:0',
             'audiences' => 'sometimes|array',
-            'audiences.*' => 'enum:' . Audience::class,
+            'audiences.*' => 'enum:'.Audience::class,
             'categories' => 'sometimes|array',
-            'categories.*' => 'enum:' . Category::class,
+            'categories.*' => 'enum:'.Category::class,
             'grades' => 'sometimes|array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'standards' => 'sometimes|array',
-            'standards.*' => 'enum:' . Standard::class,
+            'standards.*' => 'enum:'.Standard::class,
             'practices' => 'sometimes|array',
-            'practices.*' => 'enum:' . Practice::class,
+            'practices.*' => 'enum:'.Practice::class,
             'languages' => 'sometimes|array',
-            'languages.*' => 'enum:' . Language::class,
+            'languages.*' => 'enum:'.Language::class,
         ]);
 
         $results = match (true) {

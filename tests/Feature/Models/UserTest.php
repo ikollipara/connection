@@ -5,7 +5,6 @@ namespace Tests\Feature\Models;
 use App\Mail\Login;
 use App\Mail\Survey;
 use App\Models\User;
-use App\Models\UserProfile;
 use App\ValueObjects\Avatar;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -40,7 +39,7 @@ class UserTest extends TestCase
     public function test_user_route_key_is_correct()
     {
         $user = User::factory()->create();
-        $expected = '@' . str($user->full_name)->slug('-') . '--' . $user->id;
+        $expected = '@'.str($user->full_name)->slug('-').'--'.$user->id;
         $this->assertEquals($expected, $user->getRouteKey());
     }
 
@@ -227,7 +226,7 @@ class UserTest extends TestCase
         $this->assertEquals(0, $user->events()->count());
     }
 
-    public function test_user_sendLoginLink()
+    public function test_user_send_login_link()
     {
         /** @var User */
         $user = User::factory()->createOne();

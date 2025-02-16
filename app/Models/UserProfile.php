@@ -16,6 +16,7 @@ class UserProfile extends Model
 {
     /** @use HasFactory<\Database\Factories\UserProfileFactory> */
     use HasFactory;
+
     /** @use Viewable<self> */
     use Viewable;
 
@@ -29,7 +30,6 @@ class UserProfile extends Model
     // Accessors and Mutators
 
     /**
-     *
      * @return Attribute<string, null>
      */
     protected function shortTitle(): Attribute
@@ -41,7 +41,7 @@ class UserProfile extends Model
         };
 
         return Attribute::make(
-            get: fn(): string => match ($this->is_preservice) {
+            get: fn (): string => match ($this->is_preservice) {
                 true => "$this->subject Pre-Service Teacher ($years)",
                 false => "$this->subject Teacher ($years)",
             },
@@ -49,7 +49,6 @@ class UserProfile extends Model
     }
 
     /**
-     *
      * @return Attribute<Editor, Editor>
      */
     protected function bio(): Attribute
@@ -59,6 +58,7 @@ class UserProfile extends Model
             if ($value[0] === '"') {
                 $value = json_decode($value);
             }
+
             // @codeCoverageIgnoreEnd
             return Editor::fromJson($value);
         }, set: function (Editor $value): array {
@@ -77,15 +77,15 @@ class UserProfile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     /**
-     *
      * @return array{bio: 'array', grades: 'App\Enums\Grade:collection', is_preservice: 'boolean'}
      */
     protected function casts(): array
     {
         return [
             'bio' => 'array',
-            'grades' => Grade::class . ':collection',
+            'grades' => Grade::class.':collection',
             'is_preservice' => 'boolean',
         ];
     }

@@ -20,7 +20,9 @@ class Comment extends Model
 {
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
+
     use HasUuids;
+
     /** @use Likeable<self> */
     use Likeable;
 
@@ -29,7 +31,6 @@ class Comment extends Model
     protected $with = ['children'];
 
     /**
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -38,7 +39,6 @@ class Comment extends Model
     }
 
     /**
-     *
      * @return MorphTo<Model, $this>
      */
     public function commentable(): MorphTo
@@ -47,7 +47,6 @@ class Comment extends Model
     }
 
     /**
-     *
      * @return BelongsTo<self, $this>
      */
     public function parent(): BelongsTo
@@ -56,7 +55,6 @@ class Comment extends Model
     }
 
     /**
-     *
      * @return HasMany<self, $this>
      */
     public function children(): HasMany
@@ -65,8 +63,7 @@ class Comment extends Model
     }
 
     /**
-     *
-     * @param Builder<self> $query
+     * @param  Builder<self>  $query
      * @return Builder<self>
      */
     protected static function scopeRoot(Builder $query): Builder
@@ -78,6 +75,7 @@ class Comment extends Model
     {
         return filled($this->parent_id);
     }
+
     protected function casts(): array
     {
         return [];

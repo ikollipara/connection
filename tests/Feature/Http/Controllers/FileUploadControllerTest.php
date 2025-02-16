@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\User;
-use Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -35,7 +34,7 @@ class FileUploadControllerTest extends TestCase
             'success' => 1,
         ]);
 
-        Storage::disk('public')->assertExists('files/' . $data['image']->hashName());
+        Storage::disk('public')->assertExists('files/'.$data['image']->hashName());
     }
 
     public function test_store_url()
@@ -53,7 +52,7 @@ class FileUploadControllerTest extends TestCase
         $response->assertJsonFragment([
             'success' => 1,
         ]);
-        Storage::disk('public')->assertExists('files/' . str($response->json('file')['url'])->afterLast('/'));
+        Storage::disk('public')->assertExists('files/'.str($response->json('file')['url'])->afterLast('/'));
     }
 
     public function test_store_url__failure()
@@ -66,7 +65,7 @@ class FileUploadControllerTest extends TestCase
         ];
         Storage::fake('public');
         \Http::fake([
-            '*' => 400
+            '*' => 400,
         ]);
 
         $response = $this->actingAs($this->user)->post(route('api.upload.store'), $data);

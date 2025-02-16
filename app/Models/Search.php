@@ -32,9 +32,9 @@ class Search extends Model
     }
 
     /**
-     *
-     * @param array<mixed> $params
+     * @param  array<mixed>  $params
      * @return Collection<int, \Illuminate\Database\Eloquent\Model>
+     *
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
@@ -42,7 +42,6 @@ class Search extends Model
     {
         $this->normalizeParams($params);
         /** @var array{type: Post|ContentCollection|Event, views: int, likes: int, metadata: array<string, list<string>>, q: string} $params */
-
         $this->search_params = $params;
         $this->save();
 
@@ -56,9 +55,11 @@ class Search extends Model
     }
 
     /**
-     * @param array<mixed> &$params
+     * @param  array<mixed>  &$params
      * @return void
+     *
      * @throws InvalidArgumentException
+     *
      * @phpstan-assert array{type: Post|ContentCollection|Event, views: int, likes: int, metadata: array<string, list<string>>, q: string} $params
      */
     private function normalizeParams(array &$params)
@@ -90,8 +91,8 @@ class Search extends Model
             default => throw new InvalidArgumentException("type is invalid: {$params['type']}"),
         };
     }
+
     /**
-     *
      * @return array{search_params: 'array'}
      */
     protected function casts(): array

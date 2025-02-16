@@ -8,12 +8,11 @@ use App\Models\User;
 use App\ValueObjects\Editor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\IcalendarGenerator\Components\Calendar;
-use Tests\TestCase;
 use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
+use Tests\TestCase;
 
 class EventTest extends TestCase
 {
-
     use RefreshDatabase;
 
     protected Event $event;
@@ -112,6 +111,6 @@ class EventTest extends TestCase
     {
         $result = $this->event->toIcalEvent();
         $this->assertCount(3, $result);
-        $result->each(fn($r) => $this->assertInstanceOf(ICalEvent::class, $r));
+        $result->each(fn ($r) => $this->assertInstanceOf(ICalEvent::class, $r));
     }
 }

@@ -27,7 +27,9 @@ final class UserEventController extends Controller
     public function index(Request $request, User $user): View
     {
         $q = $request->query('q');
-        if (is_array($q)) $q = (string) Arr::first($q);
+        if (is_array($q)) {
+            $q = (string) Arr::first($q);
+        }
         $events = $user->events()->search($q)->withCount(['days', 'attendees'])->paginate(15);
 
         return view('users.events.index', [
@@ -49,36 +51,38 @@ final class UserEventController extends Controller
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'nullable|string',
-            'audience' => 'enum:' . Audience::class,
-            'category' => 'enum:' . Category::class,
+            'audience' => 'enum:'.Audience::class,
+            'category' => 'enum:'.Category::class,
             'grades' => 'sometimes|array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'standards' => 'sometimes|array',
-            'standards.*' => 'enum:' . Standard::class,
+            'standards.*' => 'enum:'.Standard::class,
             'practices' => 'sometimes|array',
-            'practices.*' => 'enum:' . Practice::class,
+            'practices.*' => 'enum:'.Practice::class,
             'languages' => 'sometimes|array',
-            'languages.*' => 'enum:' . Language::class,
+            'languages.*' => 'enum:'.Language::class,
             'start' => 'required|date_format:H:i',
             'end' => 'required|date_format:H:i',
             'days' => 'required|array',
             'days.*.date' => 'required|date',
         ]);
 
-
         data_fill($validated, 'days', [['date' => Carbon::today()]]);
         $validated['description'] = Editor::fromJson($validated['description']);
         $validated['metadata'] = new Metadata($validated);
-
 
         [$result, $event] = DB::transaction(function () use ($validated, $user) {
             $event = $user->events()->make(Arr::except($validated, 'days'));
             $result = $event->save();
             $event->days()->createMany($validated['days']);
+
             return [$result, $event];
         });
 
-        if ($result) return to_route('users.events.edit', ['me', $event]);
+        if ($result) {
+            return to_route('users.events.edit', ['me', $event]);
+        }
+
         return session_back()->with('error', _('An error occured when saving the event.'));
     }
 
@@ -96,16 +100,16 @@ final class UserEventController extends Controller
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'nullable|string',
-            'audience' => 'enum:' . Audience::class,
-            'category' => 'enum:' . Category::class,
+            'audience' => 'enum:'.Audience::class,
+            'category' => 'enum:'.Category::class,
             'grades' => 'sometimes|array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'standards' => 'sometimes|array',
-            'standards.*' => 'enum:' . Standard::class,
+            'standards.*' => 'enum:'.Standard::class,
             'practices' => 'sometimes|array',
-            'practices.*' => 'enum:' . Practice::class,
+            'practices.*' => 'enum:'.Practice::class,
             'languages' => 'sometimes|array',
-            'languages.*' => 'enum:' . Language::class,
+            'languages.*' => 'enum:'.Language::class,
             'start' => 'required|date_format:H:i',
             'end' => 'required|date_format:H:i',
             'days' => 'required|array',
@@ -122,7 +126,6 @@ final class UserEventController extends Controller
             $event->days()->delete();
             $event->days()->createMany($validated['days']);
         });
-
 
         return to_route('users.events.edit', ['me', $event]);
     }

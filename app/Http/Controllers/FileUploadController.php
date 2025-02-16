@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Http;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,7 +12,6 @@ use Illuminate\Support\Str;
 
 final class FileUploadController extends Controller
 {
-
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -23,9 +21,15 @@ final class FileUploadController extends Controller
         ]);
 
         $path = false;
-        if (isset($validated['url'])) $path = $this->saveUrl($validated['url']);
-        if (isset($validated['file'])) $path = $validated['file']->store('files', 'public');
-        if (isset($validated['image'])) $path = $validated['image']->store('files', 'public');
+        if (isset($validated['url'])) {
+            $path = $this->saveUrl($validated['url']);
+        }
+        if (isset($validated['file'])) {
+            $path = $validated['file']->store('files', 'public');
+        }
+        if (isset($validated['image'])) {
+            $path = $validated['image']->store('files', 'public');
+        }
 
         return new JsonResponse(
             data: [
@@ -54,7 +58,9 @@ final class FileUploadController extends Controller
     protected function saveUrl(string $url): string|false
     {
         $response = \Http::get($url);
-        if ($response->failed()) return false;
+        if ($response->failed()) {
+            return false;
+        }
 
         $ext = str($response->header('content-type'))
             ->split("/\//")

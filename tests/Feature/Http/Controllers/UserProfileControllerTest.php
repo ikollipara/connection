@@ -9,7 +9,6 @@ use function Pest\Laravel\get;
 
 covers(UserProfileController::class);
 
-
 it('should show the profile for the given user', function () {
     $user = User::factory()->has(UserProfile::factory(), 'profile')->createOne();
 
@@ -57,12 +56,10 @@ it('should fail to allow editing (owner)', function () {
     /** @var User */
     $user2 = User::factory()->has(UserProfile::factory(), 'profile')->createOne();
 
-
     actingAs($user2)
         ->get(route('users.profile.edit', $user1->id))
         ->assertRedirect();
 });
-
 
 it('should fail to allow updating (owner)', function () {
     /** @var User */
@@ -70,7 +67,6 @@ it('should fail to allow updating (owner)', function () {
 
     /** @var User */
     $user2 = User::factory()->has(UserProfile::factory(), 'profile')->createOne();
-
 
     actingAs($user2)
         ->put(route('users.profile.update', $user1->id))

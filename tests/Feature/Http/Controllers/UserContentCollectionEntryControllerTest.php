@@ -12,13 +12,11 @@ use function Pest\Laravel\delete;
 
 covers(UserContentCollectionEntryController::class);
 
-
 beforeEach(function () {
     /** @var User */
     $this->user = User::factory()->createOne();
     actingAs($this->user);
 });
-
 
 it('should destroy a collection entry', function () {
     $collection = ContentCollection::factory()->createOne();

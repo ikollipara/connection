@@ -12,8 +12,8 @@ use Arr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
-use Js;
 use Illuminate\View\View;
+use Js;
 
 final class UserContentCollectionController extends Controller
 {
@@ -24,7 +24,9 @@ final class UserContentCollectionController extends Controller
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
-        if (is_array($q)) $q = (string) Arr::first($q);
+        if (is_array($q)) {
+            $q = (string) Arr::first($q);
+        }
 
         $collections = $user->collections()->search($q)->status($status)->latest()->paginate(15)->withQueryString();
 
@@ -54,7 +56,9 @@ final class UserContentCollectionController extends Controller
             'body' => Editor::fromJson($body),
         ]);
         $result = $collection->save();
-        if (!$result) return session_back()->with('error', 'Collection creation failed');
+        if (! $result) {
+            return session_back()->with('error', 'Collection creation failed');
+        }
 
         info('Collection created', ['collection' => $collection, 'user' => $user]);
 
@@ -79,7 +83,9 @@ final class UserContentCollectionController extends Controller
             'body' => Editor::fromJson($body),
         ]);
 
-        if (!$result) return session_back()->with('error', 'Collection update failed');
+        if (! $result) {
+            return session_back()->with('error', 'Collection update failed');
+        }
 
         info('Collection updated', ['collection' => $collection, 'user' => $user]);
 

@@ -9,7 +9,6 @@ use function Pest\Laravel\post;
 
 covers(ContactController::class, ContactRequest::class, Contact::class);
 
-
 it('should display the contact form', function () {
     $response = get(route('contact'));
 

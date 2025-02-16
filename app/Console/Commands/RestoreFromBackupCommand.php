@@ -43,34 +43,43 @@ class RestoreFromBackupCommand extends Command implements PromptsForMissingInput
      */
     public function handle()
     {
-        if ($this->option('wipe')) Artisan::call('db:wipe');
+        if ($this->option('wipe')) {
+            Artisan::call('db:wipe');
+        }
 
         /** @var string */
         $file = $this->argument('file');
 
-        if ($file = file($file)) $contents = Arr::join($file, "\n");
-        else $contents = '';
+        if ($file = file($file)) {
+            $contents = Arr::join($file, "\n");
+        } else {
+            $contents = '';
+        }
 
         /** @var array{host: string, port: string, password: string|'', database: string, username: string} */
         $dbConfig = config('database.connections.mysql');
 
         $processArgs = [
-            '-h' . $dbConfig['host'],
-            '-u' . $dbConfig['username'],
-            '-P' . $dbConfig['port']
+            '-h'.$dbConfig['host'],
+            '-u'.$dbConfig['username'],
+            '-P'.$dbConfig['port'],
         ];
 
-        if (filled($dbConfig['password'])) $processArgs[] = '-p' . $dbConfig['password'];
+        if (filled($dbConfig['password'])) {
+            $processArgs[] = '-p'.$dbConfig['password'];
+        }
 
         $result = Process::input($contents)->run(['mysql', ...$processArgs]);
 
         if ($result->successful()) {
             $this->info($result->output());
-            $this->info("Successfully restored database");
+            $this->info('Successfully restored database');
+
             return 0;
-        };
+        }
         $this->error($result->errorOutput());
-        $this->error("Failed to restore database.");
+        $this->error('Failed to restore database.');
+
         return 1;
     }
 }

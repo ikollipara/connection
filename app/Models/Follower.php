@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 class Follower extends Model
 {
     use AsPivot;
+
     /** @use HasFactory<\Database\Factories\FollowerFactory> */
     use HasFactory;
 

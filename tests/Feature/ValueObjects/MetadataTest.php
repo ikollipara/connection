@@ -11,7 +11,6 @@ it('should test Metadata', function () {
     expect($metadata->__toString())->toBeJson();
 });
 
-
 it('should use defaults for Category and Audience', function () {
     $metadataArray = Metadata::fromFaker(fake())->toArray();
     unset($metadataArray['audience']);

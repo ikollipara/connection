@@ -21,7 +21,7 @@ final class UserFeedController extends Controller
         $feed = Cache::remember(
             key: "$user->id--feed",
             ttl: now()->addMinutes(5),
-            callback: fn() => Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->shouldBeSearchable()->latest()->get()
+            callback: fn () => Content::query()->whereIn('user_id', $user->following()->pluck('followers.followed_id'))->shouldBeSearchable()->latest()->get()
         );
 
         return view('users.feed', [

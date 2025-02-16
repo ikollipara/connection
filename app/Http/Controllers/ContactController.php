@@ -23,6 +23,7 @@ final class ContactController extends Controller
         $validated = $request->validated();
 
         Mail::to(config('mail.maintainer'))->queue(new Contact($validated['email'], $validated['subject'], $validated['message']));
+
         return to_route('contact')->with('success');
     }
 

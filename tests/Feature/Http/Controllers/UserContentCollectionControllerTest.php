@@ -8,7 +8,6 @@ use function Pest\Laravel\actingAs;
 
 covers(UserContentCollectionController::class);
 
-
 beforeEach(function () {
     $this->user = User::factory()->createOne();
     $this->collection = ContentCollection::factory()->draft()->createOne(['user_id' => $this->user->id]);
@@ -32,7 +31,7 @@ it('should create a new collection', function (string $title, string $body) {
     actingAs($this->user)
         ->post(route('users.collections.store', 'me'), [
             'body' => $body,
-            'title' => $title
+            'title' => $title,
         ])
         ->assertRedirect()
         ->assertSessionHas('success');
@@ -53,7 +52,7 @@ it('should update a collection', function (string $title, string $body) {
     actingAs($this->user)
         ->put(route('users.collections.update', ['me', $this->collection]), [
             'body' => $body,
-            'title' => $title
+            'title' => $title,
         ])
         ->assertRedirect()
         ->assertSessionHas('success');

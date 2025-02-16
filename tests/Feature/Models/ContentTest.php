@@ -39,7 +39,7 @@ class ContentTest extends TestCase
     public function test_content_should_get_the_correct_route_key()
     {
         $content = Content::factory()->create();
-        $expected = str($content->title)->slug() . '--' . $content->id;
+        $expected = str($content->title)->slug().'--'.$content->id;
         $this->assertEquals($expected, $content->getRouteKey());
     }
 

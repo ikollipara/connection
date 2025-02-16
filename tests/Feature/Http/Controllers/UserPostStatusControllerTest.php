@@ -9,7 +9,6 @@ use function Pest\Laravel\delete;
 
 covers(UserPostStatusController::class);
 
-
 it('should update the given post\'s status to ', function (string $startingState, Status $status) {
     $user = User::factory()->createOne();
     $post = Post::factory()->{$startingState}()->createOne();
@@ -22,7 +21,6 @@ it('should update the given post\'s status to ', function (string $startingState
     'draft/archived' => ['draft', Status::archived()],
     'published/archived' => ['published', Status::archived()],
 ]);
-
 
 it('should fail to set status back to draft', function () {
     $user = User::factory()->createOne();

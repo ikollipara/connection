@@ -23,7 +23,7 @@ class UserIsOwner
     public function handle(Request $request, Closure $next, ?string $resource = null): Response
     {
         $requestUser = $request->route()?->parameter('user');
-        $requestRoute = $request->route()?->getName() ?? "";
+        $requestRoute = $request->route()?->getName() ?? '';
         if (! $requestUser instanceof User) {
             return to_route($requestRoute, ['me']);
         }

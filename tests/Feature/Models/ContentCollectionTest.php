@@ -14,7 +14,6 @@ it('should have n entries', function (int $count) {
     expect($contentCollection->entries)->toHaveCount($count);
 })->with([3, 4, 5]);
 
-
 it('should return true for hasEntry', function () {
     /** @var ContentCollection */
     $contentCollection = ContentCollection::factory()->createOne();

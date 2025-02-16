@@ -24,7 +24,9 @@ final class UserPostController extends Controller
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
-        if (is_array($q)) $q = (string) Arr::first($q);
+        if (is_array($q)) {
+            $q = (string) Arr::first($q);
+        }
 
         $posts = $user->posts()->search($q)->status($status)->latest()->paginate(15)->withQueryString();
 
@@ -53,7 +55,9 @@ final class UserPostController extends Controller
             'body' => Editor::fromJson($body),
         ]);
         $result = $post->save();
-        if (!$result) return session_back()->with('error', 'Post creation failed');
+        if (! $result) {
+            return session_back()->with('error', 'Post creation failed');
+        }
 
         info('Post created', ['post' => $post, 'user' => $user]);
 
@@ -77,7 +81,9 @@ final class UserPostController extends Controller
             'title' => $title,
             'body' => Editor::fromJson($body),
         ]);
-        if (!$result) return session_back()->with('error', 'Post update failed');
+        if (! $result) {
+            return session_back()->with('error', 'Post update failed');
+        }
 
         info('Post updated', ['post' => $post, 'user' => $user]);
 

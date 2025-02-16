@@ -18,7 +18,7 @@ final class UserContentCollectionStatusController extends Controller
     public function __invoke(Request $request, User $user, ContentCollection $collection): RedirectResponse
     {
         $status = Status::from($request->validate([
-            'status' => 'required|enum:' . Status::class,
+            'status' => 'required|enum:'.Status::class,
         ])['status']);
 
         if ($status->equals(Status::draft())) {
@@ -26,8 +26,11 @@ final class UserContentCollectionStatusController extends Controller
         }
 
         $successful = false;
-        if ($status->equals(Status::archived())) $successful = $collection->delete();
-        elseif ($status->equals(Status::published())) $successful = $collection->restore();
+        if ($status->equals(Status::archived())) {
+            $successful = $collection->delete();
+        } elseif ($status->equals(Status::published())) {
+            $successful = $collection->restore();
+        }
 
         return session_back()->with($successful ? 'success' : 'error', $successful ? 'Collection status updated.' : 'Collection status update failed.');
     }

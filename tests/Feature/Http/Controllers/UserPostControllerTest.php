@@ -8,7 +8,6 @@ use function Pest\Laravel\actingAs;
 
 covers(UserPostController::class);
 
-
 beforeEach(function () {
     $this->user = User::factory()->createOne();
     $this->post = Post::factory()->draft()->createOne(['user_id' => $this->user->id]);
@@ -32,7 +31,7 @@ it('should create a new post', function (string $title, string $body) {
     actingAs($this->user)
         ->post(route('users.posts.store', 'me'), [
             'body' => $body,
-            'title' => $title
+            'title' => $title,
         ])
         ->assertRedirect()
         ->assertSessionHas('success');
@@ -53,7 +52,7 @@ it('should update a post', function (string $title, string $body) {
     actingAs($this->user)
         ->put(route('users.posts.update', ['me', $this->post]), [
             'body' => $body,
-            'title' => $title
+            'title' => $title,
         ])
         ->assertRedirect()
         ->assertSessionHas('success');

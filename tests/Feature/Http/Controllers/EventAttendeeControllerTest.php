@@ -20,7 +20,7 @@ beforeEach(function () {
 
 it('should create an attendee', function () {
     post(route('events.attendees.store', $this->event), [
-        'user_id' => $this->user->id
+        'user_id' => $this->user->id,
     ])
         ->assertRedirect()
         ->assertSessionHas('success');

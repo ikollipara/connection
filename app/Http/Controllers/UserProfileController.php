@@ -26,10 +26,9 @@ final class UserProfileController extends Controller
         $profile = $user->profile;
         abort_if(is_null($profile), Response::HTTP_INTERNAL_SERVER_ERROR, 'Profile is missing on the user.');
         /** @var \App\Models\UserProfile $profile */
-
         $user = $user->loadCount([
-            'posts' => fn($query) => $query->shouldBeSearchable(),
-            'collections' => fn($query) => $query->shouldBeSearchable(),
+            'posts' => fn ($query) => $query->shouldBeSearchable(),
+            'collections' => fn ($query) => $query->shouldBeSearchable(),
             'followers',
             'following',
         ]);
@@ -71,7 +70,7 @@ final class UserProfileController extends Controller
             'subject' => 'string',
             'years_of_experience' => 'sometimes|integer|min:0',
             'grades' => 'array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'bio' => 'json',
             'consented.full_name' => 'nullable|string',
         ]);

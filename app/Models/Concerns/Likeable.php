@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Models\Concerns;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template T of Model
@@ -45,10 +44,10 @@ trait Likeable
     }
 
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param 'asc'|'desc' $direction
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  'asc'|'desc'  $direction
      * @return \Illuminate\Database\Eloquent\Builder<T>
+     *
      * @throws \InvalidArgumentException
      */
     protected function scopeOrderByLikes(Builder $query, $direction = 'desc')
@@ -60,17 +59,17 @@ trait Likeable
         return $query->orderBy(
             DB::table('likes_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', $model_type),
             $direction
         );
     }
 
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param 0|positive-int $count
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  0|positive-int  $count
      * @return \Illuminate\Database\Eloquent\Builder<T>
+     *
      * @throws \InvalidArgumentException
      */
     protected function scopeHasLikesCount(Builder $query, $count)
@@ -81,7 +80,7 @@ trait Likeable
         return $query->where(
             // @phpstan-ignore-next-line
             DB::table('likes_log')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', $model_type)
                 ->distinct()
                 ->selectRaw('count(user_id) as likes_count'),

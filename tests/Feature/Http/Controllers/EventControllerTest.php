@@ -18,7 +18,6 @@ it('should show all events', function () {
         ->assertViewIs('events.index');
 });
 
-
 it('should show an event', function () {
     $event = Event::factory()->create();
     /** @var User */

@@ -1,14 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\ContentContentCollectionController;
-use App\Models\Content;
 use App\Models\ContentCollection;
 use App\Models\Post;
 
 use function Pest\Laravel\post;
 
 covers(ContentContentCollectionController::class);
-
 
 it('should add the content to all of the collections (post)', function () {
     $content = Post::factory()->createOne();

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Support\Facades\App;
 use Sentry\Laravel\Integration;
 use Throwable;
@@ -41,7 +40,9 @@ class Handler extends ExceptionHandler
     {
         // @codeCoverageIgnoreStart
         $this->reportable(function (Throwable $e) {
-            if (App::isProduction()) Integration::captureUnhandledException($e);
+            if (App::isProduction()) {
+                Integration::captureUnhandledException($e);
+            }
         });
         // @codeCoverageIgnoreEnd
     }

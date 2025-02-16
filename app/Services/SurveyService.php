@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
 
 /**
- *
  * @phpstan-type SurveyTypes self::CT_CAST|self::SCALES
  * @phpstan-type SurveyIntervals self::ONCE|self::YEARLY
  */
@@ -42,19 +41,18 @@ class SurveyService
     }
 
     /**
-     *
-     * @param list<string> $survey_types
-     * @param int $frequency
+     * @param  list<string>  $survey_types
+     * @param  int  $frequency
      * @return $this
+     *
      * @throws InvalidArgumentException
      */
     public function sendSurvey(array $survey_types, $frequency)
     {
         $this->validateArgs($survey_types, $frequency);
 
-
         // @phpstan-ignore-next-line
-        $urls = collect($survey_types)->map(fn($survey_type) => $this->buildUrl($survey_type));
+        $urls = collect($survey_types)->map(fn ($survey_type) => $this->buildUrl($survey_type));
 
         $this->user->created_at ??= now();
         if ($frequency === static::ONCE) {
@@ -68,8 +66,8 @@ class SurveyService
     }
 
     /**
-     * @param Collection<int, string> $urls
-     * @return void
+     * @param  Collection<int, string>  $urls
+     *
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
@@ -78,14 +76,14 @@ class SurveyService
         if ($this->user->sent_week_one_survey) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->sent_week_one_survey = true;
         $this->user->save();
     }
 
     /**
-     * @param Collection<int, string> $urls
-     * @return void
+     * @param  Collection<int, string>  $urls
+     *
      * @throws InvalidArgumentException
      * @throws InvalidCastException
      */
@@ -97,16 +95,16 @@ class SurveyService
         ) {
             return;
         }
-        $urls->each(fn($url) => Mail::to($this->user)->queue(new Survey($url)));
+        $urls->each(fn ($url) => Mail::to($this->user)->queue(new Survey($url)));
         $this->user->yearly_survey_sent_at = now();
         $this->user->save();
     }
 
     /**
-     * @param array<string|mixed> $survey_types
-     * @param int $frequency
-     * @return void
+     * @param  array<string|mixed>  $survey_types
+     *
      * @throws InvalidArgumentException
+     *
      * @phpstan-assert list<SurveyTypes> $survey_types
      * @phpstan-assert SurveyIntervals $frequency
      */
@@ -120,12 +118,12 @@ class SurveyService
         if (
             ! collect($survey_types)
                 ->map(
-                    fn($survey_type) => in_array($survey_type, [
+                    fn ($survey_type) => in_array($survey_type, [
                         static::CT_CAST,
                         static::SCALES,
                     ]),
                 )
-                ->reduce(fn($carry, $item) => $carry && $item, true)
+                ->reduce(fn ($carry, $item) => $carry && $item, true)
         ) {
             throw new \InvalidArgumentException(
                 'Invalid survey type, must be one of: SurveyService::CT_CAST, SurveyService::SCALES',
@@ -134,9 +132,7 @@ class SurveyService
     }
 
     /**
-     *
-     * @param SurveyTypes $survey_type
-     * @return string
+     * @param  SurveyTypes  $survey_type
      */
     private function buildUrl($survey_type): string
     {

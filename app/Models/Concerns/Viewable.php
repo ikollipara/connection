@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template T of Model
@@ -17,8 +17,6 @@ trait Viewable
 {
     /**
      * Get the views count for the model.
-     *
-     * @return int
      */
     public function views(): int
     {
@@ -46,10 +44,10 @@ trait Viewable
     }
 
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param 'asc'|'desc' $direction
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  'asc'|'desc'  $direction
      * @return \Illuminate\Database\Eloquent\Builder<T>
+     *
      * @throws InvalidArgumentException
      */
     protected function scopeOrderByViews($query, $direction = 'desc')
@@ -57,15 +55,15 @@ trait Viewable
         return $query->orderBy(
             DB::table('views_log')
                 ->selectRaw('count(user_id)')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', self::class),
             $direction
         );
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param 0|positive-int $count
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  0|positive-int  $count
      * @return \Illuminate\Database\Eloquent\Builder<T>
      */
     protected function scopeHasViewsCount($query, $count)
@@ -73,7 +71,7 @@ trait Viewable
         return $query->where(
             /** @phpstan-ignore-next-line */
             DB::table('views_log')
-                ->whereColumn('model_id', $this->getTable() . '.id')
+                ->whereColumn('model_id', $this->getTable().'.id')
                 ->where('model_type', self::class)
                 ->distinct()
                 ->selectRaw('count(user_id) as views_count'),

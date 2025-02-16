@@ -8,7 +8,6 @@ use function Pest\Laravel\get;
 
 covers(UserFollowingController::class);
 
-
 it('should return the list of user followers', function () {
     $user = User::factory()->has(UserProfile::factory(), 'profile')->createOne();
     $user->followers()->attach(User::factory()->has(UserProfile::factory(), 'profile')->createMany(records: 10));

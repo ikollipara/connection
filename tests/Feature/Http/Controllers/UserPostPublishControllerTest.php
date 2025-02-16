@@ -6,10 +6,8 @@ use App\Models\User;
 use App\ValueObjects\Metadata;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\put;
 
 covers(UserPostPublishController::class);
-
 
 it('should successfully publish the post (existing)', function () {
     /** @var User */

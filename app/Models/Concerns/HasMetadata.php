@@ -28,14 +28,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 trait HasMetadata
 {
     /**
-     *
      * @return Attribute<Metadata, Metadata>
      */
     public function metadata(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => new Metadata(json_decode($value, associative: true)),
-            set: fn(Metadata $metadata) => $metadata->__toString(),
+            get: fn (string $value) => new Metadata(json_decode($value, associative: true)),
+            set: fn (Metadata $metadata) => $metadata->__toString(),
         );
     }
 

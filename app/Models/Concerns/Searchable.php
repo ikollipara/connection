@@ -14,13 +14,12 @@ trait Searchable
 {
     /** @use Likeable<T> */
     use Likeable;
+
     /** @use Viewable<T> */
     use Viewable;
 
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param null|string $q
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
      * @return \Illuminate\Database\Eloquent\Builder<T>
      */
     protected function scopeSearch(Builder $query, ?string $q)
@@ -35,9 +34,8 @@ trait Searchable
     }
 
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
-     * @param array<string, mixed> $params
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  array<string, mixed>  $params
      * @return \Illuminate\Database\Eloquent\Builder<T>
      */
     protected function scopeFilterBy(Builder $query, array $params)
@@ -45,8 +43,8 @@ trait Searchable
         foreach ($params as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $k => $v) {
-                    if (in_array($key . '->' . $k, $this->getFilterableColumns())) {
-                        $query->whereJsonContains($key . '->' . $k, $v);
+                    if (in_array($key.'->'.$k, $this->getFilterableColumns())) {
+                        $query->whereJsonContains($key.'->'.$k, $v);
                     }
                 }
             } elseif (in_array($key, $this->getFilterableColumns())) {
@@ -67,8 +65,7 @@ trait Searchable
     // @codeCoverageIgnoreStart
     // This is always overriden.
     /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder<T> $query
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
      * @return \Illuminate\Database\Eloquent\Builder<T>
      */
     protected function scopeShouldBeSearchable(Builder $query): Builder

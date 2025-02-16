@@ -31,6 +31,6 @@ it('should create a new comment', function (?string $parent_id) {
         ->assertRedirect()
         ->assertSessionHas('success');
 })->with([
-    fn() => Comment::factory()->createOne()->id,
+    fn () => Comment::factory()->createOne()->id,
     null,
 ]);

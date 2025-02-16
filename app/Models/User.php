@@ -6,37 +6,33 @@ namespace App\Models;
 
 // use App\Mail\Survey;
 
-use App\Enums\Grade;
 use App\Mail\Login;
 use App\Services\SurveyService;
 use App\ValueObjects\Avatar;
-use App\ValueObjects\Editor;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 // use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+// use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-// use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Mail;
-use Illuminate\Support\Carbon;
 
-class User extends Authenticatable implements MustVerifyEmail, AuthContract
+class User extends Authenticatable implements AuthContract, MustVerifyEmail
 {
+    use HasApiTokens, HasUuids, Notifiable;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-    use HasApiTokens, HasUuids, Notifiable;
 
     protected $fillable = ['first_name', 'last_name', 'avatar', 'email', 'consented'];
 
@@ -68,7 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
 
     public function getRouteKey()
     {
-        return '@' . Str::slug($this->full_name, '-') . '--' . $this->getAttribute($this->getRouteKeyName());
+        return '@'.Str::slug($this->full_name, '-').'--'.$this->getAttribute($this->getRouteKeyName());
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -82,7 +78,6 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     }
 
     /**
-     *
      * @return Attribute<string, null>
      */
     protected function fullName(): Attribute
@@ -93,7 +88,6 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     }
 
     /**
-     *
      * @return Attribute<Avatar, Avatar|string>
      */
     protected function avatar(): Attribute
@@ -102,9 +96,11 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
             $avatar = new Avatar(Arr::get($this->attributes, 'avatar', ''));
             $full_name = trim(str_replace(' ', '+', $this->full_name));
             $avatar->setDefault("https://ui-avatars.com/api/?name={$full_name}&color=7F9CF5&background=EBF4FF");
+
             return $avatar;
         }, set: function (string|Avatar $value): array {
             $value = is_string($value) ? new Avatar($value) : $value;
+
             return ['avatar' => $value->path()];
         })->withoutObjectCaching();
     }
@@ -234,8 +230,8 @@ class User extends Authenticatable implements MustVerifyEmail, AuthContract
     {
         return $this->following()->where('followed_id', $user->id)->exists();
     }
+
     /**
-     *
      * @return array{email_verified_at: 'datetime', consented: 'boolean', sent_week_one_survey: 'boolean', yearly_survey_sent_at: 'datetime'}
      */
     protected function casts(): array

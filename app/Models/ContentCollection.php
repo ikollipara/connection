@@ -14,6 +14,7 @@ class ContentCollection extends Content
 {
     /** @use HasFactory<\Database\Factories\ContentCollectionFactory> */
     use HasFactory;
+
     use HasParent;
 
     /**

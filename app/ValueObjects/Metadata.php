@@ -17,7 +17,6 @@ use App\Enums\Grade;
 use App\Enums\Language;
 use App\Enums\Practice;
 use App\Enums\Standard;
-use Arr;
 use Faker\Generator;
 use Illuminate\Support\Collection;
 use Spatie\Enum\Laravel\Enum;
@@ -65,7 +64,7 @@ class Metadata implements \Stringable
     public Audience $audience;
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __construct(array $data)
     {
@@ -98,23 +97,22 @@ class Metadata implements \Stringable
     }
 
     /**
-     *
      * @return array{grades: array<mixed>, languages: array<mixed>, practices: array<mixed>, standards: array<mixed>, category: string|int, audience: string|int}
      */
     public function toArray(): array
     {
         return [
             'grades' => $this->grades
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
@@ -125,22 +123,22 @@ class Metadata implements \Stringable
     {
         $result = json_encode([
             'grades' => $this->grades
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'languages' => $this->languages
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'practices' => $this->practices
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'standards' => $this->standards
-                ->map(fn($value) => $value->value)
+                ->map(fn ($value) => $value->value)
                 ->toArray(),
             'category' => $this->category->value,
             'audience' => $this->audience->value,
         ]);
 
-        return $result ? $result : "";
+        return $result ? $result : '';
     }
 
     public static function fromFaker(Generator $faker): self
@@ -173,16 +171,17 @@ class Metadata implements \Stringable
      * Parse the provided key data or return an empty array.
      *
      * @template T of Enum
-     * @param  class-string<T> $enum
-     * @param array<string, array<mixed>> $data
+     *
+     * @param  class-string<T>  $enum
+     * @param  array<string, array<mixed>>  $data
      * @return Collection<int, T>
      */
     private function parseDataByKey(string $key, array $data, $enum): Collection
     {
         return array_key_exists($key, $data)
             ? collect($data[$key])
-            ->map(fn(string $value) => $enum::tryFrom($value))
-            ->reject(fn($value): bool => is_null($value))
+                ->map(fn (string $value) => $enum::tryFrom($value))
+                ->reject(fn ($value): bool => is_null($value))
             : collect();
     }
 }

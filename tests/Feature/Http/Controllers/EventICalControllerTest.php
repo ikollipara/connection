@@ -7,7 +7,6 @@ use function Pest\Laravel\get;
 
 covers(EventICalController::class);
 
-
 it('should return a calendar response', function () {
     Event::factory()->createMany(records: 10);
 

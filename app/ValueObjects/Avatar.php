@@ -49,7 +49,9 @@ class Avatar implements \Stringable
         }
 
         $path = $file->store('avatars', $disk);
-        if (!$path) return new self('');
+        if (! $path) {
+            return new self('');
+        }
 
         return new self($path, $disk);
     }

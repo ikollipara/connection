@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\ValueObjects;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use JsonException;
 use Override;
@@ -21,9 +19,8 @@ class Editor implements Arrayable
      */
     protected array $data;
 
-
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __construct(array $data)
     {
@@ -37,9 +34,8 @@ class Editor implements Arrayable
     }
 
     /**
-     *
-     * @param bool $parse
      * @return ($parse is true ? Js : string)
+     *
      * @throws JsonException
      */
     public function toJson(bool $parse = false)

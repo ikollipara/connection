@@ -6,7 +6,6 @@ use Illuminate\Mail\Mailables\Envelope;
 
 covers(Contact::class);
 
-
 it('should create a valid contact', function () {
     $contact = new Contact(fake()->safeEmail(), fake()->word(), fake()->paragraphs(asText: true));
 

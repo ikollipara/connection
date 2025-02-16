@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\ContentCollection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

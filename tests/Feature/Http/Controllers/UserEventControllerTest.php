@@ -41,12 +41,11 @@ it('should create a new event', function () {
         'description' => '{"blocks": []}',
         'start' => '08:00',
         'end' => '09:00',
-        'days' => [['date' => '2025-01-01']]
+        'days' => [['date' => '2025-01-01']],
     ])
         ->assertRedirect()
         ->assertSessionMissing('error')
         ->assertSessionHasNoErrors();
-
 
     expect($this->user->events->count())->toEqual(1);
 });
@@ -59,7 +58,7 @@ it('should create a new event (fail)', function () {
         'description' => '{"blocks": []}',
         'start' => '08:00',
         'end' => '09:00',
-        'days' => [['date' => '2025-01-01']]
+        'days' => [['date' => '2025-01-01']],
     ])
         ->assertRedirect()
         ->assertSessionHas('error');
@@ -79,7 +78,7 @@ it('should update an event', function () {
         'description' => '{"blocks": []}',
         'start' => '08:00',
         'end' => '09:00',
-        'days' => [['date' => '2025-01-01']]
+        'days' => [['date' => '2025-01-01']],
     ])
         ->assertRedirect()
         ->assertSessionHasNoErrors();
