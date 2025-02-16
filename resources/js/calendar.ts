@@ -12,8 +12,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listViewPlugin from "@fullcalendar/list";
 import iCalPlugin from "@fullcalendar/icalendar";
+import type { AlpineComponent } from "alpinejs";
 
-export default ({ user = null }) => ({
+const component = ({ user = null }):  AlpineComponent<{ calendar?: Calendar }> => ({
   init() {
     this.calendar = new Calendar(this.$el, {
       plugins: [dayGridPlugin, timeGridPlugin, iCalPlugin, listViewPlugin],
@@ -58,9 +59,11 @@ export default ({ user = null }) => ({
         url: route("events.ical", { user }),
       },
     });
-    this.$nextTick(() => this.calendar.render());
+    this.$nextTick(() => this.calendar?.render());
   },
   destroy() {
-    this.calendar.destroy();
+    this.calendar?.destroy();
   },
 });
+
+export default component;

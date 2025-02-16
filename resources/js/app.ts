@@ -19,8 +19,10 @@ window.flowbiteDatePicker = Datepicker;
 
 // Global event listeners
 document.addEventListener("content-removed", (event) => {
-  event.target.classList.add("animate__animated", "animate__fadeOut");
+    // @ts-ignore
+    event.target?.classList.add("animate__animated", "animate__fadeOut");
   setTimeout(() => {
-    event.target.remove();
+    // @ts-ignore
+    event.target?.remove();
   }, 500);
 });

@@ -29,9 +29,13 @@
 //     forceTLS: true
 // });
 
+import { route as RouteFn } from 'ziggy-js';
+
+
 import * as Sentry from "@sentry/browser";
 
 Sentry.init({
+  // @ts-ignore
   dsn: import.meta.env.VITE_SENTRY_JS_DSN,
 
   // Alternatively, use `process.env.npm_package_version` for a dynamic release version
@@ -59,3 +63,11 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 });
+
+declare global {
+    var route: typeof RouteFn
+    interface Window {
+        Alpine: typeof import("alpinejs"),
+        flowbiteDatePicker: typeof import("flowbite")["Datepicker"]
+    }
+}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**------------------------------------------------------------
  * editor.js
  * Ian Kollipara
@@ -9,21 +10,24 @@
  * editor content.
  *------------------------------------------------------------**/
 
+
 async function configureTools(
-  canUpload,
-  csrf,
-  imagesToDelete,
-  attachesToDelete,
+  canUpload: boolean,
+  csrf: string,
+  imagesToDelete: string[],
+  attachesToDelete: string[],
 ) {
   return await Promise.all([
     import("@editorjs/header"),
     import("@editorjs/delimiter"),
     import("@editorjs/nested-list"),
     import("@editorjs/quote"),
+    // @ts-ignore
     import("@editorjs/embed"),
     import("@editorjs/table"),
     import("@editorjs/code"),
     import("@editorjs/underline"),
+    // @ts-ignore
     import("@editorjs/text-variant-tune"),
     canUpload ? import("./image-override") : Promise.resolve({ default: null }),
     canUpload
@@ -98,13 +102,21 @@ async function configureTools(
   );
 }
 
+type Props = {
+    name: string,
+    readOnly: boolean,
+    canUpload: boolean,
+    csrf: string,
+    body: object
+}
+
 export default ({
   name,
   readOnly = false,
   canUpload = true,
   csrf,
   body = { blocks: [] },
-}) => ({
+}: Props) => ({
   init() {
     this.body = body;
     if (typeof body === "object") {

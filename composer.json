@@ -19,7 +19,7 @@
     "spatie/icalendar-generator": "*",
     "spatie/laravel-enum": "^3.0",
     "tightenco/parental": "^1.0",
-    "tightenco/ziggy": "^1.8"
+    "tightenco/ziggy": "^2"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3.7",
