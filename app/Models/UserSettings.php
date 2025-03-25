@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * \App\Models\UserSettings
@@ -20,28 +23,32 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserSettings extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserSettingsFactory> */
     use HasFactory;
 
     protected $guarded = [];
 
     protected $with = ['user'];
 
-    protected $casts = [
-        'receive_weekly_digest' => 'boolean',
-        'receive_comment_notifications' => 'boolean',
-        'receive_new_follower_notifications' => 'boolean',
-        'receive_follower_notifications' => 'boolean',
-    ];
-
     // Relationships
 
     /**
      * Get the user that owns the settings.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'receive_weekly_digest' => 'boolean',
+            'receive_comment_notifications' => 'boolean',
+            'receive_new_follower_notifications' => 'boolean',
+            'receive_follower_notifications' => 'boolean',
+        ];
     }
 }

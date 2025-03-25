@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ValueObjects;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,12 +14,15 @@ use Illuminate\Support\Facades\Storage;
  * This class represents the Avatar value object. It wraps the avatar property of the user
  * into a rich object that can be used to perform operations on the avatar property.
  */
-class Avatar
+class Avatar implements \Stringable
 {
     private string $path;
 
     private ?string $default;
 
+    /**
+     * @var FilesystemAdapter
+     */
     private $storage;
 
     public function __construct(string $path, string $disk = 'public')
@@ -36,18 +42,18 @@ class Avatar
      *
      * @param  ?UploadedFile  $file  The uploaded file
      */
-    public static function fromUploadedFile($file, $disk = 'public'): self
+    public static function fromUploadedFile($file, string $disk = 'public'): self
     {
-        if ($file === null) {
-            return new static('');
+        if (is_null($file)) {
+            return new self('');
         }
 
-        return new static($file->store('avatars', $disk));
-    }
+        $path = $file->store('avatars', $disk);
+        if (! $path) {
+            return new self('');
+        }
 
-    public static function is($value): bool
-    {
-        return $value instanceof self;
+        return new self($path, $disk);
     }
 
     public function path(): string
@@ -60,7 +66,7 @@ class Avatar
         return $this->storage->delete($this->path);
     }
 
-    public function url()
+    public function url(): ?string
     {
         // return $this->exists()
         // ? $this->storage->url($this->path)
@@ -75,6 +81,6 @@ class Avatar
 
     public function __toString(): string
     {
-        return $this->url();
+        return $this->url() ?? '';
     }
 }

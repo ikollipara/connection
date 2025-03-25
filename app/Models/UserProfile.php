@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\Grade;
@@ -10,34 +12,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * \App\Models\UserProfile
- *
- * @property int $id
- * @property string $user_id
- * @property Editor $bio
- * @property bool $is_preservice
- * @property string $school
- * @property string $subject
- * @property-read string $short_title
- * @property \Illuminate\Support\Collection<\App\Enums\Grade> $grades
- * @property string $gender
- * @property int $years_of_experience
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \App\Models\User $user
- */
 class UserProfile extends Model
 {
-    use HasFactory, Viewable;
+    /** @use HasFactory<\Database\Factories\UserProfileFactory> */
+    use HasFactory;
+
+    /** @use Viewable<self> */
+    use Viewable;
 
     protected $guarded = [];
-
-    protected $casts = [
-        'bio' => 'array',
-        'grades' => Grade::class . ':collection',
-        'is_preservice' => 'boolean',
-    ];
 
     protected $attributes = [
         'bio' => '{"blocks": []}',
@@ -46,6 +29,9 @@ class UserProfile extends Model
 
     // Accessors and Mutators
 
+    /**
+     * @return Attribute<string, null>
+     */
     protected function shortTitle(): Attribute
     {
         $years = match ($this->years_of_experience) {
@@ -55,36 +41,52 @@ class UserProfile extends Model
         };
 
         return Attribute::make(
-            get: fn() => match ($this->is_preservice) {
+            get: fn (): string => match ($this->is_preservice) {
                 true => "$this->subject Pre-Service Teacher ($years)",
                 false => "$this->subject Teacher ($years)",
             },
         );
     }
 
-    protected function getBioAttribute($value): Editor
+    /**
+     * @return Attribute<Editor, Editor>
+     */
+    protected function bio(): Attribute
     {
-        if ($value[0] == '"') {
-            $value = json_decode($value);
-        }
-        return Editor::fromJson($value);
-    }
+        return Attribute::make(get: function (string $value): Editor {
+            // @codeCoverageIgnoreStart
+            if ($value[0] === '"') {
+                $value = json_decode($value);
+            }
 
-    protected function setBioAttribute(Editor $value): void
-    {
-        $this->attributes['bio'] = $value->toJson();
+            // @codeCoverageIgnoreEnd
+            return Editor::fromJson($value);
+        }, set: function (Editor $value): array {
+            return ['bio' => $value->toJson()];
+        })->withoutObjectCaching();
     }
-
 
     // Relationships
 
     /**
      * Get the user that owns the profile.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return array{bio: 'array', grades: 'App\Enums\Grade:collection', is_preservice: 'boolean'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'bio' => 'array',
+            'grades' => Grade::class.':collection',
+            'is_preservice' => 'boolean',
+        ];
     }
 }

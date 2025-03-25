@@ -1,27 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\Grade;
+use App\Http\Middleware\UserIsOwner;
 use App\Models\User;
 use DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
-class UserProfileController extends Controller
+final class UserProfileController extends Controller
 {
     /**
      * Display the resource.
      */
-    public function show(User $user)
+    public function show(User $user): View
     {
         $profile = $user->profile;
+        abort_if(is_null($profile), Response::HTTP_INTERNAL_SERVER_ERROR, 'Profile is missing on the user.');
+        /** @var \App\Models\UserProfile $profile */
         $user = $user->loadCount([
-            'posts' => fn($query) => $query->areSearchable(),
-            'collections' => fn($query) => $query->areSearchable(),
+            'posts' => fn ($query) => $query->shouldBeSearchable(),
+            'collections' => fn ($query) => $query->shouldBeSearchable(),
             'followers',
             'following',
         ]);
@@ -43,7 +50,7 @@ class UserProfileController extends Controller
     /**
      * Show the form for editing the resource.
      */
-    public function edit(User $user)
+    public function edit(User $user): View
     {
         $profile = $user->profile;
 
@@ -56,14 +63,14 @@ class UserProfileController extends Controller
     /**
      * Update the resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'school' => 'string',
             'subject' => 'string',
             'years_of_experience' => 'sometimes|integer|min:0',
             'grades' => 'array',
-            'grades.*' => 'enum:' . Grade::class,
+            'grades.*' => 'enum:'.Grade::class,
             'bio' => 'json',
             'consented.full_name' => 'nullable|string',
         ]);
@@ -81,7 +88,7 @@ class UserProfileController extends Controller
     {
         return [
             new Middleware('auth', only: ['edit', 'update']),
-            new Middleware('owner', only: ['edit', 'update']),
+            new Middleware(UserIsOwner::class, only: ['edit', 'update']),
         ];
     }
 }

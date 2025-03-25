@@ -1,19 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
-use App\Events\CommentLiked;
-use App\Events\PostCollectionLiked;
-use App\Events\PostCollectionViewed;
-use App\Events\PostLiked;
-use App\Events\PostViewed;
-use App\Events\UserFollowed;
-use App\Listeners\UpdateCommentLikesCount;
-use App\Listeners\UpdatePostCollectionLikesCount;
-use App\Listeners\UpdatePostCollectionViews;
-use App\Listeners\UpdatePostLikedCount;
-use App\Listeners\UpdatePostViews;
-use App\Listeners\UpdateUserFollowers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -28,12 +18,6 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [SendEmailVerificationNotification::class],
-        PostLiked::class => [UpdatePostLikedCount::class],
-        PostCollectionLiked::class => [UpdatePostCollectionLikesCount::class],
-        CommentLiked::class => [UpdateCommentLikesCount::class],
-        PostViewed::class => [UpdatePostViews::class],
-        PostCollectionViewed::class => [UpdatePostCollectionViews::class],
-        UserFollowed::class => [UpdateUserFollowers::class],
     ];
 
     /**

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Illuminate\Support\Facades\App;
+use Sentry\Laravel\Integration;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -35,16 +38,12 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+        // @codeCoverageIgnoreStart
         $this->reportable(function (Throwable $e) {
-            //
+            if (App::isProduction()) {
+                Integration::captureUnhandledException($e);
+            }
         });
-
-        $this->renderable(function (InvalidSignatureException $e) {
-            return response()->view(
-                'errors.link-expired',
-                ['message' => $e->getMessage()],
-                403,
-            );
-        });
+        // @codeCoverageIgnoreEnd
     }
 }

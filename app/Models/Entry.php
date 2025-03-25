@@ -1,25 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
-/**
- * \App\Models\Entry
- *
- * @property int $id
- * @property string $content_id
- * @property string $collection_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\Content $content
- * @property \App\Models\ContentCollection $collection
- */
 class Entry extends Model
 {
-    use AsPivot, HasFactory;
+    use AsPivot;
+
+    /** @use HasFactory<\Database\Factories\EntryFactory> */
+    use HasFactory;
 
     protected $table = 'entries';
 
@@ -27,33 +22,18 @@ class Entry extends Model
 
     public $incrementing = true;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['content_id', 'collection_id'];
 
     protected $guarded = ['id'];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
 
     // Relationships
 
     /**
      * Get the content that the entry belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Content>
+     * @return BelongsTo<Content, $this>
      */
-    public function content()
+    public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);
     }
@@ -61,10 +41,18 @@ class Entry extends Model
     /**
      * Get the collection that the entry belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<ContentCollection>
+     * @return BelongsTo<ContentCollection, $this>
      */
-    public function collection()
+    public function collection(): BelongsTo
     {
         return $this->belongsTo(ContentCollection::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console;
 
-use App\Models\User;
-use App\Services\SurveyService;
+use App\Console\Commands\NotifyConsenteesCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,17 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule
-            ->call(function () {
-                User::query()
-                    ->where('consented', true)
-                    ->each(
-                        fn ($user) => (new SurveyService($user))
-                            ->sendSurvey([SurveyService::CT_CAST], SurveyService::ONCE)
-                            ->sendSurvey([SurveyService::CT_CAST, SurveyService::SCALES], SurveyService::YEARLY),
-                    );
-            })
-            ->daily();
+        $schedule->command(NotifyConsenteesCommand::class)->daily();
         $schedule
             ->command('queue:work --stop-when-empty')
             ->everyMinute()

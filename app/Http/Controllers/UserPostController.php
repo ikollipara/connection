@@ -1,24 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Post;
 use App\Models\User;
 use App\ValueObjects\Editor;
+use Arr;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Js;
+use Illuminate\View\View;
 
-class UserPostController extends Controller
+final class UserPostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $status = Status::tryFrom($request->query('status', 'draft')) ?? Status::draft();
         $q = $request->query('q');
+        if (is_array($q)) {
+            $q = (string) Arr::first($q);
+        }
 
         $posts = $user->posts()->search($q)->status($status)->latest()->paginate(15)->withQueryString();
 
@@ -32,57 +40,54 @@ class UserPostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(User $user)
+    public function create(User $user): View
     {
         return view('users.posts.create', ['user' => $user, 'post' => new Post]);
     }
 
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $user): RedirectResponse
     {
-        $body = $request->input('body', '');
-        $title = $request->input('title', '');
+        $body = $request->input('body') ?? '{"blocks": []}';
+        $title = $request->input('title') ?? '';
 
-        try {
-            $post = $user->posts()->create([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
-
-            info('Post created', ['post' => $post, 'user' => $user]);
-
-            return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
-        } catch (\Throwable $th) {
+        $post = $user->posts()->make([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
+        $result = $post->save();
+        if (! $result) {
             return session_back()->with('error', 'Post creation failed');
         }
+
+        info('Post created', ['post' => $post, 'user' => $user]);
+
+        return to_route('users.posts.edit', [$user, $post])->with('success', 'Post created successfully');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user, Post $post)
+    public function edit(User $user, Post $post): View
     {
         return view('users.posts.edit', ['user' => $user, 'post' => $post]);
     }
 
-    public function update(Request $request, User $user, Post $post)
+    public function update(Request $request, User $user, Post $post): RedirectResponse
     {
-        $body = $request->input('body', Js::encode($post->body));
-        $title = $request->input('title', $post->title);
+        $body = $request->input('body') ?? Js::encode($post->body);
+        $title = $request->input('title') ?? $post->title;
 
-        try {
-            $post->update([
-                'title' => $title,
-                'body' => Editor::fromJson($body),
-            ]);
-
-            info('Post updated', ['post' => $post, 'user' => $user]);
-
-            return redirect()->route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
-        } catch (\Throwable $th) {
-            logger()->error('Post update failed', ['user' => $user, 'post' => $post, 'error' => $th->getMessage()]);
-
+        $result = $post->update([
+            'title' => $title,
+            'body' => Editor::fromJson($body),
+        ]);
+        if (! $result) {
             return session_back()->with('error', 'Post update failed');
         }
+
+        info('Post updated', ['post' => $post, 'user' => $user]);
+
+        return to_route('users.posts.edit', [$user, $post])->with('success', 'Post updated successfully');
     }
 
     public static function middleware(): array

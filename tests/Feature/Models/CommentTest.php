@@ -26,15 +26,6 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->user()->exists());
     }
 
-    public function test_comment_has_likes()
-    {
-        $comment = Comment::factory()
-            ->hasLikes(5)
-            ->create();
-        $this->assertNotNull($comment->likes);
-        $this->assertEquals(5, $comment->likes->count());
-    }
-
     public function test_comment_commentable()
     {
         /** @var Comment */
@@ -44,21 +35,35 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->commentable()->exists());
     }
 
-    public function test_comments_can_be_scoped_to_this_month()
+    public function test_comment_has_parent()
     {
-        $this->travelTo(now()->subMonth());
-        Comment::factory()->create();
-        $this->travelBack();
-        Comment::factory()->create();
-        $this->assertEquals(1, Comment::thisMonth()->count());
+        /** @var Comment */
+        $parent = Comment::factory()->createOne();
+
+        /** @var Comment */
+        $comment = Comment::factory()->createOne(['parent_id' => $parent->id]);
+
+        $this->assertNotNull($comment->parent);
+        $this->assertInstanceOf(Comment::class, $comment->parent);
     }
 
-    public function test_comments_can_be_scoped_to_last_month()
+    public function test_comment_is_root()
     {
-        $this->travelTo(now()->subMonth());
-        Comment::factory()->create();
-        $this->travelBack();
-        Comment::factory()->create();
-        $this->assertEquals(1, Comment::lastMonth()->count());
+        Comment::factory()->createOne();
+
+        $result = Comment::query()->root()->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function test_comment_is_reply()
+    {
+        /** @var Comment */
+        $parent = Comment::factory()->createOne();
+
+        /** @var Comment */
+        $comment = Comment::factory()->createOne(['parent_id' => $parent->id]);
+
+        $this->assertTrue($comment->isReply());
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Contracts\Commentable;
@@ -11,5 +13,8 @@ use Parental\HasParent;
  */
 class Post extends Content implements Commentable
 {
-    use HasFactory, HasParent;
+    /** @use HasFactory<\Database\Factories\PostFactory> */
+    use HasFactory;
+
+    use HasParent;
 }

@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\URL;
 
-class Login extends Mailable
+class Login extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -37,7 +40,7 @@ class Login extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_FROM_ADDRESS'))
+        return $this->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Login to conneCTION')
             ->markdown('mail.login');
     }

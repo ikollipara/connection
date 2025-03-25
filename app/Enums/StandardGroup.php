@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*|=============================================================================|
   | StandardGroup.php
   | Ian Kollipara <ikollipara2@huskers.unl.edu>
@@ -12,6 +14,8 @@ namespace App\Enums;
 use Closure;
 use Spatie\Enum\Laravel\Enum;
 
+// @codeCoverageIgnoreStart
+// Handled and tested
 /**
  * @method static self CSTA_1A_CS()
  * @method static self CSTA_1B_CS()
@@ -84,7 +88,7 @@ class StandardGroup extends Enum
         ];
     }
 
-    public static function values(): Closure
+    protected static function values(): Closure
     {
         return function ($value) {
             if (str_starts_with($value, 'CSTA')) {
@@ -96,3 +100,4 @@ class StandardGroup extends Enum
         };
     }
 }
+// @codeCoverageIgnoreEnd

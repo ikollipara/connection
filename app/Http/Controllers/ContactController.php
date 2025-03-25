@@ -1,28 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
+use App\Mail\Contact;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
+use Mail;
 
-class ContactController extends Controller
+final class ContactController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('contact');
     }
 
-    public function store(ContactRequest $request)
+    public function store(ContactRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
-        $successful = mail(env('MAINTAINER_EMAIL'), $validated['subject'], $validated['message'], 'From: '.$validated['email']);
+        Mail::to(config('mail.maintainer'))->queue(new Contact($validated['email'], $validated['subject'], $validated['message']));
 
-        if ($successful) {
-            return to_route('contact')->with('success');
-        }
-
-        return to_route('contact')->with('error');
+        return to_route('contact')->with('success');
     }
 
     public static function middleware(): array

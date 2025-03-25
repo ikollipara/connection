@@ -2,15 +2,13 @@
 
 namespace Tests\Feature\Models;
 
+use App\Mail\Login;
 use App\Mail\Survey;
 use App\Models\User;
-use App\Models\UserProfile;
 use App\ValueObjects\Avatar;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -29,13 +27,6 @@ class UserTest extends TestCase
                 ->lower()
                 ->__toString(),
         ]);
-    }
-
-    public function test_when_a_user_is_created_a_registered_event_is_dispatched()
-    {
-        Event::fake([Registered::class]);
-        $user = User::factory()->create();
-        Event::assertDispatched(Registered::class);
     }
 
     public function test_when_user_is_saved_as_consented_a_mail_notification_is_sent()
@@ -94,6 +85,7 @@ class UserTest extends TestCase
         $avatar = UploadedFile::fake()->image('avatar.jpg');
         $avatar = Avatar::fromUploadedFile($avatar);
         Storage::disk('public')->assertExists($avatar->path());
+        /** @var User */
         $user = User::factory()->create([
             'avatar' => $avatar,
         ]);
@@ -183,8 +175,9 @@ class UserTest extends TestCase
 
     public function test_user_can_have_many_searches()
     {
-        $user = User::factory()->create();
-        foreach (range(1, 5) as $i) {
+        /** @var User */
+        $user = User::factory()->createOne();
+        for ($i = 0; $i < 5; $i++) {
             $user->searches()->create([
                 'search_params' => [],
             ]);
@@ -192,25 +185,14 @@ class UserTest extends TestCase
         $this->assertEquals(5, $user->searches->count());
     }
 
-    public function test_user_can_be_created_with_profile_and_settings()
-    {
-        $user = User::factory()->makeOne();
-        $profile = UserProfile::factory()->makeOne();
-        unset($profile['user_id']);
-        $user = User::createWithProfileAndSettings(array_merge($user->toArray(), $profile->toArray()));
-
-        $this->assertDatabaseHas('users', ['email' => $user->email]);
-        $this->assertDatabaseHas('user_profiles', ['user_id' => $user->id]);
-        $this->assertDatabaseHas('user_settings', ['user_id' => $user->id]);
-        $this->assertEquals($user->profile->user_id, $user->id);
-    }
-
     public function test_user_can_delete_their_avatar()
     {
-        Storage::fake('public');
+        Storage::fake('public', ['throw' => true]);
         $avatar = UploadedFile::fake()->image('avatar.jpg');
+        /** @var Avatar */
         $avatar = Avatar::fromUploadedFile($avatar);
-        $user = User::factory()->create([
+        /** @var User */
+        $user = User::factory()->createOne([
             'avatar' => $avatar,
         ]);
         $this->assertTrue($user->avatar->delete());
@@ -219,10 +201,41 @@ class UserTest extends TestCase
 
     public function test_user_can_follow_another_user()
     {
+        /** @var User */
         $user = User::factory()->create();
         $another_user = User::factory()->create();
         $user->followers()->attach($another_user);
         $this->assertTrue($user->followers->contains($another_user));
         $this->assertTrue($another_user->following->contains($user));
+        $this->assertTrue($another_user->isFollowing($user));
+    }
+
+    public function test_user_has_attending_events()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        $this->assertEquals(0, $user->attending()->count());
+    }
+
+    public function test_user_has_events()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        $this->assertEquals(0, $user->events()->count());
+    }
+
+    public function test_user_send_login_link()
+    {
+        /** @var User */
+        $user = User::factory()->createOne();
+
+        Mail::fake();
+
+        $user->sendLoginLink();
+
+        Mail::assertQueuedCount(1);
+        Mail::assertQueued(Login::class);
     }
 }

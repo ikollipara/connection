@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -16,7 +18,7 @@ class CommentFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'body' => $this->faker->paragraphs(3, true),
+            'body' => fake()->paragraphs(3, true),
         ];
     }
 }

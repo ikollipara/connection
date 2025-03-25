@@ -3,10 +3,13 @@
 namespace Tests\Feature\Models;
 
 use App\Enums\Status;
+use App\Models\Comment;
 use App\Models\Content;
 use App\Models\User;
+use App\ValueObjects\Editor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ContentTest extends TestCase
@@ -20,16 +23,6 @@ class ContentTest extends TestCase
         $this->assertTrue($content->is(Content::sole()));
     }
 
-    public function test_content_can_be_converted_to_searchable_array()
-    {
-        $content = Content::factory()->create();
-        $searchableArray = $content->toSearchableArray();
-        $this->assertArrayHasKey('title', $searchableArray);
-        $this->assertArrayHasKey('body', $searchableArray);
-        $this->assertEquals($content->title, $searchableArray['title']);
-        $this->assertEquals($content->asPlainText('body'), $searchableArray['body']);
-    }
-
     public function test_content_should_be_searchable()
     {
         $draftContent = Content::factory()
@@ -40,9 +33,7 @@ class ContentTest extends TestCase
             ->create();
         $archivedContent = Content::factory()->create();
         $archivedContent->delete();
-        $this->assertFalse($draftContent->shouldBeSearchable());
-        $this->assertTrue($publishedContent->shouldBeSearchable());
-        $this->assertFalse($archivedContent->shouldBeSearchable());
+        $this->assertTrue(Content::query()->shouldBeSearchable()->firstOrFail()->is($publishedContent));
     }
 
     public function test_content_should_get_the_correct_route_key()
@@ -67,53 +58,27 @@ class ContentTest extends TestCase
         $this->assertTrue($content->is($resolved));
     }
 
-    public function test_content_recently_published()
-    {
-        $content = Content::factory()
-            ->draft()
-            ->create();
-        $content->published = true;
-        $content->save();
-        $this->assertTrue($content->was_recently_published);
-    }
-
     public function test_status_is_correct()
     {
+        /** @var Content */
         $content = Content::factory()
             ->draft()
-            ->create();
-        $this->assertTrue(Status::draft()->equals($content->status));
+            ->createOne();
+
+        $this->assertTrue($content->status->equals(Status::draft()));
 
         $content->published = true;
         $content->save();
-        $this->assertTrue(Status::published()->equals($content->status));
+        $this->assertTrue($content->status->equals(Status::published()));
 
         $content->delete();
-        $this->assertTrue(Status::archived()->equals($content->status));
+        $this->assertTrue($content->status->equals(Status::archived()));
     }
 
     public function test_content_has_a_user()
     {
-        $content = Content::factory()->create();
+        $content = Content::factory()->createOne();
         $this->assertInstanceOf(User::class, $content->user);
-    }
-
-    public function test_content_has_likes()
-    {
-        $content = Content::factory()
-            ->hasLikes(5)
-            ->create();
-        $this->assertDatabaseCount('content_likes', 5);
-        $this->assertEquals(5, $content->likes->count());
-    }
-
-    public function test_content_has_views()
-    {
-        $content = Content::factory()
-            ->hasViews(5)
-            ->create();
-        $this->assertDatabaseCount('views', 5);
-        $this->assertEquals(5, $content->views->count());
     }
 
     public function test_content_can_belong_to_many_collections()
@@ -140,9 +105,9 @@ class ContentTest extends TestCase
         $content = Content::factory()->create();
         $content->delete();
 
-        $this->assertEquals(3, Content::status(Status::draft())->count());
-        $this->assertEquals(2, Content::status(Status::published())->count());
-        $this->assertEquals(1, Content::status(Status::archived())->count());
+        $this->assertEquals(3, Content::query()->status(Status::draft())->count());
+        $this->assertEquals(2, Content::query()->status(Status::published())->count());
+        $this->assertEquals(1, Content::query()->status(Status::archived())->count());
     }
 
     public function test_where_published_scope()
@@ -161,50 +126,142 @@ class ContentTest extends TestCase
         $this->assertEquals(2, Content::wherePublished()->count());
     }
 
-    public function test_top_last_month_scope()
+    public function test_was_recently_published()
     {
-        $this->travelTo(now()->subMonth());
-        Content::factory()
-            ->count(2)
-            ->published()
-            ->create();
-        $content = Content::factory()
-            ->hasLikes(3)
-            ->published()
-            ->create();
+        /** @var Content */
+        $content = Content::factory()->draft()->createOne();
 
-        $this->travelBack();
+        $content->published = true;
+        $content->save();
 
-        $this->assertTrue(
-            Content::topLastMonth()
-                ->first()
-                ->is($content),
-        );
+        $this->assertTrue($content->was_recently_published);
     }
 
-    public function test_content_can_normalize_search_constraints()
+    public function test_body_is_instance_of_editor()
     {
-        $normalized = Content::normalizeSearchConstraints([]);
-        $this->assertArrayHasKey('type', $normalized);
-        $this->assertArrayHasKey('categories', $normalized);
-        $this->assertArrayHasKey('audiences', $normalized);
-        $this->assertArrayHasKey('grades', $normalized);
-        $this->assertArrayHasKey('standards', $normalized);
-        $this->assertArrayHasKey('practices', $normalized);
-        $this->assertArrayHasKey('languages', $normalized);
-        $this->assertArrayHasKey('standard_groups', $normalized);
-        $this->assertArrayHasKey('likes_count', $normalized);
-        $this->assertArrayHasKey('views_count', $normalized);
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertInstanceOf(Editor::class, $content->body);
     }
 
-    public function test_content_can_be_scoped_by_search_constraints()
+    public function test_content_has_comments()
     {
-        $contents = Content::factory()
-            ->count(5)
-            ->published()
-            ->create();
-        $normalized = Content::normalizeSearchConstraints([]);
+        /** @var Content */
+        $content = Content::factory()->createOne();
 
-        $this->assertEquals(5, Content::withSearchConstraints($normalized)->count());
+        $comments = Comment::factory(count: 3)->createMany();
+        foreach ($comments as $comment) {
+            $content->comments->add($comment);
+        }
+
+        $this->assertCount(3, $content->comments);
+    }
+
+    // Viewable Tests
+    public function test_views()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertEquals(0, $content->views());
+        Cache::clear();
+    }
+
+    public function test_view()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+        $this->actingAs($content->user);
+
+        $content->view();
+
+        $this->assertEquals(1, $content->views());
+    }
+
+    public function test_order_by_views()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $content2 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->view();
+
+        $result = Content::query()->orderByViews()->get();
+
+        $this->assertTrue($result[0]->is($content1));
+    }
+
+    public function test_has_views_count()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->view();
+
+        $result = Content::query()->hasViewsCount(1)->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    // Likeable tests
+    public function test_likes()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+
+        $this->assertEquals(0, $content->likes());
+        Cache::clear();
+    }
+
+    public function test_like()
+    {
+        /** @var Content */
+        $content = Content::factory()->createOne();
+        $this->actingAs($content->user);
+
+        $content->like();
+
+        $this->assertEquals(1, $content->likes());
+    }
+
+    public function test_order_by_likes()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $content2 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->like();
+
+        $result = Content::query()->orderBylikes()->get();
+
+        $this->assertTrue($result[0]->is($content1));
+    }
+
+    public function test_has_likes_count()
+    {
+        /** @var Content */
+        $content1 = Content::factory()->createOne();
+        $this->actingAs($content1->user);
+
+        $content1->like();
+
+        $result = Content::query()->hasLikesCount(1)->count();
+
+        $this->assertEquals(1, $result);
+    }
+
+    // Searchable Tests
+    public function test_filter_by()
+    {
+        /** @var Content */
+        $content = Content::factory()->published()->createOne();
+
+        $result = Content::query()->shouldBeSearchable()->search($content->title)->filterBy(['metadata->category' => $content->metadata->category->value, 'views' => 0, 'likes' => 0])->count();
+
+        $this->assertEquals(1, $result);
     }
 }

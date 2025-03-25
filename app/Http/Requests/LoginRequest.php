@@ -1,29 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
 {
+    protected $redirectRoute = 'login';
+
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, string|array<string>>
+     * @return array<string, string|list<string>>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'email' => 'email|required|exists:users,email',
+            'email' => ['email', 'required', 'exists:users,email'],
         ];
     }
 
     /**
-     * Get the error messages for the defined validation rules.
-     *
      * @return array<string, string>
      */
-    public function messages()
+    public function messages(): array
     {
         return [
             'email.exists' => 'The email you entered does not exist.',

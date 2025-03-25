@@ -1,13 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Concerns;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template T of Model
+ */
 trait Searchable
 {
-    use Likeable, Viewable;
+    /** @use Likeable<T> */
+    use Likeable;
 
+    /** @use Viewable<T> */
+    use Viewable;
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<T>
+     */
     protected function scopeSearch(Builder $query, ?string $q)
     {
         $q ??= '';
@@ -19,6 +33,11 @@ trait Searchable
         });
     }
 
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @param  array<string, mixed>  $params
+     * @return \Illuminate\Database\Eloquent\Builder<T>
+     */
     protected function scopeFilterBy(Builder $query, array $params)
     {
         foreach ($params as $key => $value) {
@@ -33,22 +52,39 @@ trait Searchable
             }
         }
 
+        // These lines assume the builder has implemented them.
+        // TODO: Figure out how to type this.
+        /** @phpstan-ignore-next-line */
         $query->HasViewsCount($params['views']);
+        /** @phpstan-ignore-next-line */
         $query->HasLikesCount($params['likes']);
 
         return $query;
     }
 
-    protected function scopeShouldBeSearchable($query)
+    // @codeCoverageIgnoreStart
+    // This is always overriden.
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<T>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<T>
+     */
+    protected function scopeShouldBeSearchable(Builder $query): Builder
     {
         return $query;
     }
+    // @codeCoverageIgnoreEnd
 
+    /**
+     * @return list<string>
+     */
     protected function getSearchableColumns(): array
     {
         return $this->searchableColumns ?? [];
     }
 
+    /**
+     * @return list<string>
+     */
     protected function getFilterableColumns(): array
     {
         return $this->filterableColumns ?? [];

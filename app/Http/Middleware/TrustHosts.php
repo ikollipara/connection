@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Middleware\TrustHosts as Middleware;
 
+// @codeCoverageIgnoreStart
 class TrustHosts extends Middleware
 {
     /**
@@ -18,3 +21,4 @@ class TrustHosts extends Middleware
         ];
     }
 }
+// @codeCoverageIgnoreEnd

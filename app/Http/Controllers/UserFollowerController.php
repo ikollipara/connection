@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
-class UserFollowerController extends Controller
+final class UserFollowerController extends Controller
 {
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $followers = $user->followers()->get();
 
@@ -21,7 +25,7 @@ class UserFollowerController extends Controller
         ]);
     }
 
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'follower_id' => 'required|exists:users,id',
@@ -32,7 +36,7 @@ class UserFollowerController extends Controller
         return session_back(status: Response::HTTP_SEE_OTHER)->with('success', 'User followed successfully');
     }
 
-    public function destroy(User $user, User $follower)
+    public function destroy(User $user, User $follower): RedirectResponse
     {
         $user->followers()->detach($follower);
 

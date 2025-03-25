@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use Closure;
+use Illuminate\Support\Collection;
+use Spatie\Enum\Exceptions\DuplicateLabelsException;
+use Spatie\Enum\Exceptions\DuplicateValuesException;
 use Spatie\Enum\Laravel\Enum;
 
 /**
@@ -160,10 +165,16 @@ use Spatie\Enum\Laravel\Enum;
  */
 class Standard extends Enum
 {
-    public static function getGroup(StandardGroup $group)
+    /**
+     * @return Collection<int, int|string>
+     *
+     * @throws DuplicateValuesException
+     * @throws DuplicateLabelsException
+     */
+    public static function getGroup(StandardGroup $group): Collection
     {
-        return collect(static::toValues())
-            ->filter(fn ($value) => str_starts_with($value, $group))
+        return collect(self::toValues())
+            ->filter(fn ($value) => str((string) $value)->startsWith((string) $group->value))
             ->values();
     }
 

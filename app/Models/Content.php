@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Enums\Standard;
-use App\Enums\StandardGroup;
 use App\Enums\Status;
 use App\Models\Concerns\HasMetadata;
 use App\Models\Concerns\Likeable;
@@ -12,61 +12,46 @@ use App\Models\Concerns\Sluggable;
 use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
 use Parental\HasChildren;
 
-/**
- * \App\Models\Content
- *
- * @property string $id
- * @property string $title
- * @property Editor $body
- * @property-read Status $status
- * @property bool $published
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentComment> $comments
- * @property-read \Illuminate\Database\Eloquent\Collection<ContentCollection> $collections
- */
 class Content extends Model
 {
-    use HasChildren, HasFactory, HasMetadata, HasUuids, Likeable, Searchable, Sluggable, SoftDeletes, Viewable;
+    use HasChildren;
+
+    /** @use HasFactory<\Database\Factories\ContentFactory> */
+    use HasFactory;
+
+    use HasMetadata, HasUuids;
+
+    /** @use Likeable<self> */
+    use Likeable;
+
+    /** @use Searchable<self> */
+    use Searchable;
+
+    use Sluggable, SoftDeletes;
+
+    /** @use Viewable<self> */
+    use Viewable;
 
     protected $table = 'content';
 
+    /** @phpstan-ignore-next-line */
     protected $childTypes = [
         'post' => Post::class,
         'collection' => ContentCollection::class,
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['title', 'body', 'metadata', 'published', 'user_id', 'type'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'published' => 'boolean',
-        'body' => 'array',
-    ];
-
-    /**
-     * The attributes that should be defaults.
-     *
-     * @var array<string, mixed>
-     */
     protected $attributes = [
         'published' => false,
         'metadata' => '{"category": "material", "audience": "Teachers"}',
@@ -74,50 +59,64 @@ class Content extends Model
         'title' => '',
     ];
 
-    protected $searchableColumns = ['title', 'body'];
+    /** @var list<string> */
+    protected array $searchableColumns = ['title', 'body'];
 
-    protected $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
+    /** @var list<string> */
+    protected array $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
 
-    protected function scopeShouldBeSearchable(Builder $query)
+    protected function scopeShouldBeSearchable(Builder $query): Builder
     {
         return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
 
-    // Accessors and Mutators
-
-    public function getWasRecentlyPublishedAttribute()
+    /**
+     * @return Attribute<bool, null>
+     */
+    protected function wasRecentlyPublished(): Attribute
     {
-        return $this->published and $this->wasChanged('published');
+        return Attribute::make(get: function (): bool {
+            return $this->published and $this->wasChanged('published');
+        });
     }
 
-    public function getStatusAttribute()
+    /**
+     * @return Attribute<Status, null>
+     */
+    protected function status(): Attribute
     {
-        if ($this->trashed()) {
-            return Status::archived();
-        }
-        if ($this->published) {
-            return Status::published();
-        }
+        return Attribute::make(get: function (): Status {
+            if ($this->trashed()) {
+                return Status::archived();
+            }
+            if ($this->published) {
+                return Status::published();
+            }
 
-        return Status::draft();
+            return Status::draft();
+        })->withoutObjectCaching();
     }
 
-    protected function getBodyAttribute($value)
+    /**
+     * @return Attribute<Editor, Editor>
+     */
+    protected function body(): Attribute
     {
-        // TODO: Fix this hack
-        // Some of the content is "doubly" stringified, so we need to
-        // decode it twice. This is a temporary fix until we can
-        // properly migrate the data.
-        if ($value[0] == '"') {
-            $value = json_decode($value);
-        }
+        return Attribute::make(get: function (string $value): Editor {
+            // TODO: Fix this hack
+            // Some of the content is "doubly" stringified, so we need to
+            // decode it twice. This is a temporary fix until we can
+            // properly migrate the data.
+            // @codeCoverageIgnoreStart
+            if ($value[0] === '"') {
+                $value = json_decode($value);
+            }
 
-        return Editor::fromJson($value);
-    }
-
-    protected function setBodyAttribute(Editor $value)
-    {
-        $this->attributes['body'] = $value->toJson();
+            // @codeCoverageIgnoreEnd
+            return Editor::fromJson($value);
+        }, set: function (Editor $value): array {
+            return ['body' => $value->toJson()];
+        })->withoutObjectCaching();
     }
 
     // Relationships
@@ -125,15 +124,21 @@ class Content extends Model
     /**
      * Get the user that owns the content.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User>
+     * @return BelongsTo<User, $this>
      */
-    public function user()
+    public function user(): BelongsTo
     {
+        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
-    public function collections()
+    /**
+     * @return BelongsToMany<ContentCollection, $this>
+     */
+    public function collections(): BelongsToMany
     {
+        // Phpstan cannot handle custom pivot models
+        /** @phpstan-ignore-next-line */
         return $this->belongsToMany(ContentCollection::class, 'entries', 'content_id', 'collection_id')->using(
             Entry::class,
         );
@@ -142,9 +147,9 @@ class Content extends Model
     /**
      * Get all of the comments for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\App\Models\Comment>
+     * @return MorphMany<Comment, $this>
      */
-    public function comments()
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
@@ -159,11 +164,17 @@ class Content extends Model
      */
     public function scopeStatus($query, Status $status)
     {
-        return match (true) {
-            $status->equals(Status::archived()) => $query->onlyTrashed(),
-            $status->equals(Status::published()) => $query->where('published', true),
-            $status->equals(Status::draft()) => $query->where('published', false),
-        };
+        if ($status->equals(Status::archived())) {
+            $query->onlyTrashed();
+        } elseif (
+            $status->equals(Status::published())
+        ) {
+            $query->where('published', true);
+        } elseif ($status->equals(Status::draft())) {
+            $query->where('published', false);
+        }
+
+        return $query;
     }
 
     /**
@@ -178,106 +189,13 @@ class Content extends Model
     }
 
     /**
-     * Filter to only include top content for the last month. Top is
-     * defined as having the most likes, views, and comments.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<self>
+     * @return array{published: 'boolean', body: 'array'}
      */
-    public function scopeTopLastMonth($query)
-    {
-        return $query
-            ->where('published', true)
-            ->withCount([
-                'likes as last_month_likes' => function ($query) {
-                    return $query->lastMonth();
-                },
-                'views as last_month_views' => function ($query) {
-                    return $query->lastMonth();
-                },
-                'comments as last_month_comments' => function ($query) {
-                    return $query->lastMonth();
-                },
-            ])
-            ->orderByDesc('last_month_likes')
-            ->orderByDesc('last_month_views')
-            ->orderByDesc('last_month_comments')
-            ->orderByDesc('created_at');
-    }
-
-    /**
-     * Apply search constraints to the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @param  array<string, mixed>  $constraints
-     * @return \Illuminate\Database\Eloquent\Builder<self>
-     */
-    public function scopeWithSearchConstraints($query, array $constraints)
-    {
-        return $query
-            ->where('published', true)
-            ->when($constraints['type'], fn ($query, $types) => $query->where('type', $types))
-            ->when(
-                $constraints['grades'],
-                fn ($query, $grades) => $query->whereJsonContains('metadata->grades', $grades),
-            )
-            ->when(
-                $constraints['standards'],
-                fn ($query, $standards) => $query->whereJsonContains('metadata->standards', $standards),
-            )
-            ->when(
-                $constraints['standard_groups'],
-                fn ($query, $standard_groups) => $query->where(
-                    fn ($query) => collect($standard_groups)
-                        ->map(
-                            fn ($group) => $query->orWhereJsonContains(
-                                'metadata->standards',
-                                Standard::getGroup(StandardGroup::from($group)),
-                            ),
-                        )
-                        ->flatten(),
-                ),
-            )
-            ->when(
-                $constraints['practices'],
-                fn ($query, $practices) => $query->whereJsonContains('metadata->practices', $practices),
-            )
-            ->when(
-                $constraints['languages'],
-                fn ($query, $languages) => $query->whereJsonContains('metadata->languages', $languages),
-            )
-            ->when(
-                $constraints['categories'],
-                fn ($query, $categories) => $query->whereIn('metadata->category', $categories),
-            )
-            ->when(
-                $constraints['audiences'],
-                fn ($query, $audiences) => $query->whereIn('metadata->audience', $audiences),
-            )
-            ->whereHas('likes', null, '>=', $constraints['likes_count'])
-            ->whereHas('views', null, '>=', $constraints['views_count']);
-    }
-
-    // Methods
-
-    public static function normalizeSearchConstraints(array $constraints): array
+    protected function casts(): array
     {
         return [
-            'type' => data_get($constraints, 'type', ''),
-            'categories' => Arr::wrap(data_get($constraints, 'categories', [])),
-            'audiences' => Arr::wrap(data_get($constraints, 'audiences', [])),
-            'grades' => Arr::wrap(data_get($constraints, 'grades', [])),
-            'standards' => Arr::wrap(data_get($constraints, 'standards', [])),
-            'practices' => Arr::wrap(data_get($constraints, 'practices', [])),
-            'languages' => Arr::wrap(data_get($constraints, 'languages', [])),
-            'standard_groups' => Arr::wrap(data_get($constraints, 'standard_groups', [])),
-            'likes_count' => data_get($constraints, 'likes_count', 0),
-            'views_count' => data_get($constraints, 'views_count', 0),
+            'published' => 'boolean',
+            'body' => 'array',
         ];
-    }
-
-    public function scopeAreSearchable(Builder $query)
-    {
-        return $query->where('published', true)->whereNull('deleted_at');
     }
 }

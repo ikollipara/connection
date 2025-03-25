@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Concerns\HasMetadata;
@@ -10,6 +12,7 @@ use App\Models\Concerns\Viewable;
 use App\Models\Scopes\OrderByLikes;
 use App\ValueObjects\Editor;
 use DB;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,8 +26,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Override;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
+use Throwable;
 
 /**
  * @property Editor $description
@@ -32,7 +37,21 @@ use Spatie\IcalendarGenerator\Components\Event as ICalEvent;
 #[ScopedBy(OrderByLikes::class)]
 class Event extends Model
 {
-    use HasFactory, HasMetadata, Likeable, Searchable, Sluggable, Viewable;
+    /** @use HasFactory<\Database\Factories\EventFactory> */
+    use HasFactory;
+
+    use HasMetadata;
+
+    /** @use Likeable<self> */
+    use Likeable;
+
+    /** @use Searchable<self> */
+    use Searchable;
+
+    use Sluggable;
+
+    /** @use Viewable<self> */
+    use Viewable;
 
     protected $fillable = [
         'title',
@@ -50,116 +69,151 @@ class Event extends Model
         'description' => '{"blocks": []}',
     ];
 
-    protected $casts = [
-        'description' => 'array',
-        'start' => 'datetime',
-        'end' => 'datetime',
-    ];
+    /** @var list<string> */
+    protected array $searchableColumns = ['title', 'description'];
 
-    protected $searchableColumns = ['title', 'description'];
+    /** @var list<string> */
+    protected array $filterableColumns = ['metadata->category', 'metadata->audience', 'metadata->languages', 'metadata->grades', 'metadata->standards', 'metadata->practices'];
 
-    protected $filterableColumns = ['metadata->category', 'metadata->audience', 'metadata->languages', 'metadata->grades', 'metadata->standards', 'metadata->practices'];
-
-    protected function scopeShouldBeSearchable($query)
+    protected function scopeShouldBeSearchable(Builder $query): Builder
     {
-        return $query->whereHas('days', fn ($query) => $query->where('date', '>=', now()));
+        return $query->whereHas('days', fn (\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function source(): ?BelongsTo
+    /**
+     * @return BelongsTo<self, $this>
+     */
+    public function source(): BelongsTo
     {
         return $this->belongsTo(self::class, 'cloned_from');
     }
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function attendees(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'attendees');
     }
 
+    /**
+     * @return HasMany<Day, $this>
+     */
     public function days(): HasMany
     {
         return $this->hasMany(Day::class);
     }
 
+    /**
+     * @return MorphMany<Comment, $this>
+     */
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
 
-    protected function isClonedAttribute(): Attribute
+    /**
+     * @return Attribute<bool, null>
+     */
+    protected function isCloned(): Attribute
     {
         return Attribute::make(
             get: fn () => filled($this->cloned_from),
         );
     }
 
-    protected function isSourceAttribute(): Attribute
+    /**
+     * @return Attribute<bool, null>
+     */
+    protected function isSource(): Attribute
     {
         return Attribute::make(
-            get: fn () => empty($this->cloned_from),
+            get: fn () => blank($this->cloned_from),
         );
     }
 
-    protected function getDescriptionAttribute($value)
+    /**
+     * @return Attribute<Editor, Editor>
+     */
+    protected function description(): Attribute
     {
-        return Editor::fromJson($value);
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function ($value): Editor {
+            return Editor::fromJson($value);
+        }, set: function (Editor $value) {
+            return ['description' => $value->toJson()];
+        })->withoutObjectCaching();
     }
 
-    protected function setDescriptionAttribute(Editor $value)
+    /**
+     * @param  Builder  $query
+     * @return Builder
+     */
+    protected function scopeIsAttending($query, ?User $user)
     {
-        $this->attributes['description'] = $value->toJson();
+        if (is_null($user)) {
+            return $query;
+        }
+
+        return $query->whereHas('attendees', fn (Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
     }
 
-    protected function scopeIsAttending($query, User $user)
-    {
-        return $query->whereHas('attendees', fn ($query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
-    }
-
-    public function isMultiDay()
+    public function isMultiDay(): bool
     {
         return $this->days()->count() > 1;
     }
 
+    /**
+     * @param  list<string>|null  $except
+     * @return static
+     *
+     * @throws Throwable
+     */
+    #[Override]
     public function replicate(?array $except = null)
     {
-        return DB::transaction(function () {
+        return DB::transaction(function () use ($except) {
             $except = array_merge(['cloned_from'], $except ?? []);
             $replica = parent::replicate($except);
 
             $replica->cloned_from = $this->id;
             $replica->save();
 
-            $this->days->each(function (Day $day) use ($replica) {
+            foreach ($this->days as $day) {
                 $replica->days()->create($day->toArray());
-            });
+            }
 
             return $replica;
-
         });
     }
 
     /**
-     * @return Collection<ICalEvent>
+     * @return Collection<int, ICalEvent>
      */
     public function toIcalEvent()
     {
         return $this->days->map->toIcalEvent();
     }
 
-    public static function toICalCalendar(?User $user): Calendar
+    public static function toICalCalendar(?User $user = null): Calendar
     {
         $calendar = match (true) {
             $user => Calendar::create("$user->name's conneCTION Calendar"),
             default => Calendar::create('conneCTION Calendar'),
         };
-        $events = Event::query()->when(filled($user), fn ($q) => $q->isAttending($user))->with('days')->get();
+        $events = Event::query()->isAttending($user)->with('days')->get();
         foreach ($events as $event) {
             $event->days->each->setRelation('event', $event);
-            $event->days->each(fn (Day $day) => $calendar->event($day->toIcalEvent()));
+            foreach ($event->days as $day) {
+                $calendar->event($day->toIcalEvent());
+            }
         }
 
         return $calendar;
@@ -168,6 +222,18 @@ class Event extends Model
     public function attendedBy(User $user): bool
     {
         return $this->attendees()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * @return array{description: 'array', start: 'datetime', end: 'datetime'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'description' => 'array',
+            'start' => 'datetime',
+            'end' => 'datetime',
+        ];
     }
 }
 

@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\ContentCollection;
 use App\Models\Entry;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
-class UserContentCollectionEntryController extends Controller
+final class UserContentCollectionEntryController extends Controller
 {
-    public function destroy(User $user, ContentCollection $collection, Entry $entry)
+    public function destroy(User $user, ContentCollection $collection, Entry $entry): RedirectResponse
     {
         $entry->delete();
 

@@ -1,18 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
-class PostCommentController extends Controller
+final class PostCommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Post $post)
+    public function index(Post $post): View
     {
         $comments = $post->comments()->root()->get();
 
@@ -23,10 +23,7 @@ class PostCommentController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request, Post $post)
+    public function store(Request $request, Post $post): RedirectResponse
     {
         $validated = $request->validate([
             'body' => 'required|string',
@@ -34,26 +31,11 @@ class PostCommentController extends Controller
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        $successful = $post->comments()->create($validated);
+        $comment = $post->comments()->make($validated);
+
+        $successful = $comment->save();
 
         return session_back()->with('success', $successful ? 'Comment created successfully' : 'Failed to create comment');
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Post $post, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Post $post, Comment $comment)
-    {
-        //
     }
 
     public static function middleware(): array

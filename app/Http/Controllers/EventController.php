@@ -1,31 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
-class EventController extends Controller
+final class EventController extends Controller
 {
-    // public function index()
-    // {
-    //     $events = Event::query()->with('user')->get();
-    //     return view("events.index", compact("events"));
-    // }
-    // public function show(Event $event)
-    // {
-    //     return view('events.show', compact('event'));
-    // }
-
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         return view('events.index', [
             'mine' => $request->has('attending'),
         ]);
     }
 
-    public function show(Event $event)
+    public function show(Event $event): View
     {
         $event->view();
 

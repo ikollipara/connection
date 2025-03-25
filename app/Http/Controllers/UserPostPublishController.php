@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\Audience;
@@ -12,14 +14,16 @@ use App\Models\Post;
 use App\Models\User;
 use App\ValueObjects\Metadata;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class UserPostPublishController extends Controller
+final class UserPostPublishController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, User $user, Post $post)
+    public function __invoke(Request $request, User $user, Post $post): RedirectResponse
     {
         $validated = $request->validate([
             'audience' => 'enum:'.Audience::class,
@@ -48,7 +52,7 @@ class UserPostPublishController extends Controller
             'auth',
             'verified',
             function (Request $request, Closure $next) {
-                if (! $request->user()->is($request->route('user'))) {
+                if (($requestUser = $request->route('user')) && $requestUser instanceof Model && (! $request->user()?->is($requestUser))) {
                     return session_back()->with('error', 'You are not authorized to perform this action.');
                 }
 

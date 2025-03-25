@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*|=============================================================================|
   | HasMetadata.php
   | Ian Kollipara <ikollipara2@huskers.unl.edu>
@@ -11,6 +13,7 @@
 namespace App\Models\Concerns;
 
 use App\ValueObjects\Metadata;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * |=============================================================================|
@@ -24,17 +27,18 @@ use App\ValueObjects\Metadata;
  * |=============================================================================| */
 trait HasMetadata
 {
-    public function getMetadataAttribute()
+    /**
+     * @return Attribute<Metadata, Metadata>
+     */
+    public function metadata(): Attribute
     {
-        return new Metadata(json_decode($this->attributes['metadata'], true));
+        return Attribute::make(
+            get: fn (string $value) => new Metadata(json_decode($value, associative: true)),
+            set: fn (Metadata $metadata) => $metadata->__toString(),
+        );
     }
 
-    public function setMetadataAttribute(Metadata $metadata)
-    {
-        $this->attributes['metadata'] = $metadata->__toString();
-    }
-
-    public static function bootHasMetadata()
+    public static function bootHasMetadata(): void
     {
         static::saving(function ($model) {
             $model->attributes['metadata'] = $model->metadata->__toString();

@@ -18,14 +18,14 @@ abstract class AuthedTestCase extends TestCase
     /**
      * Setup an authenticated user
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create(); // updated to use $user property
         $this->actingAs($this->user);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->user->delete();
         parent::tearDown();

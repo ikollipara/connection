@@ -7,11 +7,20 @@ use App\Models\User;
 use App\Services\SurveyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class SurveyServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_survey_can_successfully_be_built()
+    {
+        $survey = new Survey(fake()->url());
+        $survey->build();
+
+        $this->assertNotNull($survey->markdown);
+    }
 
     public function test_send_survey_once()
     {
@@ -105,7 +114,7 @@ class SurveyServiceTest extends TestCase
 
     public function test_send_survey_invalid_survey_type()
     {
-        $this->expectExceptionMessage('Invalid survey type');
+        $this->expectException(InvalidArgumentException::class);
         $user = User::factory()->create();
         $surveyService = new SurveyService($user);
         $surveyService->sendSurvey(['invalid'], SurveyService::ONCE);

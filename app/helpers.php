@@ -1,21 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+use Illuminate\Http\RedirectResponse;
+
 /*|==================================================================================|
   | helpers.php                                                                      |
   | Ian Kollipara <ikollipara2@huskers.unl.edu>                                      |
   |----------------------------------------------------------------------------------|
   | This file contains helper functions that can be used throughout the application. |
   |==================================================================================| */
-
+// @codeCoverageIgnoreStart
 if (! function_exists('session_back')) {
+    // @codeCoverageIgnoreEnd
     /**
      * Redirects the user back to the previous page
      * using the cached session previous url.
+     *
+     * @param  array<string, string>  $headers
      */
-    function session_back($fallback = false, $status = 302, $headers = [], $secure = null)
+    function session_back(int $status = 302, array $headers = [], ?bool $secure = null): RedirectResponse
     {
-        $url = session()->previousUrl();
+        $url = session()->previousUrl() ?? '/';
 
-        return redirect($url ?? $fallback, $status, $headers, $secure);
+        return redirect($url, $status, $headers, $secure);
     }
 }

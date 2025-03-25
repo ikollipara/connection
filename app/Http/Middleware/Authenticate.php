@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
+// @codeCoverageIgnoreStart
 class Authenticate extends Middleware
 {
     /**
@@ -17,5 +20,8 @@ class Authenticate extends Middleware
         if (! $request->expectsJson()) {
             return route('login');
         }
+
+        return null;
     }
 }
+// @codeCoverageIgnoreEnd

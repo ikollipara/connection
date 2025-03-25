@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\ContentCollection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\View\View;
 
-class ContentCollectionCommentController extends Controller
+final class ContentCollectionCommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(ContentCollection $collection)
+    public function index(ContentCollection $collection): View
     {
         $comments = $collection->comments()->root()->get();
 
@@ -26,7 +29,7 @@ class ContentCollectionCommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, ContentCollection $collection)
+    public function store(Request $request, ContentCollection $collection): RedirectResponse
     {
         $validated = $request->validate([
             'body' => 'required|string',
@@ -34,25 +37,10 @@ class ContentCollectionCommentController extends Controller
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        $successful = $collection->comments()->create($validated);
+        $comment = $collection->comments()->make($validated);
+        $successful = $comment->save();
 
         return session_back()->with('success', $successful ? 'Comment created successfully' : 'Failed to create comment');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ContentCollection $collection, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ContentCollection $collection, Comment $comment)
-    {
-        //
     }
 
     public static function middleware(): array
