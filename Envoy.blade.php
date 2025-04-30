@@ -22,7 +22,7 @@
 
 @task('build-frontend', ['on' => 'local'])
   npm ci
-  npm run build
+  APP_DEBUG=false npm run build
   tar -czf public.tar.gz public
   scp public.tar.gz connection@nuros.unl.edu:public_html/connection-main
   rm public.tar.gz
@@ -32,7 +32,7 @@
 @task('update-repo', ['on' => 'nuros'])
   cd public_html/connection-main
   git restore .
-  git pull origin php-8.1
+  git pull origin main
   php composer.phar install --optimize-autoloader --no-dev
 @endtask
 

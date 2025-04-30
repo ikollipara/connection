@@ -77,7 +77,7 @@ class Event extends Model
 
     protected function scopeShouldBeSearchable(Builder $query): Builder
     {
-        return $query->whereHas('days', fn (\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
+        return $query->whereHas('days', fn(\Illuminate\Contracts\Database\Query\Builder $query) => $query->where('date', '>=', now()));
     }
 
     /**
@@ -126,7 +126,7 @@ class Event extends Model
     protected function isCloned(): Attribute
     {
         return Attribute::make(
-            get: fn () => filled($this->cloned_from),
+            get: fn() => filled($this->cloned_from),
         );
     }
 
@@ -136,7 +136,7 @@ class Event extends Model
     protected function isSource(): Attribute
     {
         return Attribute::make(
-            get: fn () => blank($this->cloned_from),
+            get: fn() => blank($this->cloned_from),
         );
     }
 
@@ -162,7 +162,7 @@ class Event extends Model
             return $query;
         }
 
-        return $query->whereHas('attendees', fn (Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
+        return $query->whereHas('attendees', fn(Builder $query) => $query->where('user_id', $user->id))->orWhere('user_id', $user->id);
     }
 
     public function isMultiDay(): bool
