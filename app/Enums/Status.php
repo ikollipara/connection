@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Attributes\Legacy;
 use Spatie\Enum\Laravel\Enum;
 
 /**
@@ -13,4 +14,5 @@ use Spatie\Enum\Laravel\Enum;
  * @method static self published()
  * @method static self archived()
  */
+#[Legacy()]
 class Status extends Enum {}

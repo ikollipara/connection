@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Attributes\Legacy;
 use Closure;
 use Illuminate\Support\Str;
 use Spatie\Enum\Laravel\Enum;
@@ -33,6 +34,7 @@ use Spatie\Enum\Laravel\Enum;
  * @method static self practice7_2()
  * @method static self practice7_3()
  */
+#[Legacy()]
 class Practice extends Enum
 {
     protected static function values(): Closure
