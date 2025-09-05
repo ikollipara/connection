@@ -14,7 +14,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // use Illuminate\Support\Facades\Mail;

@@ -23,6 +23,7 @@ class Survey extends Mailable implements ShouldQueue
     public function __construct(string $url)
     {
         $this->url = $url;
+        $this->from(config('mail.maintainer'));
     }
 
     /**

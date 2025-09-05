@@ -1,5 +1,6 @@
 services:
     laravel.test:
+        platform: linux/amd64
         build:
             context: ./docker/8.2
             dockerfile: Dockerfile
@@ -26,6 +27,7 @@ services:
             - mailpit
             - selenium
     mysql:
+        platform: linux/amd64
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
@@ -50,6 +52,7 @@ services:
             retries: 3
             timeout: 5s
     mailpit:
+        platform: linux/amd64
         image: 'axllent/mailpit:latest'
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
@@ -57,6 +60,7 @@ services:
         networks:
             - sail
     selenium:
+        platform: linux/amd64
         image: selenium/standalone-chrome
         extra_hosts:
             - 'host.docker.internal:host-gateway'
