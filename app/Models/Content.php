@@ -12,6 +12,7 @@ use App\Models\Concerns\Sluggable;
 use App\Models\Concerns\Viewable;
 use App\ValueObjects\Editor;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -65,7 +66,8 @@ class Content extends Model
     /** @var list<string> */
     protected array $filterableColumns = ['type', 'metadata->grades', 'metadata->standards', 'metadata->practices', 'metadata->languages', 'metadata->category', 'metadata->audience'];
 
-    protected function scopeShouldBeSearchable(Builder $query): Builder
+    #[Scope]
+    protected function shouldBeSearchable(Builder $query): Builder
     {
         return $query->where('published', true)->whereNull('deleted_at')->with('user');
     }
@@ -128,7 +130,6 @@ class Content extends Model
      */
     public function user(): BelongsTo
     {
-        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
@@ -162,7 +163,8 @@ class Content extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
-    public function scopeStatus($query, Status $status)
+    #[Scope]
+    protected function byStatus($query, Status $status)
     {
         if ($status->equals(Status::archived())) {
             $query->onlyTrashed();
@@ -183,7 +185,8 @@ class Content extends Model
      * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
-    public function scopeWherePublished($query)
+    #[Scope]
+    protected function wherePublished($query)
     {
         return $query->where('published', true);
     }

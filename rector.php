@@ -36,6 +36,6 @@ return RectorConfig::configure()
         ValidationRuleArrayStringValueToArrayRector::class,
     ])
     ->withSets([
-        LaravelLevelSetList::UP_TO_LARAVEL_110,
+        LaravelLevelSetList::UP_TO_LARAVEL_120,
         LaravelSetList::ARRAY_STR_FUNCTIONS_TO_STATIC_CALL,
     ]);

@@ -7,16 +7,13 @@ namespace App\Models;
 // use App\Mail\Survey;
 
 use App\Mail\Login;
-use App\Services\SurveyService;
 use App\ValueObjects\Avatar;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\Authenticatable as AuthContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -42,22 +39,8 @@ class User extends Authenticatable implements AuthContract, MustVerifyEmail
     {
         // Before creating the user, we normalize the email.
         static::creating(function (User $user) {
-            $user->email = trim(strtolower($user->email));
+            $user->email = str($user->email)->trim()->lower()->toString();
         });
-        static::created(function (User $user) {
-            // event(new Registered($user));
-            $user->notifyIfConsented();
-        });
-        static::saved(function (User $user) {
-            $user->notifyIfConsented();
-        });
-    }
-
-    private function notifyIfConsented(): void
-    {
-        if ($this->consented and ($this->wasChanged('consented') or $this->wasRecentlyCreated)) {
-            (new SurveyService($this))->sendSurvey([SurveyService::SCALES], SurveyService::ONCE);
-        }
     }
 
     // Overrides
@@ -106,38 +89,6 @@ class User extends Authenticatable implements AuthContract, MustVerifyEmail
     }
 
     // Relationships
-
-    /**
-     * Get the user's followers
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, $this>
-     *
-     * @see \App\Models\User::followers()
-     */
-    public function followers(): BelongsToMany
-    {
-        return $this->belongsToMany(self::class, 'followers', 'followed_id', 'follower_id')->using(Follower::class);
-    }
-
-    /**
-     * Get the users who the users is following
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<self, $this>
-     */
-    public function following(): BelongsToMany
-    {
-        return $this->belongsToMany(self::class, 'followers', 'follower_id', 'followed_id')->using(Follower::class);
-    }
-
-    /**
-     * What events the user is attending.
-     *
-     * @return BelongsToMany<Event, $this>
-     */
-    public function attending(): BelongsToMany
-    {
-        return $this->belongsToMany(Event::class, 'attendees');
-    }
 
     /**
      * Get the user's settings
@@ -190,16 +141,6 @@ class User extends Authenticatable implements AuthContract, MustVerifyEmail
     }
 
     /**
-     * Get the user's Events
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Event, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(Event::class);
-    }
-
-    /**
      * Get the user's comments
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<Comment, $this>
@@ -209,26 +150,11 @@ class User extends Authenticatable implements AuthContract, MustVerifyEmail
         return $this->hasMany(Comment::class);
     }
 
-    /**
-     * Get the user's searches
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Search, $this>
-     */
-    public function searches(): HasMany
-    {
-        return $this->hasMany(Search::class);
-    }
-
     // Scopes
 
     public function sendLoginLink(): void
     {
         Mail::to($this)->queue(new Login($this));
-    }
-
-    public function isFollowing(User $user): bool
-    {
-        return $this->following()->where('followed_id', $user->id)->exists();
     }
 
     /**

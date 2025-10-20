@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,8 @@ class ContentCollection extends Content
             ->exists();
     }
 
-    protected function scopeWithHasEntry(Builder $query, string|Content|null $content = null): Builder
+    #[Scope]
+    protected function withHasEntry(Builder $query, string|Content|null $content = null): Builder
     {
         if (is_null($content)) {
             return $query;

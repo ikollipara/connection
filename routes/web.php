@@ -36,6 +36,10 @@
 |
 */
 
+use App\Http\Controllers\SearchController;
+
+Route::get('/', SearchController::class)->name('search');
+
 // Route::view('/', 'index')->name('index')->middleware('guest');
 // Route::view('about', 'about')->name('about')->middleware('guest');
 // Route::get('contact', [ContactController::class, 'create'])->name('contact');

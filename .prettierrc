@@ -1,6 +1,13 @@
 {
     "$schema": "https://json.schemastore.org/prettierrc",
     "plugins": ["@shufo/prettier-plugin-blade"],
+    "arrowParens": "always",
+    "tabWidth": 2,
+    "endOfLine": "lf",
+    "trailingComma": "all",
+    "singleQuote": false,
+    "printWidth": 110,
+    "semi": true,
     "overrides": [
         {
             "files": ["*.blade.php"],

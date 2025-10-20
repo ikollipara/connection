@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Likeable;
 use App\Models\Scopes\OrderByLikes;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -66,7 +67,8 @@ class Comment extends Model
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    protected static function scopeRoot(Builder $query): Builder
+    #[Scope]
+    protected function root(Builder $query): Builder
     {
         return $query->whereNull('parent_id');
     }

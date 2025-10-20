@@ -1,56 +1,16 @@
+@import "tailwindcss";
+@import "slim-select/styles";
 
-/* @import "bulma/css/versions/bulma-no-dark-mode.min.css";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+@source "../**/*.elm";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
 
-:root {
-    --bulma-primary-h: 201;
-    --bulma-primary-s: 100%;
-    --bulma-primary-l: 14%;
-    --bulma-primary-invert-l: calc(100% - var(--bulma-primary-l));
-    --bulma-success-h: 150;
-    --bulma-success-s: 71%;
-    --bulma-success-l: 41%;
-    --bulma-success-invert-l: var(--bulma-light-l);
-    --ss-primary-color: hsl(
-        var(--bulma-primary-h),
-        var(--bulma-primary-s),
-        var(--bulma-primary-l)
-    );
-    --ss-focus-color: hsl(
-        var(--bulma-primary-h),
-        var(--bulma-primary-s),
-        calc(var(--bulma-primary-l) + 10%)
-    );
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    --color-primary: #1E4ED8;
 }
-
-.loader {
-    animation: spinAround 500ms infinite linear;
-    border: 2px solid var(--bulma-border);
-    border-radius: var(--bulma-radius-rounded);
-    border-right-color: transparent;
-    border-top-color: transparent;
-    content: "";
-    display: block;
-    height: 5em;
-    position: relative;
-    width: 5em;
-    margin: auto;
-    margin-top: 5em;
-}
-
-.is-primary {
-    --bulma-link-text: #d6dbff;
-}
-
-.preserve-rounding {
-    border-radius: var(--bulma-control-radius) !important;
-}
-
-.level.bordered {
-    padding-block: 0.25rem;
-    border-top: var(--bulma-white) 1px solid;
-    border-bottom: var(--bulma-white) 1px solid;
-} */
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@plugin "@tailwindcss/typography";
